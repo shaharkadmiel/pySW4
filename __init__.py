@@ -8,6 +8,15 @@
 # This code is distributed under the terms of the GNU General Public License
 #------------------------------------------------------------------------------
 """
+
+   _____      _      ____       
+  / ___/___  (_)____/ __ \__  __
+  \__ \/ _ \/ / ___/ /_/ / / / /
+ ___/ /  __/ (__  ) ____/ /_/ / 
+/____/\___/_/____/_/    \__, /  
+                       /____/   
+
+                       
 SeisPy: A Python Toolbox for processing Seismic-wave propagation simulations
 ============================================================================
 
