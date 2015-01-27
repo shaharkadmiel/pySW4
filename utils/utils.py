@@ -149,6 +149,3 @@ def get_vmin(h, fmax, ppw=15):
 
 def get_z(v, v0, v_grad):
     return (v - v0) / v_grad
-
-def function():
-    pass
