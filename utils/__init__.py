@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #  Purpose: Convenience imports for SeisPy
 #   Author: Shahar Shani-Kadmiel
-#			kadmiel@post.bgu.ac.il
+#			      kadmiel@post.bgu.ac.il
 #
 # Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel
 # This code is distributed under the terms of the GNU General Public License
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 """
 
    _____      _      ____       
@@ -16,7 +16,7 @@
 /____/\___/_/____/_/    \__, /  
                        /____/   
 
-                       
+
 SeisPy: A Python Toolbox for processing Seismic-wave propagation simulations
 ============================================================================
 
