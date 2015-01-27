@@ -33,7 +33,3 @@ the task (preprocessing, post-processing and runtime visualization).
     (http://www.gnu.org/copyleft/gpl.html)
     See ./LICENSE.txt
 """
-
-__version__ = 0.1
-
-from seispy.preprocessing.fault import Fault, make_fault
