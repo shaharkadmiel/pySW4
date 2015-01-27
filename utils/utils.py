@@ -17,3 +17,5 @@ def flatten(ndarray):
 				yield subitem
 		except TypeError:
 			yield item
+def stam:
+	pass
