@@ -1,3 +1,5 @@
+from shutil import copyfile
+
 def grid_seismograms(x_extent,y_extent,mode='displacement',x_n_of_stations=11.,y_n_of_stations=11.,
                      x_spacing=None,y_spacing=None,xmin=None,xmax=None,ymin=None,ymax=None,z=0.,
                      wpp_input_file=None,grid_name='grid',writeEvery=100):
