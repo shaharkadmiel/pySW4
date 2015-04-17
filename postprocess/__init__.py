@@ -36,3 +36,4 @@ the task (preprocessing, post-processing and runtime visualization).
 
 from sw4_read_image import sw4_image
 from sw4_plot_image import sw4_plot_image
+from png2mp4 import images_to_movie
