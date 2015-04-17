@@ -27,7 +27,7 @@ the task (preprocessing, post-processing and runtime visualization).
 :copyright:
     Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
     and
-    Omry Volk (enter email here)
+    Omry Volk (omryv@post.bgu.ac.il)
 :license:
     GNU GENERAL PUBLIC LICENSE Version 3
     (http://www.gnu.org/copyleft/gpl.html)
@@ -36,6 +36,10 @@ the task (preprocessing, post-processing and runtime visualization).
 
 __version__ = 0.1
 
-from seispy.preprocessing.fault import Fault, make_fault
+#from seispy.preprocessing.fault import Fault, make_fault
 import numpy as np
 import matplotlib.pyplot as plt
+import postprocess
+import preprocess
+import utils
+

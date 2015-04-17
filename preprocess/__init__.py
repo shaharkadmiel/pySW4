@@ -33,3 +33,5 @@ the task (preprocessing, post-processing and runtime visualization).
     (http://www.gnu.org/copyleft/gpl.html)
     See ./LICENSE.txt
 """
+
+from grid_seismograms import grid_seismograms
