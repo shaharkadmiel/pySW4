@@ -36,7 +36,6 @@ the task (preprocessing, post-processing and runtime visualization).
 
 __version__ = 0.1
 
-#from seispy.preprocessing.fault import Fault, make_fault
 import numpy as np
 import matplotlib.pyplot as plt
 import postprocess
