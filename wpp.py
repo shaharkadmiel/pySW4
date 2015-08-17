@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 from matplotlib.ticker import MultipleLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from copy import deepcopy
 import numpy as np
 import fnmatch as fn
 import itertools as it
@@ -1121,6 +1122,66 @@ class Grid(ImageFile):
         ax.set_title('Cross section grid view', fontsize=14, y=1.03)
         
         return fig, ax
+
+
+def xvelmax2PGV(hvelmax, vvelmax, dt=None):
+    """
+    This function computes PGV such that:
+    
+        PGV = SQRT(HPGV^2 + VPGV^2)
+        
+    returns
+    --------
+    a WPP ImageFile object with the new data
+    
+    Parameters
+    -----------
+    hvelmax and vvelmax : are either WPP ImageFile objects or
+        filenames to the WPP .hvelmax and .vvelmax files
+    """
+    
+    try:
+        Himage = read(hvelmax, None, None, dt)
+        Vimage = read(vvelmax, None, None, dt)
+    except AttributeError:
+        Himage = hvelmax
+        Vimage = vvelmax
+        
+    newimage = deepcopy(Himage)
+    (name,
+     cycle,
+     plane,
+     plane_value,
+     extention) = parse_filename(Himage.filename)
+    newimage.filename = None
+    try:
+        newimage.file_dict['data_in_file'] = 'PGV'
+        newimage.file_dict['extention'] = 'xvelmax'
+        newimage.label_dict['colorbarlabel'] = 'PGV, m/s'
+        newimage.label_dict['title'] = 'Peak ground velocity'
+    except AttributeError:
+        newimage.file_dict = {'cycle'        : cycle,
+                              'data_in_file' : 'PGV',
+                              'extention'    : 'xvelmax'}
+        newimage.label_dict = {'colorbarlabel' : 'PGV, m/s',
+                               'title'         : 'Peak ground velocity'}
+        
+    if dt is not None:
+        newimage.dt = dt
+    
+    for i in range(Himage.number_of_patches):
+        Hdata = Himage.patches[i]
+        Vdata = Vimage.patches[i]
+        newimage.patches[i] = np.sqrt(Hdata**2 + Vdata**2)
+        
+    (newimage.max,
+     newimage.min,
+     newimage.rms,
+     newimage.ptp) = calc_stuff(newimage.patches)
+    
+    return deepcopy(newimage)
+    
+
 
 ## Input file and monitor file related functions and classes
 
