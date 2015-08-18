@@ -17,30 +17,30 @@ def resample(data, extent, shape=None, method='linear',
              draft=False, corners=None, origin='nw', verbose=False):
     """Resample or interpolate an array on to a grid with new extent.
     If no shape is passed, output grid is same shape as input array.
-    
+
     Params:
     -------
-    
+
     data : either a tuple of 3x2d arrays `(X,Y,Z)` or a single
         2d array `Z`. If a single `Z` array is passed, `corners` must
         be passed.
-    
+
     extent : tuple/list the extent of the output grid to which the
         array is interpolated.
-    
+
     shape : the shape of the output grid, tuple, defaults to the shape
         of the input array.
-            
+
     method : 'linear' interpolation (default), 'nearest or 'cubic'
         interpolation are also possible.
-    
+
     draft : if set to True, a very fast OpenCV algorithem is used to
         interpolate the array by reprojection the data corners onto
         arbitrary corners. See http://stackoverflow.com/a/31724678/1579211
         for explanation.
-            
+
     corners : a tuple of 4 points to which the corners of `Z` will
-        be tranformed to. 
+        be tranformed to.
         After transformation, the TL,TR,BR,BL corners of the `Z` array
         will be transformed to the coordinates in:
         `corners=(top-left, top-right, bottom-right, bottom-left)` where
@@ -48,34 +48,34 @@ def resample(data, extent, shape=None, method='linear',
         Optionally, corners can be a `(src,dst)` tuple, where src,dst are
         each a tuple of n points. Each point in src is transformed to the
         respective point in extent coordinates in dst.
-        
+
     origin : corresponds to Z[0,0] of the array or grid,
         either 'nw' (default), or 'sw'.
-        
+
     verbose : if set to True, some information about the transformation is
         provided.
-        
+
     Returns :
     ---------
     If `data` is a tuple of 3x2d arrays `(X,Y,Z)` and `draft` is False,
     xi,
     """
-    
+
     if len(data) == 3:
         X,Y,Z = data
     elif data.ndim == 2:
         Z = data
     else:
         print 'Error: data must be 3x2d tuple of (XYZ) or 2d Z array'
-    
+
     w,e,s,n = extent
-    
+
     # if no output shape is supplied
     # use the shape of the input array Z
     if not shape:
         shape = Z.shape
     ny,nx = shape
-        
+
     if draft is False: # the long and accurate way...
         if verbose:
             message = """
@@ -90,20 +90,20 @@ This may take a while...
                             np.linspace(s, n, ny))
         zi = griddata((X.ravel(),Y.ravel()), Z.ravel(), (xi,yi), method=method)
         return xi, yi, zi
-    
+
     elif draft is True: # the fast and less accurate way...
         try: # both src and dst are passed
             src,dst = corners
             src,dst = tuple(src),tuple(dst)
-            
+
         except ValueError: # only dst corners passed
             src = ((0,0),(nx,0),(nx,ny),(0,ny))
             dst = corners
-            
+
         xc,yc = [p[0] for p in dst],[p[1] for p in dst]
         xc,yc = xy2pixel_coordinates(xc,yc,extent,shape,origin)
         dst = tuple(zip(xc,yc))
-        
+
         if verbose:
             message = """
 Transforming points:
@@ -119,7 +119,7 @@ in the the output grid of shape %dx%d and extent %.2f,%.2f,%.2f,%.2f.
         # data in output grid pixel coordinates
         tranformation_matrix = cv2.getPerspectiveTransform(np.float32(src),
                                                            np.float32(dst))
-        
+
         # Make the transformation
         interpolation = {'nearest' : 0,
                          'linear'  : 1,
@@ -129,15 +129,15 @@ in the the output grid of shape %dx%d and extent %.2f,%.2f,%.2f,%.2f.
                                  flags=interpolation[method],
                                  borderMode=0,
                                  borderValue=np.nan)
-        
+
         return zi
 
-        
+
 def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
                      delta=None, verbose=False):
-    """Compute the Fourier spectrum of a signal either as a whole or as 
+    """Compute the Fourier spectrum of a signal either as a whole or as
     a series of windows with or without overlaps for smoother spectrum.
-    
+
     The reason for windowing a signal into smaller chunks is to smooth a
     'noisy' Fourier spectrum of a very long signal. The frequency
     resolution of the FFT is related to the number of points (npts) passed
@@ -151,7 +151,7 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
     would be 5001 and the frequency resolution would be 0.01 Hz making the
     the spectrum very noisy numerically with many frequencies that don't
     contain any real information.
-    
+
     Pay attention to the `stepsize` parameter. Leave it None if you are not
     sure what is the correct value. If a high energy peak in the time domain
     is picked up by more than one window due to ovelap, that can be accumulated
@@ -161,58 +161,58 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
     resulting frequency domain will contain false amplitudes at high frequencies
     as a result. Setting an overlap will get rid of this problem as these unwanted
     effects will be canceled out by one another or averaged by several windows.
-    
-    
+
+
     Params:
     -------
-    
+
     data : either a sequence (say, values of a time-history) or an obspy
         Trace object. If a sequence is passed `delta` must be supplied.
-        
+
     womean : remove mean before transform. Default is False, transform
         as is. This is usefull in cases that the signal does not revolve
         around zero but rather around some other constant value.
-    
+
     winsize : by default `winsize` is None, taking the FFT of the entire
         signal as-is. Otherwise, `winsize` sets the size of the sliding
         window, taking `winsize` points of the signal at a time.
         Works fastest when `winsize` is a whole power of 2, i.e., 128, 512
         1024, 2048, 4096 etc.
-        
+
     stepsize : the number of points by which the window slides each time.
         By default, `stepsize` is None, making it equal to `winsize`,
         no overlap. Setting `stepsize` to half `winsize` is common practice
-        and will cause a 50% overlap. 
-        
+        and will cause a 50% overlap.
+
     delta : the dt from one sample to the next such that 1/delta is the
         sampling rate.
-        
+
     verbose : if True some information about the process is printed.
-    
+
     Returns :
     ---------
-    
+
     a frequency array and an amplitude array.
     """
-    
+
     def _fft(signal, delta):
         freq = np.fft.rfftfreq(signal.size, delta)
-        amp = np.abs(np.fft.rfft(signal))/(0.5*signal.size)
+        amp = np.abs(np.fft.rfft(signal))*delta
         return freq, amp
-    
+
     # if data is a sequence
     if type(data) in [tuple,list,np.ndarray]:
         if verbose:
             message = """Processing data as a sequence..."""
             print message
             sys.stdout.flush()
-            
+
         signal  = np.array(data)
         if delta is None:
             print 'Error: If data is not an `obspy.core.trace.Trace` object\n'+\
                   '`delta` must be supplied.'
             return
-    
+
     # if data is an obspy Trace object
     elif type(data) is obspy.core.trace.Trace:
         if verbose:
@@ -220,13 +220,13 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
 Processing data as an obspy.core.trace.Trace object..."""
             print message
             sys.stdout.flush()
-            
+
         signal = data.data
         # if womean is not False, remove the mean befor transform
         if womean:
             signal -= signal.mean()
         delta = data.stats.delta
-        
+
     # fft the entire signal, no windoing...
     if winsize is None:
         if verbose:
@@ -234,9 +234,9 @@ Processing data as an obspy.core.trace.Trace object..."""
 Performing FFT on entire signal with %d point, no windoing..."""
             print message %signal.size
             sys.stdout.flush()
-           
+
         return _fft(signal, delta)
-    
+
     # cut the signal into overlaping windows,
     # fft each window and average the sum
     else:
@@ -245,17 +245,17 @@ Performing FFT on entire signal with %d point, no windoing..."""
             stepsize = winsize
         else:
             stepsize = int(stepsize)
-        
+
         if stepsize > winsize:
             print 'Error: stepsize must be smaller than or equal to winsize'
             return
         if winsize > npts:
             print 'Error: winsize must be smaller than or equal to npts'
             return
-        
+
         overlap = winsize - stepsize
         n_of_win = signal.size//(winsize - overlap)
-        
+
         if verbose:
             message = """
 Performing FFT on %d long signal with %d windows of size %d points
@@ -263,24 +263,22 @@ and %d points overlap.
 May take a while if winsize or stepsize are small..."""
             print message %(signal.size, n_of_win, winsize, overlap)
             sys.stdout.flush()
-           
+
         # pad the end of the signal with zeros
         # to make sure the entire signal is used
         # for the fft.
         padded = np.pad(signal,(0,winsize),mode='constant')
         freq = np.fft.rfftfreq(winsize, delta)
         amps = np.zeros_like(freq)
-        
+
         for i in xrange(n_of_win):
             if verbose:
                 print ('\rFTT window %d out of %d...' %(i+1, n_of_win)),
                 sys.stdout.flush()
-           
+
             start = i*stepsize
             stop = start + winsize
-            amps += np.abs(
-                        np.fft.rfft(
-                            padded[start:stop]))/(0.5*winsize)
+            amps += np.abs(np.fft.rfft(padded[start:stop]))*delta
 
         amp = amps/n_of_win
         return freq, amp
@@ -288,28 +286,28 @@ May take a while if winsize or stepsize are small..."""
 
 def make_cmap(colors, position=None, bit=False, named=True):
     """Make a color map compatible with matplotlib plotting functions.
-    
+
     Params :
     --------
-    
+
     colors : a list of matplotlib named colors, see
         http://matplotlib.org/examples/color/named_colors.html
         for color names. Arrange your colors so that the first color is
         the lowest value for the colorbar and the last is the highest.
-        
+
     position : a list of values from 0 to 1, controls the position of
         each color on the cmap. If None (default), an evenly spaced cmap
         is created.
-        
+
     named : if set to False, colors are regarded as tuples of RGB values.
         The RGB values may either be in 8-bit [0 to 255], in which case
         bit must be set to True or arithmetic [0 to 1] (default).
-        
+
     Returns :
     ---------
     a cmap (an instance of `matplotlib.colors.LinearSegmentedColormap`)
     """
-    
+
     bit_rgb = np.linspace(0,1,256)
     if position == None:
         position = np.linspace(0,1,len(colors))
@@ -357,12 +355,12 @@ def close_polygon(x,y):
 def get_corners(x,y):
     """extract the corners of the data from
     its coordinates arrays x and y.
-    
+
     returns 2 lists of longitudes and latitudes"""
-    
+
     xc = [x[0,0],x[0,-1],x[-1,-1],x[-1,0]]
     yc = [y[0,0],y[0,-1],y[-1,-1],y[-1,0]]
-    
+
     return xc,yc
 
 
@@ -371,13 +369,13 @@ def xy2pixel_coordinates(x, y, extent, shape, origin='nw'):
     a grid with `extent` and `shape`.
     `origin` corresponds to Z[0,0] of the array or grid, either
     'nw' (default), or 'sw'."""
-    
+
     x,y = np.array([x,y])
     w,e,s,n = extent
     ny,nx = shape
     dx = float(e-w)/nx
     dy = float(n-s)/ny
-    
+
     if origin is 'nw':
         xc = (x - w)/dx
         yc = (n - y)/dy
@@ -389,7 +387,7 @@ def xy2pixel_coordinates(x, y, extent, shape, origin='nw'):
 
     return xc,yc
 
-    
+
 def rms(x):
     """Returns the Root Mean Square of numpy array"""
     return np.sqrt((x**2).mean())

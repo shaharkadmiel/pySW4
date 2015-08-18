@@ -69,7 +69,4 @@ def grid_seismograms(x_extent,y_extent,mode='displacement',x_n_of_stations=11.,y
             f.write(string)
         f.close()
 
-        return filename        
-    
-
-        
+        return filename
