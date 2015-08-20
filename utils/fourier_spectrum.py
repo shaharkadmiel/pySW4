@@ -10,6 +10,7 @@ By: Shahar Shani-Kadmiel, August 2015, kadmiel@post.bgu.ac.il
 
 import sys
 import numpy as np
+import obspy
 
 def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
                      delta=None, verbose=False):
