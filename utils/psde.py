@@ -1,8 +1,8 @@
 """
-- fourier_spectrum.py -
+- psde.py -
 
-Python wrapper for `matplotlib.mlab.psd` for conveniently computing the
-Fourier transform of a signal.
+Python wrapper for `matplotlib.mlab.psd` for conveniently estimate the power
+spectral density of a signal.
 
 By: Shahar Shani-Kadmiel, August 2015, kadmiel@post.bgu.ac.il
 
@@ -16,7 +16,7 @@ import obspy
 def next_power_2(x):
     return 1<<(x-1).bit_length()
 
-def fourier_spectrum(data, womean=False, winsize='default', stepsize=None,
+def psde(data, womean=False, winsize='default', stepsize=None,
                      delta=None, verbose=False):
     """Compute the Fourier spectrum of a signal either as a whole or as
     a series of windows with or without overlaps for smoother spectrum.

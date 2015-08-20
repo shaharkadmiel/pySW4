@@ -128,7 +128,7 @@ Performing FFT on entire signal with %d point, no windoing..."""
         if stepsize > winsize:
             print 'Error: stepsize must be smaller than or equal to winsize'
             return
-        if winsize > npts:
+        if winsize > signal.size:
             print 'Error: winsize must be smaller than or equal to npts'
             return
 
