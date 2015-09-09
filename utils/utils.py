@@ -212,6 +212,15 @@ def get_corners(x,y):
 
     return xc,yc
 
+def line_in_loglog(x, m, b):
+    """
+    Function to calculate the y values of a line
+    in log-log space according to b * 10**(log10(x**m))
+    where ``m`` is the slope of the line, ``b`` is the y
+    value at x=1 and x is a sequence of values on the x-axis.
+    """
+    return b * 10**(np.log10(x**m))
+
 
 def xy2pixel_coordinates(x, y, extent, shape, origin='nw'):
     """get the pixel coordinates of xy points (can be lon,lat) on
@@ -363,3 +372,5 @@ def get_vmin(h, fmax, ppw=15):
 
 def get_z(v, v0, v_grad):
     return (v - v0) / v_grad
+
+

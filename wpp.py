@@ -40,7 +40,7 @@ rc('legend', **legend)
 
 axes = {'titlesize'     : 14.0,
         'labelsize'     : 12.0}
-    
+
 rc('axes', **axes)
 rc('pdf', fonttype=42)
 
@@ -112,12 +112,12 @@ def xy2latlon(x,y, origin=(37.0,-118.0), az=0, km2deg=111.3195):
     Returns
     --------
     lat and lon 2darrays."""
-    
+
     az = np.radians(az)
     lat = origin[0] + (x*np.cos(az) - y*np.sin(az))/km2deg
     lon = (origin[1] + (x*np.sin(az) + y*np.cos(az))/
             (km2deg*np.cos(np.radians(lat))))
-    
+
     return lat, lon
 
 def latlon2xy(lat, lon, origin=(37.0,-118.0), az=0, km2deg=111.3195):
@@ -140,7 +140,7 @@ def latlon2xy(lat, lon, origin=(37.0,-118.0), az=0, km2deg=111.3195):
     Returns
     --------
     x and y 2darrays."""
-    
+
     az = np.radians(az)
     x = km2deg*(
                 ((lat - origin[0]) +
@@ -148,7 +148,7 @@ def latlon2xy(lat, lon, origin=(37.0,-118.0), az=0, km2deg=111.3195):
                  (np.cos(az)*(1 + np.tan(az)**2)))
     y = (km2deg*((lon - origin[1]) * np.cos(np.radians(lat))) /
          np.cos(az)) - x*np.tan(az)
-    
+
     return x, y
 
 def grid_spacing(vmin, fmax, ppw=15):
@@ -173,7 +173,7 @@ def f0(fmax, source_type):
     elif source_type in ['Brune', 'BruneSmoothed']:
         f_0 = fmax/4
     return f_0
-        
+
 def omega(f0, source_type):
     """Calculate omega, that value that goes on the source line in the
     WPP input file as ``freq`` based on f_0 and the source type"""
@@ -188,7 +188,7 @@ def get_vmin(h, fmax, ppw=15):
 
 def get_z(v, v0, v_grad):
     return (v - v0)/v_grad
-    
+
 
 def trace_along_line(x1=None, x2=None, y1=None, y2=None,
             lon1=None, lon2=None, lat1=None, lat2=None,
@@ -199,11 +199,11 @@ def trace_along_line(x1=None, x2=None, y1=None, y2=None,
     The number of stations is given by ``number_of_stations`` (defaults to 3).
     A ``name`` can be given as a prefix to the sac file name.
     ``velocity`` and ``writeEvery`` are WPP parameters, see WPP userguide for more info.
-    
+
     The function returns a formatted string which can be copied or appended to a WPP inputfile
     if ``wpp_input_file`` is None or adds the lines to the specified file.
     """
-    
+
     if x1 is not None and x2 is not None:
         x = np.linspace(x1, x2, number_of_stations)
         sac_string = 'sac x=%.3f y=%.3f depth=0 file=%s_x=%.3f_y=%.3f_ writeEvery=%d velocity=%d\n'
@@ -215,17 +215,17 @@ def trace_along_line(x1=None, x2=None, y1=None, y2=None,
         y = np.linspace(y1, y2, number_of_stations)
     elif lat1 is not None and lat2 is not None:
         y = np.linspace(lat1, lat2, number_of_stations)
-            
+
     string = "\n\n#------------------- seismograms for traces: %s -------------------\n" %name
     for i in range(len(x)):
         string += (sac_string
                     %(x[i],y[i],name,x[i],y[i],writeEvery,velocity))
-        
+
     if wpp_input_file is None:
         return string
     else:
         # copy the premade WPP input file,
-        # add '+traces' to the filename 
+        # add '+traces' to the filename
         # and open the new file in append mode
         if 'traces' not in wpp_input_file:
             filename,extention = wpp_input_file.rsplit('.',1)
@@ -233,7 +233,7 @@ def trace_along_line(x1=None, x2=None, y1=None, y2=None,
             copyfile(wpp_input_file, filename)
         else:
             filename = wpp_input_file
-        
+
         with open(filename, "a") as f:
             f.write(string)
         f.close()
@@ -247,11 +247,11 @@ def place_station(x=None, y=None, lat=None, lon=None,
     or at (``lat``, ``lon``) in geographical coordinates.
     A sequence (list or tuple) of station names can be passed on to ``name``.
     ``velocity`` and ``writeEvery`` are WPP parameters, see WPP userguide for more info.
-    
+
     The function returns a formatted string which can be copied or appended to a WPP inputfile
     if ``wpp_input_file`` is None or adds the lines to the specified file.
     """
-    
+
     if x is not None and y is not None:
         sac_string = 'sac x=%.3f y=%.3f depth=0 file=%s writeEvery=%d velocity=%d\n'
     elif lon is not None and lat is not None:
@@ -266,12 +266,12 @@ def place_station(x=None, y=None, lat=None, lon=None,
     except TypeError:
         string += (sac_string
                         %(x,y,name,writeEvery,velocity))
-        
+
     if wpp_input_file is None:
         return string
     else:
         # copy the premade WPP input file,
-        # add '+stations' to the filename 
+        # add '+stations' to the filename
         # and open the new file in append mode
         if 'stations' not in wpp_input_file:
             filename,extention = wpp_input_file.rsplit('.', 1)
@@ -279,7 +279,7 @@ def place_station(x=None, y=None, lat=None, lon=None,
             copyfile(wpp_input_file, filename)
         else:
             filename = wpp_input_file
-        
+
         with open(filename, "a") as f:
             f.write(string)
         f.close()
@@ -295,7 +295,7 @@ def revise_inputfile(replacements, original, revised=None):
      'original string 2':'substitusion string 2',
      ...
      }
-    
+
     """
     infile = open(original)
 
@@ -437,7 +437,7 @@ def read(filename, grid_filename=None, coordinate_files=None, dt=None, verbose=F
         ** See note at the bottom about the bool option **
 
     dt : float, otional, default: None
-        if supplied, the time-stamp of the timestep will be plotted to the 
+        if supplied, the time-stamp of the timestep will be plotted to the
         bottom right corner of the image
 
     verbose : bool, optional, default: False
@@ -554,12 +554,12 @@ def get_type(filename):
     --------
     file_dict, label_dict
     """
-    
+
     name, cycle, plane, plane_value, extention = parse_filename(filename)
 
     file_keys = ('name', 'cycle', 'plane', 'plane_value',
             'extention', 'data_in_file', 'data_type')
-    
+
     # set default label_vals incase one is not set by the options below
     label_keys = ('title', 'xlabel', 'ylabel', 'colorbarlabel')
     label_vals = (None, None, None, None)
@@ -615,7 +615,7 @@ def get_type(filename):
         elif extention == 'fx' or extention == 'fy' or extention == 'fz':
             data_in_file = extention
             label_vals = (data_in_file, 'Distance, km', 'Depth, km', data_in_file + ', N')
-        
+
     # check if map
     # x and y lables will be overwritten if coordinates files are supplied
     elif plane == 'z':
@@ -694,7 +694,7 @@ def get_corners(extent):
     corners.append(corners[0])
     cornersx = [corner[0] for corner in corners]
     cornersy = [corner[1] for corner in corners]
-    
+
     return cornersx, cornersy
 
 class ImageFile(object):
@@ -706,20 +706,20 @@ class ImageFile(object):
     def __init__(self, filename, verbose, n_o_p, p_i):
 
         self.filename = filename
-        
+
         # read the image header
         (precision,
             self.number_of_patches,
             self.patch_info,
             position) = readhdr(self.filename, verbose, n_o_p, p_i)
-        
+
         # read and store patch/s data
         self.patches = []
         for i, patch in enumerate(self.patch_info):
             h = patch[0]
             nx = (patch[2]-patch[1])+1
             ny = (patch[4]-patch[3])+1
-            
+
             # read each patch and append to the list of arrays at index 'i'
             if verbose:
                 print ("read:   Reading patch " + str(i) + ":" )
@@ -745,19 +745,19 @@ class CrossSection(ImageFile):
         self.label_dict = label_dict
         self.grid_filename = grid_filename
         self.dt = dt
-        
+
         if self.grid_filename is None:
             self.grid = Grid(patch_info=self.patch_info, verbose=verbose)
         else:
             if verbose:
                 print self.grid_filename
             self.grid = load_grid(self.grid_filename)
-                
+
         self.extent = self.grid.extent
-            
+
         # modify patch data
         for patch in self.patches:
-            if (self.file_dict['data_in_file'] in 
+            if (self.file_dict['data_in_file'] in
                 ['Pressure-waves velocity model',
                 'Shear-waves velocity model']):
                 patch *= 1e-3
@@ -772,12 +772,12 @@ class CrossSection(ImageFile):
         """Plotting method for WPP CrossSection class object.
         shading can be either 'flat' (faster, default) or 'gouraud'
         contours defaults to None but can be given as an int value or a tuple of clevels"""
-        
+
         return_array = [ax]
         if ax is None:
             fig, ax = plt.subplots(figsize=size)
             return_array.insert(0, fig)
-        
+
         if clipfactor is 'max':
             clip = self.max
         elif type(clipfactor) is float:
@@ -793,30 +793,30 @@ class CrossSection(ImageFile):
             's' in self.file_dict['extention'] or
             'rho' in self.file_dict['extention']):
             vmin = 0
-        
+
         im = []
-        
+
         lw = 1
 
         for i in range(self.number_of_patches-1,-1,-1):
             x = self.grid.Hpatches[i]*1e-3
             y = self.grid.Zpatches[i]*1e-3
             data = self.patches[i]
-            
+
             print("Plotting patch %d of %d patches" %(i, self.number_of_patches))
             im.append(ax.pcolormesh(x, y, data,
                       cmap=cmap, shading=shading,
                       vmin=vmin, vmax=vmax, alpha=alpha))
-            
+
             if contours:
                 cs = ax.contour(x, y, data, contours, colors='k',
                         vmin=self.min, vmax=self.max)
                 ax.clabel(cs, fmt='%.2f', fontsize=10, rightside_up=True)
-            
+
             if self.number_of_patches > 1:
                 ax.plot(x[0],y[0],'k',linewidth=lw)
                 lw = 0.5
-                
+
         return_array.append(im)
 
         if colorbar:
@@ -829,14 +829,14 @@ class CrossSection(ImageFile):
             cb.formatter.set_powerlimits((-1,4))
             cb.update_ticks()
             return_array.append(cb)
-        
+
         ax.set_xlim(self.extent[0],self.extent[1])
         ax.set_ylim(self.extent[2],self.extent[3])
         ax.set_aspect('equal')
-        
+
         ax.set_xlabel(self.label_dict['xlabel'])
         ax.set_ylabel(self.label_dict['ylabel'])
-        
+
         if title is None:
             ax.set_title(self.label_dict['title'], fontsize=14, y=1.03)
         elif title is 'off':
@@ -859,7 +859,7 @@ class CrossSection(ImageFile):
             info_string += (', Time step: ' + str(self.file_dict['cycle']))
             if self.dt is not None:
                 info_string += (', Time: %s' % time_stamp)
-    
+
             ax.text(0.5, -0.2, info_string, horizontalalignment='center', verticalalignment='top',
                     transform=ax.transAxes)
 
@@ -868,7 +868,7 @@ class CrossSection(ImageFile):
             fig.savefig(save, dpi=720, bbox_inches='tight', transparent=True)
 
         return return_array
-    
+
 class Map(ImageFile):
     """
     The Map class holds a WPP surface file conforming to some z level.
@@ -907,7 +907,7 @@ class Map(ImageFile):
             nx = (patch[2]-patch[1])+1
             ny = (patch[4]-patch[3])+1
             self.extent = (0, h*ny*1e-3, 0, h*nx*1e-3)
-            
+
         # read and store patch/s data
         for patch in self.patches:
             if self.file_dict['data_in_file'] == 'topography':
@@ -919,7 +919,7 @@ class Map(ImageFile):
 
         # make a 1Darray of the data, calculate some stuff
         self.max,self.min,self.rms,self.ptp = calc_stuff(self.patches)
-        
+
     def plot(self, title=None, size=(4,4), ax=None,
                 contours=None, cmap=plt.cm.jet, clipfactor=3, shading='flat', alpha=1,
                 colorbar=True, annotate=True, mask=None,
@@ -933,7 +933,7 @@ class Map(ImageFile):
         if ax is None:
             fig, ax = plt.subplots(figsize=size)
             return_array.insert(0, fig)
-        
+
         if clipfactor is 'max':
             clip = self.max
         elif type(clipfactor) is float:
@@ -961,7 +961,7 @@ class Map(ImageFile):
 
         if self.file_dict['data_in_file'] == 'topography':
             vmin = data.min()
-        
+
         if self.coordinate_files:
             x = self.lon.patches[0]
             y = self.lat.patches[0]
@@ -997,7 +997,7 @@ class Map(ImageFile):
             cb.formatter.set_powerlimits((-1,4))
             cb.update_ticks()
             return_array.append(cb)
-        
+
         #ax.axis(self.extent)
         ax.set_aspect('equal')
 
@@ -1010,7 +1010,7 @@ class Map(ImageFile):
             pass
         else:
             ax.set_title(title, fontsize=14, y=1.03)
-        
+
         # put a time stamp in the bottom right corner of the image
         if self.dt:
             time_stamp = ('t = %.2f s' % (self.file_dict['cycle']*self.dt))
@@ -1026,7 +1026,7 @@ class Map(ImageFile):
             info_string += (', Time step: ' + str(self.file_dict['cycle']))
             if self.dt is not None:
                 info_string += (', Time: %s' % time_stamp)
-    
+
             ax.text(0.5, -0.2, info_string, horizontalalignment='center', verticalalignment='top',
                     transform=ax.transAxes)
 
@@ -1064,89 +1064,89 @@ class Grid(ImageFile):
                 print "Making a grid..."
             self.Zpatches = []
             self.Hpatches = []
-            
+
             total_depth = 0.
             for patch in patch_info:
                 h = patch[0]
                 ny = (patch[4]-patch[3])
                 total_depth += ny*h
-                
+
             patch_bottom = total_depth
             for patch in patch_info:
                 h = patch[0]
                 nx = (patch[2]-patch[1])+1
                 ny = (patch[4]-patch[3])+1
-                
+
                 patch_top = patch_bottom - (ny-1)*h
                 x = np.linspace(0,(nx-1)*h,nx)
                 y = np.linspace(patch_top,patch_bottom,ny)
                 xx,yy = np.meshgrid(x,y)
                 self.Zpatches += [yy]
                 self.Hpatches += [xx]
-                
+
                 patch_bottom = patch_top
 
         self.Z_max = max([patch.max() for patch in self.Zpatches])
         self.Z_min = min([patch.min() for patch in self.Zpatches])
-        
+
         self.H_max = max([patch.max() for patch in self.Hpatches])
         self.H_min = min([patch.min() for patch in self.Hpatches])
-        
+
         self.extent = np.array([self.H_min, self.H_max, self.Z_max, self.Z_min]) * 1e-3
-        
+
     def plot(self, size=(4,4), save='no', **kwargs):
         """Plot method for the Grid class"""
-        
+
         fig = plt.figure(figsize=size)
         ax = fig.add_axes([0,0,1,1])
-        
+
         color = 'r'
         for i in range(self.number_of_patches-1,-1,-1):
             hgrid = self.Hpatches[i] * 1e-3
             zgrid = self.Zpatches[i] * 1e-3
-            
+
             #vertical lines
             ax.plot(hgrid, zgrid, color, linewidth=0.5)
-            
+
             #horizontal lines
             ax.plot(hgrid.T, zgrid.T, color, linewidth=0.5)
-            
+
             color = 'b'
-            
+
         ax.set_xlim(self.extent[0],self.extent[1])
         ax.set_ylim(self.extent[2],self.extent[3])
         ax.set_aspect('equal')
-        
+
         ax.set_xlabel('Distance, km')
         ax.set_ylabel('Depth, km')
         ax.set_title('Cross section grid view', fontsize=14, y=1.03)
-        
+
         return fig, ax
 
 
 def xvelmax2PGV(hvelmax, vvelmax, dt=None):
     """
     This function computes PGV such that:
-    
+
         PGV = SQRT(HPGV^2 + VPGV^2)
-        
+
     returns
     --------
     a WPP ImageFile object with the new data
-    
+
     Parameters
     -----------
     hvelmax and vvelmax : are either WPP ImageFile objects or
         filenames to the WPP .hvelmax and .vvelmax files
     """
-    
+
     try:
         Himage = read(hvelmax, None, None, dt)
         Vimage = read(vvelmax, None, None, dt)
     except AttributeError:
         Himage = hvelmax
         Vimage = vvelmax
-        
+
     newimage = deepcopy(Himage)
     (name,
      cycle,
@@ -1165,22 +1165,22 @@ def xvelmax2PGV(hvelmax, vvelmax, dt=None):
                               'extention'    : 'xvelmax'}
         newimage.label_dict = {'colorbarlabel' : 'PGV, m/s',
                                'title'         : 'Peak ground velocity'}
-        
+
     if dt is not None:
         newimage.dt = dt
-    
+
     for i in range(Himage.number_of_patches):
         Hdata = Himage.patches[i]
         Vdata = Vimage.patches[i]
         newimage.patches[i] = np.sqrt(Hdata**2 + Vdata**2)
-        
+
     (newimage.max,
      newimage.min,
      newimage.rms,
      newimage.ptp) = calc_stuff(newimage.patches)
-    
+
     return deepcopy(newimage)
-    
+
 
 
 ## Input file and monitor file related functions and classes
@@ -1202,9 +1202,9 @@ class Input_file(object):
     """
 
     def __init__(self, filename, verbose):
-    
+
         self.filename = filename
-    
+
         with open(filename, 'r') as f:
             dict_name = 'None_None'
             i = 1
@@ -1249,9 +1249,9 @@ class Simulation_metadata(object):
     """
 
     def __init__(self, filename):
-    
+
         self.filename = filename
-    
+
         with open(filename, 'r') as f:
             minPPW = []
             for line in f:
@@ -1300,19 +1300,19 @@ class Simulation_metadata(object):
                         self.solver_phase += float(line_arr[line_arr.index('seconds')-1])
                 if "Total number of grid points" in line:
                     self.number_of_grid_points = float(line.split()[-1])
-            
+
             self.minPPW = int(min(minPPW)/self.maxfreq)
 
 ## Signal processing related functions and classes
 
 def sortkey(f):
-    """ This function is a service for read_traces which 
+    """ This function is a service for read_traces which
     helps sort the filenames correctly so that the traces
     data is read in the right order along the profile.
     """
     xi, yi = f.split('_')[1:3]
     sigma = float(xi.split('=')[1]) + float(yi.split('=')[1])
-    
+
     return sigma
 
 def read_traces(results_dir, name, components=['xv','yv','zv']):
@@ -1337,7 +1337,7 @@ def read_traces(results_dir, name, components=['xv','yv','zv']):
         vars()['traces_' + comp] = []
     traces_xi = []; traces_yi = [];
     for i,comp in enumerate(components):
-        for f in profile:           
+        for f in profile:
             if f.endswith(comp):
                 filename = '/'.join([results_dir,f])
                 tr = obspy.read(filename, format='sac')[0]
@@ -1350,19 +1350,19 @@ def read_traces(results_dir, name, components=['xv','yv','zv']):
                     ycoor, yi = yi.split('=')
                     traces_xi.append(float(xi))
                     traces_yi.append(float(yi))
-        
+
     delta = tr.stats.delta
     npts = tr.stats.npts
     time = tr.times()
-    
+
     for comp in components:
         vars(traces)[comp] = np.asarray(vars()['traces_' + comp]).T
     traces_xi = np.asarray(traces_xi)
     traces_yi = np.asarray(traces_yi)
-        
+
     distance = np.sqrt(traces_xi.ptp()**2 + traces_yi.ptp()**2)
     distance = np.linspace(0, distance*1e-3, traces_xi.size)
-    
+
     di, ti = np.meshgrid(distance, time)
 
     # Assign to the Traces class
@@ -1417,16 +1417,16 @@ class Traces(object):
             clip = clipfactor
         else:
             clip = clipfactor*data.std()
-    
+
         return_array = [ax]
         if ax is None:
             fig, ax = plt.subplots(figsize=size)
             return_array.insert(0, fig)
-    
+
         im = ax.pcolormesh(self.di, self.ti, data,
                             cmap=cmap, vmin=-clip, vmax=clip, shading=shading,
                             **kwargs)
-    
+
         if wiggls:
             if decimate_by is None:
                 decimate_by = int(0.1*self.distance.size)
@@ -1434,7 +1434,7 @@ class Traces(object):
             for i,line in enumerate(selected):
                 ax.plot(self.distance[2*decimate_by:-2*decimate_by:decimate_by][i]+line*wiggls,
                  self.time, color, zorder=3)
-    
+
         if colorbar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="3%", pad=0.1)
@@ -1444,7 +1444,7 @@ class Traces(object):
             cb.formatter.set_scientific(True)
             cb.formatter.set_powerlimits((-1,4))
             cb.update_ticks()
-    
+
         if xmajor_every is None:
             xmajor_every = round(self.distance.max()/4.)
         if xminor_every is None:
@@ -1473,12 +1473,12 @@ class Traces(object):
 
         if title:
             ax.set_title(title, y=1.03)
-    
+
         if save:
             fig.savefig(save, dpi=720, bbox_inches='tight', transparent=True)
         else:
             if ax is None: fig.show()
-            
+
         return return_array
 
     def plot_spectral_image(self, component, ax=None, maxfreq=None, freq_scale='log',
@@ -1510,7 +1510,7 @@ class Traces(object):
 
         im = ax.pcolormesh(self.dfi, self.fi, self.amplitude, shading=shading, cmap=cmap,
                            vmin=0, vmax=clip, **kwargs)
-        
+
         if colorbar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="3%", pad=0.1)
@@ -1520,7 +1520,7 @@ class Traces(object):
             cb.formatter.set_scientific(True)
             cb.formatter.set_powerlimits((-1,4))
             cb.update_ticks()
-        
+
         if maxfreq is None:
             maxfreq = 0.25/self.delta # half nyquest
 
@@ -1548,7 +1548,7 @@ class Traces(object):
             fig.savefig(save, dpi=720, bbox_inches='tight', transparent=True)
         else:
             if ax is None: fig.show()
-    
+
         return return_array
 
 def read_seismograms(files, fft=True, cutim=None):
@@ -1680,7 +1680,7 @@ class Seismograms(object):
              fig.savefig(save, dpi=720, bbox_inches='tight', transparent=True)
         else:
             if ax is None: fig.show()
-    
+
         return ax
 
     def plot_fft(self, size=(4,4), ax=None, colors='k',
@@ -1706,7 +1706,7 @@ class Seismograms(object):
                 ax.plot(self.frequency, amp, color=colors[i], label=name)
         else:
             ax.plot(self.frequency, self.amplitudes, color=colors, label=names)
-        
+
         if names:
             ax.legend(loc=0)
 
@@ -1729,7 +1729,7 @@ class Seismograms(object):
              fig.savefig(save, dpi=720, bbox_inches='tight', transparent=True)
         else:
             if ax is None: fig.show()
-    
+
         return ax
 
     def plot_spectral_ratio(self, size=(4,4), ax=None,
@@ -1754,7 +1754,7 @@ class Seismograms(object):
             else:
                 name = names
             ax.plot(self.frequency, amp/reference, color=colors[i], label=name)
-        
+
         if names:
             ax.legend(loc=0)
 
@@ -1777,5 +1777,5 @@ class Seismograms(object):
              fig.savefig(save, dpi=720, bbox_inches='tight', transparent=True)
         else:
             if ax is None: fig.show()
-    
+
         return ax
