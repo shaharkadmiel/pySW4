@@ -13,7 +13,7 @@
 
 Python module with plotting routines for plotting WPP and SW4 images.
 
-By: Shahar Shani-Kadmiel, August 2012, kadmiel@post.bgu.ac.il
+By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il
 
 """
 
@@ -90,11 +90,11 @@ def patch_plot(patch, ax=None, vmin='min', vmax='max', colorbar=True,
             extend = 'neither'
         elif vmin > patch.min:
             extend = 'min'
-        elif vmax < patch.max:
+        else:# vmax < patch.max:
             extend = 'max'
 
         print vmin, vmax
-        im = ax.imshow(patch.data, extent=patch.extent, vmin=vmin, vmax=vmax,
+        im = ax.imshow(patch.data.T, extent=patch.extent, vmin=vmin, vmax=vmax,
                        **kwargs)
         if colorbar:
             divider = make_axes_locatable(ax)

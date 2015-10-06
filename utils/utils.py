@@ -58,7 +58,7 @@ def resample(data, extent, shape=None, method='linear',
     Returns :
     ---------
     If `data` is a tuple of 3x2d arrays `(X,Y,Z)` and `draft` is False,
-    xi,
+    xi, yi, zi are returned. If `draft` is True, only zi is returned
     """
 
     if len(data) == 3:
@@ -328,49 +328,3 @@ def latlon2xy(lat, lon, origin=(37.0, -118.0), az=0, km2deg=111.3195):
          np.cos(az)) - x * np.tan(az)
 
     return x, y
-
-
-def grid_spacing(vmin, fmax, ppw=15):
-    """This function calculates the h parameter (grid_spacing)
-    based on the requirement that the shortest wavelength (vmin/fmax)
-    be sampled by a minimum points_per_wavelength (ppw) normally set
-    to 15.
-    """
-    return int(vmin / (fmax * ppw))
-
-
-def f_max(vmin, h, ppw=15):  # Note: ppw is regarded differently in WPP and SW4
-    """Calculate teh maximum resolved frequency as a function of the
-    minimum wave velocity, the grid spacing and the number of points
-    per wavelength."""
-    return vmin / (h * ppw)
-
-
-def f0(fmax, source_type):
-    """Calculate the fundamental frequency f_0 based on fmax and the
-    source type"""
-    if source_type in ['Ricker', 'RickerInt', 'Gaussian', 'GaussianInt']:
-        f_0 = fmax / 2.5
-    elif source_type in ['Brune', 'BruneSmoothed']:
-        f_0 = fmax / 4
-    return f_0
-
-
-def omega(f0, source_type):
-    """Calculate omega, that value that goes on the source line in the
-    WPP input file as ``freq`` based on f_0 and the source type"""
-    if source_type in ['Ricker', 'RickerInt']:
-        freq = f0
-    elif source_type in ['Brune', 'BruneSmoothed', 'Gaussian', 'GaussianInt']:
-        freq = f0 * 2 * np.pi
-    return freq
-
-
-def get_vmin(h, fmax, ppw=15):
-    return h * fmax * ppw
-
-
-def get_z(v, v0, v_grad):
-    return (v - v0) / v_grad
-
-

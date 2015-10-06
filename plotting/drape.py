@@ -95,12 +95,21 @@ def drape_plot(relief, data, extent, intensity=None, data_mask=None,
 
     if vmin is 'min':
         vmin = np.nanmin(data)
-    elif type(vmin) is float:
+    elif type(vmin) in [int,float]:
         pass
     elif vmin in [None, False]:
         vmin = -clip
 
     vmax = clip
+
+    if vmin > data.min() and vmax < data.max():
+        extend = 'both'
+    elif vmin > data.min():
+        extend = 'min'
+    elif vmax < data.max():
+        extend = 'max'
+    else:
+        extend = 'neither'
 
     imD = ax.imshow(data, extent=extent, cmap=dcmap, vmin=vmin, vmax=vmax, origin=origin)
     rgbD = imD.to_rgba(data,bytes=True)#[:,:,:3]
@@ -112,8 +121,7 @@ def drape_plot(relief, data, extent, intensity=None, data_mask=None,
     if colorbar:
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="3%", pad=0.1)
-        cb = plt.colorbar(imD, cax=cax,
-                          extend=('max' if data_clipfactor is not 'max' else 'neither'))
+        cb = plt.colorbar(imD, cax=cax, extend=extend)
         if type(colorbar) is str:
             cb.set_label(colorbar)
         cb.solids.set_edgecolor("face")

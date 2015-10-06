@@ -9,12 +9,12 @@
 # -----------------------------------------------------------------------------
 """
 
-   _____      _      ____       
+   _____      _      ____
   / ___/___  (_)____/ __ \__  __
   \__ \/ _ \/ / ___/ /_/ / / / /
- ___/ /  __/ (__  ) ____/ /_/ / 
-/____/\___/_/____/_/    \__, /  
-                       /____/   
+ ___/ /  __/ (__  ) ____/ /_/ /
+/____/\___/_/____/_/    \__, /
+                       /____/
 
 
 SeisPy: A Python Toolbox for processing Seismic-wave propagation simulations
@@ -35,3 +35,7 @@ the task (preprocessing, post-processing and runtime visualization).
 """
 
 from grid_seismograms import grid_seismograms
+from material_model import *
+from source import *
+from stations import *
+from rfileIO import *

@@ -9,8 +9,9 @@ By: Shahar Shani-Kadmiel, May 2014, kadmiel@post.bgu.ac.il
 """
 
 from scipy import ndimage
+from scipy.misc import imresize
 import numpy as np
-import os, zipfile, shutil
+import sys, os, zipfile, shutil
 import osgeo.gdal as gdal, osr
 
 def calc_intensity(relief, azimuth=315., altitude=45., scale=None, smooth=None):
@@ -114,6 +115,7 @@ def read_GeoTIFF(GeoTIFF_file=None, rasterBand=1):
     tif.path, tif.name = os.path.split(GeoTIFF_file)
 
     print 'Reading GeoTIFF file: %s' %GeoTIFF_file
+    sys.stdout.flush()
 
     dataset = gdal.Open(GeoTIFF_file)
     if dataset is None:
@@ -286,6 +288,49 @@ class GeoTIFF(object):
         return np.meshgrid(self.lon(),self.lat())
 
 
+    def resample_slow(self, by=None, to=None, shape=None, order=3):
+        """Method to resample the data either `by` a factor,
+        `to` the specified spacing, or to the specified `shape`.
+        by : if 1, nothing happens
+             if < 1, the grid is sub-sampled by the factor
+             if > 1, the grid is super-sampled byt the factor
+
+        to : the specified spacing to which the grid is resampled to.
+
+        shape : to the specified `shape`.
+
+        order: int,
+                The order of the spline interpolation, default is 3.
+                The order has to be in the range 0-5
+                0 - nearest
+                1 - bi-linear
+                3 - bicubic
+                4 - cubic
+        """
+
+        order_dict = {  0 : 'nearest',
+                        1 : 'bilinear',
+                        3 : 'bicubic',
+                        4 : 'cubic'    }
+
+        if to:
+            if to == self.dlon:
+                return
+            else:
+                shape = (int(round(abs(self.nlat*self.dlat/to))),
+                         int(round(abs(self.nlon*self.dlon/to))))
+
+        elif by:
+            shape = (int(round(abs(self.nlat*by))),
+                     int(round(abs(self.nlon*by))))
+
+        if shape:
+            self.elev = imresize(self.elev, tuple(shape),interp=order_dict[order])
+            self.nlat, self.nlon = self.elev.shape
+            self.dlat, self.dlon = (self.s-self.n)/self.nlat, (self.e-self.w)/self.nlon
+
+
+
     def resample(self, by=None, to=None, order=3):
         """Method to resample the data either *by* a factor or
         *to* the specified spacing.
@@ -303,19 +348,14 @@ class GeoTIFF(object):
         """
 
         if to:
-            by = self.dlat/to
+            by = self.dlon/to
 
-        self.dlat = self.dlat/by
-        self.dlon = self.dlon/by
-        self.nlon = int(round(self.nlon*by))
-        self.nlat = int(round(self.nlat*by))
+        if by == self.dlon:
+            return
 
         self.elev = ndimage.zoom(self.elev,by,order=order)
-        self.lon1d = None
-        self.lat1d = None
-        self.lon2d = None
-        self.lat2d = None
-        self.lonlat2d()
+        self.nlat, self.nlon = self.elev.shape
+        self.dlat, self.dlon = (self.s-self.n)/self.nlat, (self.e-self.w)/self.nlon
 
 
     def elevation_profile(self, lons, lats):
@@ -355,9 +395,10 @@ class GeoTIFF(object):
                                               self.elev.ravel())),
                    fmt='%f', header=header, comments='')
 
-    def write_GeoTIFF(self, filename):
+
+    def write_GeoTIFF(self, filename, nodata=np.nan):
         """Write a GeoTIFF file."""
 
         write_GeoTIFF(filename, self.elev, self.w, self.n,
                       self.dlon, self.dlat, epsg=4326,
-                      nodata=np.nan, rasterBand=1)
+                      nodata=nodata, rasterBand=1)

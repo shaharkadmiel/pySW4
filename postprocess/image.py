@@ -36,7 +36,7 @@ class Image(object):
 
 class Patch(object):
     """
-    A class to hold WW or SW4 patch data
+    A class to hold WPP or SW4 patch data
     """
 
     def __init__(self):
@@ -188,9 +188,10 @@ def readSW4patch(patch, f, dtype):
     """
 
     data = np.fromfile(f, dtype, patch.ni*patch.nj)
-    patch.data = data.reshape(patch.nj,patch.ni)
+    patch.data = data.reshape(patch.nj,patch.ni).T
 
-    patch.extent = (0,patch.nj*patch.h,patch.zmin+patch.ni*patch.h,patch.zmin)
+    patch.extent = (patch.zmin,patch.zmin+patch.ni*patch.h,
+                    0,patch.nj*patch.h)
     patch.min    = data.min()
     patch.max    = data.max()
     patch.std    = data.std()
