@@ -61,7 +61,11 @@ def get_qs(vs):
     returns qs"""
 
     qs = -16+104.13*vs-25.225*vs**2+8.2184*vs**3
-    qs[vs < 0.3] = 13
+    try:
+        qs[vs < 0.3] = 13
+    except TypeError:
+        if vs < 0.3:
+            qs = 13
 
     return qs
 
