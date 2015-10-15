@@ -154,7 +154,7 @@ def write_GeoTIFF(GeoTIFF_file, data, tlx, tly, dx, dy, epsg=4326,
     dst.SetProjection(dstSRS.ExportToWkt())
 
     dstband = dst.GetRasterBand(rasterBand)
-    dstband.WriteArray(data)
+    dstband.WriteArray(data.astype(np.float32))
     dstband.SetNoDataValue(nodata)
 
     dstband.FlushCache()
@@ -350,12 +350,12 @@ class GeoTIFF(object):
         if to:
             by = self.dlon/to
 
-        if by == self.dlon:
-            return
+        # if by == self.dlon:
+        #     return
 
         self.elev = ndimage.zoom(self.elev,by,order=order)
         self.nlat, self.nlon = self.elev.shape
-        self.dlat, self.dlon = (self.s-self.n)/self.nlat, (self.e-self.w)/self.nlon
+        self.dlat, self.dlon = (self.s-self.n)/(self.nlat-1), (self.e-self.w)/(self.nlon-1)
 
 
     def elevation_profile(self, lons, lats):
