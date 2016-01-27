@@ -6,11 +6,19 @@ Module to handle WPP and SW4 images of Maps or Cross-Sections
 By: Omri Volk & Shahar Shani-Kadmiel, June 2015, kadmiel@post.bgu.ac.il
 
 """
-
 import os
+
 import numpy as np
-from seispy.plotting import patch_plot
-from seispy.plotting.dic_and_dtype import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+from seispy.plotting.dic_and_dtype import (
+    SW4_header_dtype, SW4_patch_dtype, SW4_plane_dict, SW4_mode_dict, prec_dict)
+from seispy.plotting import set_matplotlib_rc_params
+
+
+set_matplotlib_rc_params()
+
 
 class Image(object):
     """
@@ -34,6 +42,48 @@ class Image(object):
 
         self.patches = []
 
+    def _readSW4hdr(self, f):
+        """
+        Read SW4 header information and store it in an Image object
+        """
+
+        header = np.fromfile(f, SW4_header_dtype, 1)[0]
+        (self.precision,
+         self.number_of_patches,
+         self.time,
+         self.plane,
+         self.coordinate,
+         self.mode,
+         self.gridinfo,
+         self.creation_time) = header
+
+    def _readSW4patches(self, f):
+        """
+        Read SW4 patch data and store it in a list of Patch objects
+        under Image.patches
+        """
+        patch_info = np.fromfile(f,SW4_patch_dtype,self.number_of_patches)
+        for i,item in enumerate(patch_info):
+            patch = Patch()
+            patch.number = i
+            (patch.h,
+             patch.zmin,
+             patch.ib,
+             patch.ni,
+             patch.jb,
+             patch.nj) = item
+            data = np.fromfile(f, self.precision, patch.ni*patch.nj)
+            patch.data = data.reshape(patch.nj, patch.ni).T
+
+            patch.extent = (patch.zmin,patch.zmin+patch.ni*patch.h,
+                            0,patch.nj*patch.h)
+            patch.min    = data.min()
+            patch.max    = data.max()
+            patch.std    = data.std()
+            patch.rms    = np.sqrt(np.mean(data**2))
+            self.patches.append(patch)
+
+
 class Patch(object):
     """
     A class to hold WPP or SW4 patch data
@@ -54,10 +104,57 @@ class Patch(object):
         self.std          = 0
         self.rms          = 0
 
-    def plot(self, *args, **kwargs):
-        """
-        """
-        return patch_plot(self, *args, **kwargs)
+    def plot(self, ax=None, vmin='min', vmax='max', colorbar=True,
+             **kwargs):
+
+        if ax is None:
+            fig, ax = plt.subplots()
+
+        ax.set_aspect(1)
+
+        if vmax is 'max':
+            vmax = self.max
+        elif type(vmax) is str:
+            try:
+                factor = float(vmax)
+                vmax = factor*self.rms
+                if self.min < 0:
+                    vmin = -vmax
+
+            except ValueError:
+                print ('Warning! keyword vmax=$s in not understood...\n' %vmax,
+                       'Setting to max')
+                vmax = self.max
+
+        if vmin is 'min':
+            vmin = self.min
+
+        if vmin > self.min and vmax < self.max:
+            extend = 'both'
+        elif vmin == self.min and vmax == self.max:
+            extend = 'neither'
+        elif vmin > self.min:
+            extend = 'min'
+        else:# vmax < self.max:
+            extend = 'max'
+
+        print vmin, vmax
+        extent = None
+        im = ax.imshow(self.data, extent=extent, vmin=vmin, vmax=vmax,
+                       origin="lower", **kwargs)
+        if colorbar:
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="3%", pad=0.1)
+            cb = plt.colorbar(im, cax=cax,
+                              extend=extend,
+                              label=colorbar if type(colorbar) is str else '')
+        else:
+            cb = None
+
+        try:
+            return fig, ax, cb
+        except NameError:
+            return cb
 
 
 def read(filename='random', verbose=False):
@@ -77,7 +174,6 @@ def read(filename='random', verbose=False):
 
     an Image object with a list of Patch objects
     """
-
     image = Image()
     image.filename = filename
 
@@ -102,27 +198,20 @@ def read(filename='random', verbose=False):
         patch.rms    = np.sqrt(np.mean(data**2))
 
         image.patches += [patch]
-        return image
-
     elif filename is None:
-        return image
-
+        pass
     else:
         (name, image.cycle, plane,
          coordinate, mode, is_SW4) = parse_filename(filename)
 
-    if is_SW4:
-        with open(image.filename,'rb') as f:
-            readSW4hdr(image, f)
-            image.precision = prec_dict[image.precision]
-            image.plane = SW4_plane_dict[image.plane]
-            image.mode, image.unit = SW4_mode_dict[image.mode]
-
-            position = 61 + 32*image.number_of_patches
-            for patch in image.patches:
-                readSW4patch(patch, f, image.precision)
-
-        return image
+        if is_SW4:
+            with open(image.filename,'rb') as f:
+                image._readSW4hdr(f)
+                image.precision = prec_dict[image.precision]
+                image.plane = SW4_plane_dict[image.plane]
+                image.mode, image.unit = SW4_mode_dict[image.mode]
+                image._readSW4patches(f)
+    return image
 
 
 def parse_filename(filename):
@@ -150,54 +239,3 @@ def parse_filename(filename):
         cycle = int(cycle.split('=')[-1])
         plane, coordinate = plane.split('=')
         return name, cycle, plane, coordinate, mode, False
-
-
-def readSW4hdr(image, f):
-    """
-    Read SW4 header information and store it in an Image object
-    """
-
-    header = np.fromfile(f, SW4_header_dtype, 1)[0]
-    (image.precision,
-     image.number_of_patches,
-     image.time,
-     image.plane,
-     image.coordinate,
-     image.mode,
-     image.gridinfo,
-     image.creation_time) = header
-
-    patch_info = np.fromfile(f,SW4_patch_dtype,image.number_of_patches)
-    for i,item in enumerate(patch_info):
-        patch = Patch()
-        patch.number = i
-        (patch.h,
-         patch.zmin,
-         patch.ib,
-         patch.ni,
-         patch.jb,
-         patch.nj) = item
-        image.patches += [patch]
-    return
-
-
-def readSW4patch(patch, f, dtype):
-    """
-    Read SW4 patch data and store it in a list of Patch objects
-    under Image.patches
-    """
-
-    data = np.fromfile(f, dtype, patch.ni*patch.nj)
-    patch.data = data.reshape(patch.nj,patch.ni).T
-
-    patch.extent = (patch.zmin,patch.zmin+patch.ni*patch.h,
-                    0,patch.nj*patch.h)
-    patch.min    = data.min()
-    patch.max    = data.max()
-    patch.std    = data.std()
-    patch.rms    = np.sqrt(np.mean(data**2))
-    return
-
-def plot(self,**imshow_kwargs):
-
-    sw4_plot_image(self,**imshow_kwargs)
