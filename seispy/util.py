@@ -49,5 +49,7 @@ def create_all_plots(
                 overwrite=True, cmap=cmap)
 
 if __name__ == "__main__":
-    create_all_plots("/tmp/UH_01_simplemost",
-                     source_time_function_type="velocity")
+    from obspy.imaging.cm import viridis
+    create_all_plots(
+        "/tmp/UH_01_simplemost", source_time_function_type="velocity",
+        cmap=None)

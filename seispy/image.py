@@ -186,6 +186,9 @@ class Patch(object):
         if ax is None:
             fig, ax = plt.subplots()
 
+        if cmap is None:
+            cmap = self._image._mode_dict[self._image._mode]['cmap']
+
         ax.set_aspect(1)
 
         if vmax is 'max':
