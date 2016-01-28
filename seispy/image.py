@@ -37,7 +37,7 @@ class Image(object):
             msg = msg.format(source_time_function_type)
             raise ValueError(msg)
 
-    def _readSW4hdr(self, f):
+    def _read_header(self, f):
         """
         Read SW4 header information and store it in an Image object
         """
@@ -51,45 +51,7 @@ class Image(object):
          self.gridinfo,
          self.creation_time) = header
 
-    @property
-    def _is_cross_section(self):
-        if self._plane in (0, 1):
-            return True
-        elif self._plane == 2:
-            return False
-
-    @property
-    def number_of_patches(self):
-        return len(self.patches)
-
-    @property
-    def precision(self):
-        return SW4_IMAGE_PRECISION[self._precision]
-
-    @property
-    def plane(self):
-        return SW4_IMAGE_PLANE[self._plane]
-
-    @property
-    def type(self):
-        if self._is_cross_section:
-            return 'cross-section'
-        else:
-            return 'map'
-
-    @property
-    def quantity_name(self):
-        return self._mode_dict[self._mode]['name']
-
-    @property
-    def quantity_symbol(self):
-        return self._mode_dict[self._mode]['symbol']
-
-    @property
-    def quantity_unit(self):
-        return self._mode_dict[self._mode]['unit']
-
-    def _readSW4patches(self, f):
+    def _read_patches(self, f):
         """
         Read SW4 patch data and store it in a list of Patch objects
         under Image.patches
@@ -127,6 +89,58 @@ class Image(object):
             patch.rms    = np.sqrt(np.mean(data**2))
             self.patches.append(patch)
 
+    def plot(self, patches=None, *args, **kwargs):
+        """
+        Plot all (or specific) patches in Image.
+
+        >>> my_image.plot()  # plots all patches
+        >>> my_image.plot(patches=[0, 2])  # plots first and third patch
+        """
+        if patches is None:
+            for patch in self.patches:
+                patch.plot(*args, **kwargs)
+        else:
+            for i in patches:
+                self.patches[i].plot(*args, **kwargs)
+
+    @property
+    def is_cross_section(self):
+        if self._plane in (0, 1):
+            return True
+        elif self._plane == 2:
+            return False
+
+    @property
+    def number_of_patches(self):
+        return len(self.patches)
+
+    @property
+    def precision(self):
+        return SW4_IMAGE_PRECISION[self._precision]
+
+    @property
+    def plane(self):
+        return SW4_IMAGE_PLANE[self._plane]
+
+    @property
+    def type(self):
+        if self.is_cross_section:
+            return 'cross-section'
+        else:
+            return 'map'
+
+    @property
+    def quantity_name(self):
+        return self._mode_dict[self._mode]['name']
+
+    @property
+    def quantity_symbol(self):
+        return self._mode_dict[self._mode]['symbol']
+
+    @property
+    def quantity_unit(self):
+        return self._mode_dict[self._mode]['unit']
+
 
 class Patch(object):
     """
@@ -134,19 +148,6 @@ class Patch(object):
     """
 
     def __init__(self):
-        self.number       = 0
-        self.h            = 0
-        self.zmin         = 1
-        self.ib           = 1
-        self.ni           = 0
-        self.jb           = 1
-        self.nj           = 0
-        self.extent       = (0,1,0,1)
-        self.data         = None
-        self.min          = 0
-        self.max          = 0
-        self.std          = 0
-        self.rms          = 0
         self._image = None  # link back to the image this patch belongs to
 
     def plot(self, ax=None, vmin='min', vmax='max', colorbar=True,
@@ -183,12 +184,11 @@ class Patch(object):
         else:# vmax < self.max:
             extend = 'max'
 
-        print vmin, vmax
         im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
                        origin="lower", interpolation="nearest", cmap=cmap,
                        **kwargs)
         # invert Z axis if not a map view
-        if self._image._is_cross_section:
+        if self._image.is_cross_section:
             ax.invert_yaxis()
         if colorbar:
             divider = make_axes_locatable(ax)
@@ -200,7 +200,7 @@ class Patch(object):
             cb = plt.colorbar(im, cax=cax, extend=extend, label=colorbar_label)
             # invert Z axis for cross-section plots and certain quantities that
             # usually increase with depths
-            if self._image._is_cross_section and \
+            if self._image.is_cross_section and \
                     self._image._mode in (4, 7, 8):
                 cax.invert_yaxis()
         else:
@@ -246,7 +246,7 @@ def read_SW4_image(filename='random', source_time_function_type="displacement",
     image.filename = filename
 
     if filename is 'random':  # generate random data and populate the objects
-        image = create_random_SW4_image(
+        image = _create_random_SW4_image(
             source_time_function_type=source_time_function_type)
     elif filename is None:
         pass
@@ -256,12 +256,12 @@ def read_SW4_image(filename='random', source_time_function_type="displacement",
                    "extension: '{}'.").format(filename)
             warnings.warn(msg)
         with open(image.filename, 'rb') as f:
-            image._readSW4hdr(f)
-            image._readSW4patches(f)
+            image._read_header(f)
+            image._read_patches(f)
     return image
 
 
-def create_random_SW4_image(source_time_function_type="displacement"):
+def _create_random_SW4_image(source_time_function_type="displacement"):
     """
     """
     image = Image(source_time_function_type=source_time_function_type)
@@ -274,25 +274,24 @@ def create_random_SW4_image(source_time_function_type="displacement"):
     image.max = 0
     image.std = 0
     image.rms = 0
-
-    patch = Patch()
-
-    ni,nj = 100,200
-    h = 100.
-    zmin = 0
-    data = 2*(np.random.rand(ni,nj)-0.5)
-
-    patch.data   = data
-    patch.ni     = ni
-    patch.nj     = nj
-    patch.number = 0
-    patch.h      = h
-    patch.zmin   = zmin
-    patch.extent = (0,nj*h,zmin+ni*h,zmin)
-    patch.min    = data.min()
-    patch.max    = data.max()
-    patch.std    = data.std()
-    patch.rms    = np.sqrt(np.mean(data**2))
-
-    image.patches = [patch]
+    image.patches = [_create_random_SW4_patch()]
     return image
+
+
+def _create_random_SW4_patch():
+    patch = Patch()
+    patch.ni = 100
+    patch.nj = 200
+    patch.data = 2 * (np.random.rand(patch.ni, patch.nj) - 0.5)
+    patch.number = 0
+    patch.h = 100.0
+    patch.zmin = 0
+    patch.extent = (0, patch.nj * patch.h, patch.zmin + patch.ni * patch.h,
+                    patch.zmin)
+    patch.min = patch.data.min()
+    patch.max = patch.data.max()
+    patch.std = patch.data.std()
+    patch.rms = np.sqrt(np.mean(patch.data**2))
+    patch.ib = 1
+    patch.jb = 1
+    return patch
