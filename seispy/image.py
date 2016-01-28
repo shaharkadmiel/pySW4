@@ -12,8 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from seispy.plotting.dic_and_dtype import (
-    SW4_header_dtype, SW4_patch_dtype, SW4_plane_dict, SW4_mode_dict, prec_dict)
+from seispy.header import (
+    SW4_IMAGE_HEADER_DTYPE, SW4_PATCH_HEADER_DTYPE, SW4_IMAGE_PLANE,
+    SW4_IMAGE_MODE_DISPLACEMENT, SW4_IMAGE_MODE_VELOCITY, SW4_IMAGE_PRECISION)
 from seispy.plotting import set_matplotlib_rc_params
 
 
@@ -24,45 +25,66 @@ class Image(object):
     """
     A class to hold WPP or SW4 image files
     """
-
-    def __init__(self):
-        self.filename          = None
-        self.number_of_patches = 1 # or more
-        self.precision         = 4 # or 8
-        self.type              = 'cross-section' # or or 'map'
-        self.mode              = None # velmag, ux, uy, uz, etc.
-        self.unit              = None # m, m/s, kg/cm^3, etc.
+    def __init__(self, source_time_function_type="displacement"):
+        self.filename = None
+        self.number_of_patches = 1
+        self.precision         = 4
         self.cycle             = 0
         self.time              = 0
-        self.plane             = 'X' # or Y or Z
         self.min               = 0
         self.max               = 0
         self.std               = 0
         self.rms               = 0
-
         self.patches = []
+        # set mode code mapping, depending on the type of source time function
+        if source_time_function_type == "displacement":
+            self._mode_dict = SW4_IMAGE_MODE_DISPLACEMENT
+        elif source_time_function_type == "velocity":
+            self._mode_dict = SW4_IMAGE_MODE_VELOCITY
+        else:
+            msg = ("Unrecognized 'source_time_function_type': '{}'")
+            msg = msg.format(source_time_function_type)
+            raise ValueError(msg)
 
     def _readSW4hdr(self, f):
         """
         Read SW4 header information and store it in an Image object
         """
-
-        header = np.fromfile(f, SW4_header_dtype, 1)[0]
+        header = np.fromfile(f, SW4_IMAGE_HEADER_DTYPE, 1)[0]
         (self.precision,
          self.number_of_patches,
          self.time,
          self._plane,
          self.coordinate,
-         self.mode,
+         self._mode,
          self.gridinfo,
          self.creation_time) = header
+
+    @property
+    def type(self):
+        if self._plane in (0, 1):
+            return 'cross-section'
+        elif self._plane == 2:
+            return 'map'
+
+    @property
+    def quantity_name(self):
+        return self._mode_dict[self._mode]['name']
+
+    @property
+    def quantity_symbol(self):
+        return self._mode_dict[self._mode]['symbol']
+
+    @property
+    def quantity_unit(self):
+        return self._mode_dict[self._mode]['unit']
 
     def _readSW4patches(self, f):
         """
         Read SW4 patch data and store it in a list of Patch objects
         under Image.patches
         """
-        patch_info = np.fromfile(f,SW4_patch_dtype,self.number_of_patches)
+        patch_info = np.fromfile(f,SW4_PATCH_HEADER_DTYPE,self.number_of_patches)
         for i,item in enumerate(patch_info):
             patch = Patch()
             patch._image = self
@@ -185,7 +207,8 @@ class Patch(object):
             return cb
 
 
-def read(filename='random', verbose=False):
+def read(filename='random', source_time_function_type="displacement",
+         verbose=False):
     """
     Read image data, cross-section or map into a SeisPy Image object.
 
@@ -202,7 +225,7 @@ def read(filename='random', verbose=False):
 
     an Image object with a list of Patch objects
     """
-    image = Image()
+    image = Image(source_time_function_type=source_time_function_type)
     image.filename = filename
 
     if filename is 'random': # generate random data and populate the objects
@@ -235,9 +258,8 @@ def read(filename='random', verbose=False):
         if is_SW4:
             with open(image.filename,'rb') as f:
                 image._readSW4hdr(f)
-                image.precision = prec_dict[image.precision]
-                image.plane = SW4_plane_dict[image._plane]
-                image.mode, image.unit = SW4_mode_dict[image.mode]
+                image.precision = SW4_IMAGE_PRECISION[image.precision]
+                image.plane = SW4_IMAGE_PLANE[image._plane]
                 image._readSW4patches(f)
     return image
 
