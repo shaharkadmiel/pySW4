@@ -61,10 +61,17 @@ class Image(object):
          self.creation_time) = header
 
     @property
-    def type(self):
+    def _is_cross_section(self):
         if self._plane in (0, 1):
-            return 'cross-section'
+            return True
         elif self._plane == 2:
+            return False
+
+    @property
+    def type(self):
+        if self._is_cross_section:
+            return 'cross-section'
+        else:
             return 'map'
 
     @property
@@ -177,8 +184,7 @@ class Patch(object):
         im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
                        origin="lower", interpolation="nearest", **kwargs)
         # invert Z axis if not a map view
-        print(self._image._plane)
-        if self._image._plane in (0, 1):
+        if self._image._is_cross_section:
             ax.invert_yaxis()
         if colorbar:
             divider = make_axes_locatable(ax)
@@ -186,6 +192,11 @@ class Patch(object):
             cb = plt.colorbar(im, cax=cax,
                               extend=extend,
                               label=colorbar if type(colorbar) is str else '')
+            # invert Z axis for cross-section plots and certain quantities that
+            # usually increase with depths
+            if self._image._is_cross_section and \
+                    self._image._mode in (4, 7, 8):
+                cax.invert_yaxis()
         else:
             cb = None
 
