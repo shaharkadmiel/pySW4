@@ -167,6 +167,18 @@ class Patch(object):
         else:
             cb = None
 
+        if self._image._plane == 0:
+            xlabel = "Y"
+            ylabel = "Z"
+        elif self._image._plane == 1:
+            xlabel = "X"
+            ylabel = "Z"
+        elif self._image._plane == 2:
+            xlabel = "Y"
+            ylabel = "X"
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+
         try:
             return fig, ax, cb
         except NameError:
