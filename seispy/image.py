@@ -189,9 +189,13 @@ class Patch(object):
         if colorbar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="3%", pad=0.1)
-            cb = plt.colorbar(im, cax=cax,
-                              extend=extend,
-                              label=colorbar if type(colorbar) is str else '')
+            if isinstance(colorbar, str):
+                label = colorbar
+            else:
+                label = "{name} [{unit}]".format(
+                    name=self._image.quantity_name,
+                    unit=self._image.quantity_unit)
+            cb = plt.colorbar(im, cax=cax, extend=extend, label=label)
             # invert Z axis for cross-section plots and certain quantities that
             # usually increase with depths
             if self._image._is_cross_section and \
