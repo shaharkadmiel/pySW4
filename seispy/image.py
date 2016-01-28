@@ -11,6 +11,7 @@ import glob
 import os
 import subprocess
 import warnings
+from StringIO import StringIO
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -332,7 +333,7 @@ def _create_random_SW4_patch():
 def image_files_to_movie(
         input_files, output_filename, source_time_function_type,
         patch_number=0, frames_per_second=5, overwrite=False,
-        global_colorlimits=True, **plot_kwargs):
+        global_colorlimits=True, debug=False, **plot_kwargs):
     """
     Convert SW4 images to an mp4 movie using command line ffmpeg.
 
@@ -340,12 +341,6 @@ def image_files_to_movie(
     :param input_files: Wildcarded filename pattern or list of individual
         filenames.
     """
-    # XXX TODO should probably switch to using the ffmpeg backend of matplotlib
-    # animations, as currently this produces the some problems sometimes:
-    # (http://stackoverflow.com/questions/4092927)
-    #    [png @ 0x348c7c0] Invalid PNG signature 0xD494844520000.
-    #    Error while decoding stream #0:0: Invalid data found when processing
-    #    input
     if not output_filename.endswith(".mp4"):
         output_filename += ".mp4"
     if os.path.exists(output_filename):
@@ -379,17 +374,29 @@ def image_files_to_movie(
         '-vcodec', 'png', '-i', 'pipe:', '-vcodec', 'libx264', '-pass', '1',
         '-vb', '6M', '-pix_fmt', 'yuv420p', output_filename)
 
+    string_io = StringIO()
     backend = plt.get_backend()
     try:
         plt.switch_backend('AGG')
-        p = subprocess.Popen(cmdstring, stdin=subprocess.PIPE)
         # plot all images and pipe the pngs to ffmpeg
         for file_ in files:
             image = read_SW4_image(
                 file_, source_time_function_type=source_time_function_type)
             patch = image.patches[patch_number]
             fig, _, _ = patch.plot(**plot_kwargs)
-            fig.savefig(p.stdin, format='png')
+            fig.savefig(string_io, format='png')
             plt.close(fig)
+        string_io.seek(0)
+        png_data = string_io.read()
+        string_io.close()
+        sub = subprocess.Popen(cmdstring, stdin=subprocess.PIPE,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = sub.communicate(png_data)
+        if debug:
+            print("###### ffmpeg stdout")
+            print(stdout)
+            print("###### ffmpeg stderr")
+            print(stderr)
+        sub.wait()
     finally:
         plt.switch_backend(backend)
