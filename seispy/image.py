@@ -180,7 +180,7 @@ class Patch(object):
         self.std = data.std()
         self.rms = np.sqrt(np.mean(data**2))
 
-    def plot(self, ax=None, vmin='min', vmax='max', colorbar=True,
+    def plot(self, ax=None, vmin=None, vmax=None, colorbar=True,
              colorbar_label=None, cmap=None, **kwargs):
 
         if ax is None:
@@ -191,28 +191,12 @@ class Patch(object):
 
         ax.set_aspect(1)
 
-        if vmax is 'max':
-            vmax = self.max
-        elif type(vmax) is str:
-            try:
-                factor = float(vmax)
-                vmax = factor*self.rms
-                if self.min < 0:
-                    vmin = -vmax
-
-            except ValueError:
-                print ('Warning! keyword vmax=$s in not understood...\n' %vmax,
-                       'Setting to max')
-                vmax = self.max
-
-        if vmin is 'min':
-            vmin = self.min
-
-        if self.min < vmin and self.max > vmax:
+        if (vmin is not None and self.min < vmin) and \
+                (vmax is not None and self.max > vmax):
             extend = 'both'
-        elif self.min < vmin:
+        elif vmin is not None and self.min < vmin:
             extend = 'min'
-        elif self.max > vmax:
+        elif vmax is not None and self.max > vmax:
             extend = 'max'
         else:
             extend = 'neither'
