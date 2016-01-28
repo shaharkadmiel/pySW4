@@ -36,6 +36,15 @@ class Image(object):
             msg = ("Unrecognized 'source_time_function_type': '{}'")
             msg = msg.format(source_time_function_type)
             raise ValueError(msg)
+        self.filename = None
+        self._precision = None
+        self._number_of_patches = None
+        self.time = None
+        self._plane = None
+        self.coordinate = None
+        self._mode = None
+        self.gridinfo = None
+        self.creation_time = None
 
     def _read_header(self, f):
         """
@@ -57,36 +66,12 @@ class Image(object):
         under Image.patches
         """
         patch_info = np.fromfile(f,SW4_PATCH_HEADER_DTYPE,self._number_of_patches)
-        for i,item in enumerate(patch_info):
-            patch = Patch()
-            patch._image = self
-            patch.number = i
-            (patch.h,
-             patch.zmin,
-             patch.ib,
-             patch.ni,
-             patch.jb,
-             patch.nj) = item
+        for i, header in enumerate(patch_info):
+            patch = Patch(number=i, image=self)
+            patch._set_header(header)
             data = np.fromfile(f, self.precision, patch.ni*patch.nj)
-            patch.data = data.reshape(patch.nj, patch.ni)
-
-            if self._plane in (0, 1):
-                patch.extent = (
-                    0 - (patch.h / 2.0),
-                    (patch.ni - 1) * patch.h + (patch.h / 2.0),
-                    patch.zmin - (patch.h / 2.0),
-                    patch.zmin + (patch.nj - 1) * patch.h + (patch.h / 2.0))
-            elif self._plane == 2:
-                patch.data = patch.data.T
-                patch.extent = (
-                    0 - (patch.h / 2.0),
-                    (patch.nj - 1) * patch.h + (patch.h / 2.0),
-                    0 - (patch.h / 2.0),
-                    (patch.ni - 1) * patch.h + (patch.h / 2.0))
-            patch.min    = data.min()
-            patch.max    = data.max()
-            patch.std    = data.std()
-            patch.rms    = np.sqrt(np.mean(data**2))
+            data = data.reshape(patch.nj, patch.ni)
+            patch._set_data(data)
             self.patches.append(patch)
 
     def plot(self, patches=None, *args, **kwargs):
@@ -147,8 +132,48 @@ class Patch(object):
     A class to hold WPP or SW4 patch data
     """
 
-    def __init__(self):
-        self._image = None  # link back to the image this patch belongs to
+    def __init__(self, number=None, image=None):
+        self.number = number
+        self._image = image  # link back to the image this patch belongs to
+        self.h = None
+        self.zmin = None
+        self.ib = None
+        self.ni = None
+        self.jb = None
+        self.nj = None
+        self.data = None
+        self.extent = None
+
+    def _set_header(self, header):
+        """
+        Set SW4 patch header information
+        """
+        (self.h,
+         self.zmin,
+         self.ib,
+         self.ni,
+         self.jb,
+         self.nj) = header
+
+    def _set_data(self, data):
+        self.data = data
+        if self._image.is_cross_section:
+            self.extent = (
+                0 - (self.h / 2.0),
+                (self.ni - 1) * self.h + (self.h / 2.0),
+                self.zmin - (self.h / 2.0),
+                self.zmin + (self.nj - 1) * self.h + (self.h / 2.0))
+        else:
+            self.data = self.data.T
+            self.extent = (
+                0 - (self.h / 2.0),
+                (self.nj - 1) * self.h + (self.h / 2.0),
+                0 - (self.h / 2.0),
+                (self.ni - 1) * self.h + (self.h / 2.0))
+        self.min = data.min()
+        self.max = data.max()
+        self.std = data.std()
+        self.rms = np.sqrt(np.mean(data**2))
 
     def plot(self, ax=None, vmin='min', vmax='max', colorbar=True,
              colorbar_label=None, cmap=None, **kwargs):
