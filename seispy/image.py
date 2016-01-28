@@ -150,7 +150,7 @@ class Patch(object):
         self._image = None  # link back to the image this patch belongs to
 
     def plot(self, ax=None, vmin='min', vmax='max', colorbar=True,
-             colorbar_label=None, **kwargs):
+             colorbar_label=None, cmap=None, **kwargs):
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -185,7 +185,8 @@ class Patch(object):
 
         print vmin, vmax
         im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
-                       origin="lower", interpolation="nearest", **kwargs)
+                       origin="lower", interpolation="nearest", cmap=cmap,
+                       **kwargs)
         # invert Z axis if not a map view
         if self._image._is_cross_section:
             ax.invert_yaxis()
