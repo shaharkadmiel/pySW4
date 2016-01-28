@@ -65,6 +65,7 @@ class Image(object):
         patch_info = np.fromfile(f,SW4_patch_dtype,self.number_of_patches)
         for i,item in enumerate(patch_info):
             patch = Patch()
+            patch._image = self
             patch.number = i
             (patch.h,
              patch.zmin,
@@ -114,6 +115,7 @@ class Patch(object):
         self.max          = 0
         self.std          = 0
         self.rms          = 0
+        self._image = None  # link back to the image this patch belongs to
 
     def plot(self, ax=None, vmin='min', vmax='max', colorbar=True,
              **kwargs):
@@ -218,7 +220,7 @@ def read(filename='random', verbose=False):
             with open(image.filename,'rb') as f:
                 image._readSW4hdr(f)
                 image.precision = prec_dict[image.precision]
-                image.plane = SW4_plane_dict[image.plane]
+                image.plane = SW4_plane_dict[image._plane]
                 image.mode, image.unit = SW4_mode_dict[image.mode]
                 image._readSW4patches(f)
     return image
