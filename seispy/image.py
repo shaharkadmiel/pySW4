@@ -6,7 +6,7 @@ Module to handle WPP and SW4 images of Maps or Cross-Sections
 By: Omri Volk & Shahar Shani-Kadmiel, June 2015, kadmiel@post.bgu.ac.il
 
 """
-import os
+import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,15 +26,6 @@ class Image(object):
     A class to hold WPP or SW4 image files
     """
     def __init__(self, source_time_function_type="displacement"):
-        self.filename = None
-        self.number_of_patches = 1
-        self.precision         = 4
-        self.cycle             = 0
-        self.time              = 0
-        self.min               = 0
-        self.max               = 0
-        self.std               = 0
-        self.rms               = 0
         self.patches = []
         # set mode code mapping, depending on the type of source time function
         if source_time_function_type == "displacement":
@@ -51,8 +42,8 @@ class Image(object):
         Read SW4 header information and store it in an Image object
         """
         header = np.fromfile(f, SW4_IMAGE_HEADER_DTYPE, 1)[0]
-        (self.precision,
-         self.number_of_patches,
+        (self._precision,
+         self._number_of_patches,
          self.time,
          self._plane,
          self.coordinate,
@@ -66,6 +57,18 @@ class Image(object):
             return True
         elif self._plane == 2:
             return False
+
+    @property
+    def number_of_patches(self):
+        return len(self.patches)
+
+    @property
+    def precision(self):
+        return SW4_IMAGE_PRECISION[self._precision]
+
+    @property
+    def plane(self):
+        return SW4_IMAGE_PLANE[self._plane]
 
     @property
     def type(self):
@@ -91,7 +94,7 @@ class Image(object):
         Read SW4 patch data and store it in a list of Patch objects
         under Image.patches
         """
-        patch_info = np.fromfile(f,SW4_PATCH_HEADER_DTYPE,self.number_of_patches)
+        patch_info = np.fromfile(f,SW4_PATCH_HEADER_DTYPE,self._number_of_patches)
         for i,item in enumerate(patch_info):
             patch = Patch()
             patch._image = self
@@ -220,8 +223,8 @@ class Patch(object):
             return cb
 
 
-def read(filename='random', source_time_function_type="displacement",
-         verbose=False):
+def read_SW4_image(filename='random', source_time_function_type="displacement",
+                   verbose=False):
     """
     Read image data, cross-section or map into a SeisPy Image object.
 
@@ -241,64 +244,54 @@ def read(filename='random', source_time_function_type="displacement",
     image = Image(source_time_function_type=source_time_function_type)
     image.filename = filename
 
-    if filename is 'random': # generate random data and populate the objects
-        patch = Patch()
-
-        ni,nj = 100,200
-        h = 100.
-        zmin = 0
-        data = 2*(np.random.rand(ni,nj)-0.5)
-
-        patch.data   = data
-        patch.ni     = ni
-        patch.nj     = nj
-        patch.number = 0
-        patch.h      = h
-        patch.zmin   = zmin
-        patch.extent = (0,nj*h,zmin+ni*h,zmin)
-        patch.min    = data.min()
-        patch.max    = data.max()
-        patch.std    = data.std()
-        patch.rms    = np.sqrt(np.mean(data**2))
-
-        image.patches += [patch]
+    if filename is 'random':  # generate random data and populate the objects
+        image = create_random_SW4_image(
+            source_time_function_type=source_time_function_type)
     elif filename is None:
         pass
     else:
-        (name, image.cycle, plane,
-         coordinate, mode, is_SW4) = parse_filename(filename)
-
-        if is_SW4:
-            with open(image.filename,'rb') as f:
-                image._readSW4hdr(f)
-                image.precision = SW4_IMAGE_PRECISION[image.precision]
-                image.plane = SW4_IMAGE_PLANE[image._plane]
-                image._readSW4patches(f)
+        if not filename.endswith('.sw4img'):
+            msg = ("Using 'read_SW4_image()' on file with uncommon file "
+                   "extension: '{}'.").format(filename)
+            warnings.warn(msg)
+        with open(image.filename, 'rb') as f:
+            image._readSW4hdr(f)
+            image._readSW4patches(f)
     return image
 
 
-def parse_filename(filename):
-    """ This function parses the filename in order to figure out its type.
-
-    Parameters
-    -----------
-    filename : string
-
-    Returns
-    --------
-    name, cycle, plane, coordinate, mode, is_SW4
-
+def create_random_SW4_image(source_time_function_type="displacement"):
     """
+    """
+    image = Image(source_time_function_type=source_time_function_type)
+    image.filename = None
+    image._number_of_patches = 1
+    image._precision = 4
+    image.cycle = 0
+    image.time = 0
+    image.min = 0
+    image.max = 0
+    image.std = 0
+    image.rms = 0
 
-    basename = os.path.basename(filename)
-    name, extention = os.path.splitext(basename)
-    if extention == '.sw4img':
-        name, cycle, plane, mode = name.rsplit('.',3)
-        cycle = int(cycle.split('=')[-1])
-        plane, coordinate = plane.split('=')
-        return name, cycle, plane, coordinate, mode, True
-    else:
-        name, cycle, plane, mode = basename.rsplit('.',3)
-        cycle = int(cycle.split('=')[-1])
-        plane, coordinate = plane.split('=')
-        return name, cycle, plane, coordinate, mode, False
+    patch = Patch()
+
+    ni,nj = 100,200
+    h = 100.
+    zmin = 0
+    data = 2*(np.random.rand(ni,nj)-0.5)
+
+    patch.data   = data
+    patch.ni     = ni
+    patch.nj     = nj
+    patch.number = 0
+    patch.h      = h
+    patch.zmin   = zmin
+    patch.extent = (0,nj*h,zmin+ni*h,zmin)
+    patch.min    = data.min()
+    patch.max    = data.max()
+    patch.std    = data.std()
+    patch.rms    = np.sqrt(np.mean(data**2))
+
+    image.patches = [patch]
+    return image
