@@ -235,7 +235,7 @@ class Patch(object):
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
 
-        fig.suptitle("{}\nt={} seconds".format(
+        fig.suptitle("{}\nt={:.2f} seconds".format(
             self._image.filename, self._image.time))
 
         try:
