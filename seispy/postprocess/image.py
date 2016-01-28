@@ -51,7 +51,7 @@ class Image(object):
         (self.precision,
          self.number_of_patches,
          self.time,
-         self.plane,
+         self._plane,
          self.coordinate,
          self.mode,
          self.gridinfo,
@@ -73,10 +73,21 @@ class Image(object):
              patch.jb,
              patch.nj) = item
             data = np.fromfile(f, self.precision, patch.ni*patch.nj)
-            patch.data = data.reshape(patch.nj, patch.ni).T
+            patch.data = data.reshape(patch.nj, patch.ni)
 
-            patch.extent = (patch.zmin,patch.zmin+patch.ni*patch.h,
-                            0,patch.nj*patch.h)
+            if self._plane in (0, 1):
+                patch.extent = (
+                    0 - (patch.h / 2.0),
+                    (patch.ni - 1) * patch.h + (patch.h / 2.0),
+                    patch.zmin - (patch.h / 2.0),
+                    patch.zmin + (patch.nj - 1) * patch.h + (patch.h / 2.0))
+            elif self._plane == 2:
+                patch.data = patch.data.T
+                patch.extent = (
+                    0 - (patch.h / 2.0),
+                    (patch.nj - 1) * patch.h + (patch.h / 2.0),
+                    0 - (patch.h / 2.0),
+                    (patch.ni - 1) * patch.h + (patch.h / 2.0))
             patch.min    = data.min()
             patch.max    = data.max()
             patch.std    = data.std()
@@ -139,9 +150,8 @@ class Patch(object):
             extend = 'max'
 
         print vmin, vmax
-        extent = None
-        im = ax.imshow(self.data, extent=extent, vmin=vmin, vmax=vmax,
-                       origin="lower", **kwargs)
+        im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
+                       origin="lower", interpolation="nearest", **kwargs)
         if colorbar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="3%", pad=0.1)
