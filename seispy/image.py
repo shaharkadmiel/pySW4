@@ -203,14 +203,14 @@ class Patch(object):
         if vmin is 'min':
             vmin = self.min
 
-        if vmin > self.min and vmax < self.max:
+        if self.min < vmin and self.max > vmax:
             extend = 'both'
-        elif vmin == self.min and vmax == self.max:
-            extend = 'neither'
-        elif vmin > self.min:
+        elif self.min < vmin:
             extend = 'min'
-        else:# vmax < self.max:
+        elif self.max > vmax:
             extend = 'max'
+        else:
+            extend = 'neither'
 
         im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
                        origin="lower", interpolation="nearest", cmap=cmap,
