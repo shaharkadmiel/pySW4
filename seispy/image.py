@@ -246,6 +246,9 @@ class Patch(object):
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
 
+        fig.suptitle("{}\nt={} seconds".format(
+            self._image.filename, self._image.time))
+
         try:
             return fig, ax, cb
         except NameError:
