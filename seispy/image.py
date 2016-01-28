@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 - image.py -
 
@@ -329,12 +330,22 @@ def _create_random_SW4_patch():
 
 
 def image_files_to_movie(
-        input_filename_pattern, output_filename, source_time_function_type,
+        input_files, output_filename, source_time_function_type,
         patch_number=0, frames_per_second=5, overwrite=False,
         global_colorlimits=True, **plot_kwargs):
     """
     Convert SW4 images to an mp4 movie using command line ffmpeg.
+
+    :type input_files: str or list
+    :param input_files: Wildcarded filename pattern or list of individual
+        filenames.
     """
+    # XXX TODO should probably switch to using the ffmpeg backend of matplotlib
+    # animations, as currently this produces the some problems sometimes:
+    # (http://stackoverflow.com/questions/4092927)
+    #    [png @ 0x348c7c0] Invalid PNG signature 0xD494844520000.
+    #    Error while decoding stream #0:0: Invalid data found when processing
+    #    input
     if not output_filename.endswith(".mp4"):
         output_filename += ".mp4"
     if os.path.exists(output_filename):
@@ -344,7 +355,10 @@ def image_files_to_movie(
         msg = ("Output path '{}' exists.").format(output_filename)
         raise IOError(msg)
 
-    files = sorted(glob.glob(input_filename_pattern))
+    if isinstance(input_files, str):
+        files = sorted(glob.glob(input_files))
+    else:
+        files = input_files
 
     # parse all files to determine global value range extrema before doing
     # the plotting
