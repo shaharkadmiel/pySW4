@@ -6,6 +6,9 @@ Module to handle WPP and SW4 images of Maps or Cross-Sections
 By: Omri Volk & Shahar Shani-Kadmiel, June 2015, kadmiel@post.bgu.ac.il
 
 """
+import glob
+import os
+import subprocess
 import warnings
 
 import numpy as np
@@ -320,3 +323,56 @@ def _create_random_SW4_patch():
     patch.ib = 1
     patch.jb = 1
     return patch
+
+
+def image_files_to_movie(
+        input_filename_pattern, output_filename, source_time_function_type,
+        patch_number=0, frames_per_second=5, overwrite=False,
+        global_colorlimits=True, **plot_kwargs):
+    """
+    Convert SW4 images to an mp4 movie using command line ffmpeg.
+    """
+    if not output_filename.endswith(".mp4"):
+        output_filename += ".mp4"
+    if os.path.exists(output_filename):
+        if overwrite:
+            os.remove(output_filename)
+    if os.path.exists(output_filename):
+        msg = ("Output path '{}' exists.").format(output_filename)
+        raise IOError(msg)
+
+    files = sorted(glob.glob(input_filename_pattern))
+
+    # parse all files to determine global value range extrema before doing
+    # the plotting
+    if global_colorlimits:
+        global_min = np.inf
+        global_max = -np.inf
+        for file_ in files:
+            image = read_SW4_image(
+                file_, source_time_function_type=source_time_function_type)
+            patch = image.patches[patch_number]
+            global_min = min(global_min, patch.min)
+            global_max = max(global_max, patch.max)
+        plot_kwargs["vmin"] = global_min
+        plot_kwargs["vmax"] = global_max
+
+    cmdstring = (
+        'ffmpeg', '-r', '%d' % frames_per_second, '-f', 'image2pipe',
+        '-vcodec', 'png', '-i', 'pipe:', '-vcodec', 'libx264', '-pass', '1',
+        '-vb', '6M', '-pix_fmt', 'yuv420p', output_filename)
+
+    backend = plt.get_backend()
+    try:
+        plt.switch_backend('AGG')
+        p = subprocess.Popen(cmdstring, stdin=subprocess.PIPE)
+        # plot all images and pipe the pngs to ffmpeg
+        for file_ in files:
+            image = read_SW4_image(
+                file_, source_time_function_type=source_time_function_type)
+            patch = image.patches[patch_number]
+            fig, _, _ = patch.plot(**plot_kwargs)
+            fig.savefig(p.stdin, format='png')
+            plt.close(fig)
+    finally:
+        plt.switch_backend(backend)
