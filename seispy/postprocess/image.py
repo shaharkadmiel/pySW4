@@ -154,6 +154,10 @@ class Patch(object):
         print vmin, vmax
         im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
                        origin="lower", interpolation="nearest", **kwargs)
+        # invert Z axis if not a map view
+        print(self._image._plane)
+        if self._image._plane in (0, 1):
+            ax.invert_yaxis()
         if colorbar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="3%", pad=0.1)
