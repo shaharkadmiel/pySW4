@@ -9,8 +9,8 @@ from seispy.config import read_input_file
 
 
 def create_all_plots(
-        folder, source_time_function_type=None, frames_per_second=5,
-        cmap=None, input_file=None):
+        folder, config=None, source_time_function_type=None,
+        frames_per_second=5, cmap=None):
     """
     Create all plots for an SW4 output folder.
 
@@ -19,7 +19,7 @@ def create_all_plots(
     information is included in the plots (e.g. receiver/source location,
     automatic determination of source time function type, ..)
     """
-    if source_time_function_type is None and input_file is None:
+    if source_time_function_type is None and config is None:
         msg = ("Source time function type not specified and input file not "
                "provided. Assuming a displacement type source time function..")
         warnings.warn(msg)
@@ -32,8 +32,8 @@ def create_all_plots(
         msg = "No *.sw4img files in folder '{}'".format(folder)
         return Exception(msg)
 
-    if input_file:
-        config = read_input_file(input_file)
+    if config:
+        config = read_input_file(config)
     else:
         config = None
 
@@ -67,4 +67,4 @@ def create_all_plots(
 
 if __name__ == "__main__":
     create_all_plots(
-        "/tmp/UH_01_simplemost", source_time_function_type="velocity")
+        "/tmp/UH_01_simplemost", config="/tmp/UH_01_simplemost.in")

@@ -32,7 +32,8 @@ except ImportError:
 from seispy.config import read_input_file
 from seispy.header import (
     SW4_IMAGE_HEADER_DTYPE, SW4_PATCH_HEADER_DTYPE, SW4_IMAGE_PLANE,
-    SW4_IMAGE_MODE_DISPLACEMENT, SW4_IMAGE_MODE_VELOCITY, SW4_IMAGE_PRECISION)
+    SW4_IMAGE_MODE_DISPLACEMENT, SW4_IMAGE_MODE_VELOCITY, SW4_IMAGE_PRECISION,
+    SW4_SOURCE_TIME_FUNCTION_TYPE)
 from seispy.plotting import set_matplotlib_rc_params
 
 
@@ -57,11 +58,21 @@ class Image(object):
         path_effects.Stroke(linewidth=1.5+0.7, foreground='w'),
         path_effects.Normal()]
 
-    def __init__(self, source_time_function_type="displacement", config=None):
+    def __init__(self, config=None, source_time_function_type=None):
         self.patches = []
         if config is not None and not isinstance(config, AttribDict):
             config = read_input_file(config)
         self._config = config
+        if config:
+            source_time_function_type_ = self.source_time_function_type
+            if source_time_function_type and source_time_function_type_ and \
+                    source_time_function_type != source_time_function_type_:
+                msg = ("Overriding user specified source time function "
+                       "type ({}) with the one found in configuration file "
+                       "({}).").format(source_time_function_type,
+                                       source_time_function_type_)
+                warnings.warn(msg)
+            source_time_function_type = source_time_function_type_
         # set mode code mapping, depending on the type of source time function
         if source_time_function_type == "displacement":
             self._mode_dict = SW4_IMAGE_MODE_DISPLACEMENT
@@ -166,6 +177,13 @@ class Image(object):
         if self._cmap_type in ("divergent", "divergent_r"):
             return True
         return False
+
+    @property
+    def source_time_function_type(self):
+        if not self._config:
+            return None
+        stf_type = SW4_SOURCE_TIME_FUNCTION_TYPE[self._config.source[0].type]
+        return {0: "displacement", 1: "velocity"}.get(stf_type, None)
 
     @property
     def _cmap_type(self):
@@ -339,8 +357,8 @@ class Patch(object):
             return cb
 
 
-def read_SW4_image(filename='random', source_time_function_type="displacement",
-                   verbose=False, config=None):
+def read_SW4_image(filename='random', config=None,
+                   source_time_function_type="displacement", verbose=False):
     """
     Read image data, cross-section or map into a SeisPy Image object.
 
@@ -414,9 +432,9 @@ def _create_random_SW4_patch():
 
 
 def image_files_to_movie(
-        input_files, output_filename, source_time_function_type,
-        config=None, patch_number=0, frames_per_second=5, overwrite=False,
-        global_colorlimits=True, debug=False, **plot_kwargs):
+        input_files, output_filename, config=None,
+        source_time_function_type=None, patch_number=0, frames_per_second=5,
+        overwrite=False, global_colorlimits=True, debug=False, **plot_kwargs):
     """
     Convert SW4 images to an mp4 movie using command line ffmpeg.
 
@@ -445,7 +463,8 @@ def image_files_to_movie(
         global_max = -np.inf
         for file_ in files:
             image = read_SW4_image(
-                file_, source_time_function_type=source_time_function_type)
+                file_, config=config,
+                source_time_function_type=source_time_function_type)
             patch = image.patches[patch_number]
             global_min = min(global_min, patch.min)
             global_max = max(global_max, patch.max)

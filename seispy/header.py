@@ -252,3 +252,22 @@ SW4_IMAGE_MODE_VELOCITY.update(SW4_IMAGE_MODE_COMMON)
 SW4_IMAGE_PLANE = {0: 'x', 1: 'y', 2: 'z'}
 
 SW4_IMAGE_PRECISION = {4: np.float32, 8: np.float64}
+
+# 0: displacement, 1: velocity
+SW4_SOURCE_TIME_FUNCTION_TYPE = {
+    "Gaussian": 1,
+    "GaussianInt": 0,
+    "Ricker": 1,
+    "RickerInt": 1,
+    "Brune": 0,
+    "BruneSmoothed": 0,
+    "Liu": 0,
+    "Triangle": 1,
+    "Sawtooth": 1,
+    "Ramp": 0,
+    "Smoothwave": 1,
+    "VerySmoothBump": 1,
+    "C6SmoothBump": 1,
+    "GaussianWindow": 1,
+    "Dirac": 1,
+    }
