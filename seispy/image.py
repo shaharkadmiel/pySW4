@@ -16,6 +16,16 @@ from StringIO import StringIO
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+try:
+    from obspy.imaging.cm import obspy_divergent as cmap_divergent
+    from obspy.imaging.cm import obspy_divergent_r as cmap_divergent_r
+    from obspy.imaging.cm import obspy_sequential as cmap_sequential
+    from obspy.imaging.cm import obspy_sequential_r as cmap_sequential_r
+except ImportError:
+    cmap_divergent = None
+    cmap_divergent_r = None
+    cmap_sequential = None
+    cmap_sequential_r = None
 
 from seispy.header import (
     SW4_IMAGE_HEADER_DTYPE, SW4_PATCH_HEADER_DTYPE, SW4_IMAGE_PLANE,
@@ -30,6 +40,11 @@ class Image(object):
     """
     A class to hold WPP or SW4 image files
     """
+    CMAP = {"divergent": cmap_divergent,
+            "divergent_r": cmap_divergent_r,
+            "sequential": cmap_sequential,
+            "sequential_r": cmap_sequential_r}
+
     def __init__(self, source_time_function_type="displacement"):
         self.patches = []
         # set mode code mapping, depending on the type of source time function
@@ -99,6 +114,16 @@ class Image(object):
             return True
         elif self._plane == 2:
             return False
+
+    @property
+    def is_divergent(self):
+        if self._cmap_type in ("divergent", "divergent_r"):
+            return True
+        return False
+
+    @property
+    def _cmap_type(self):
+        return self._mode_dict[self._mode]['cmap_type']
 
     @property
     def number_of_patches(self):
@@ -187,7 +212,7 @@ class Patch(object):
             fig, ax = plt.subplots()
 
         if cmap is None:
-            cmap = self._image._mode_dict[self._image._mode]['cmap']
+            cmap = self._image.CMAP[self._image._cmap_type]
 
         ax.set_aspect(1)
 
