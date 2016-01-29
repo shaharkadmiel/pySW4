@@ -9,7 +9,7 @@ By: Omri Volk & Shahar Shani-Kadmiel, June 2015, kadmiel@post.bgu.ac.il
 
 import os
 import numpy as np
-from seispy.plotting import patch_plot
+from seispy.plotting import plot_patch, plot_image
 from seispy.plotting.dic_and_dtype import *
 
 class Image(object):
@@ -34,6 +34,12 @@ class Image(object):
 
         self.patches = []
 
+
+    def plot(self, *args, **kwargs):
+        """
+        """
+        return plot_image(self, *args, **kwargs)
+
 class Patch(object):
     """
     A class to hold WPP or SW4 patch data
@@ -57,7 +63,7 @@ class Patch(object):
     def plot(self, *args, **kwargs):
         """
         """
-        return patch_plot(self, *args, **kwargs)
+        return plot_patch(self, *args, **kwargs)
 
 
 def read(filename='random', verbose=False):
@@ -79,7 +85,7 @@ def read(filename='random', verbose=False):
     """
 
     image = Image()
-    image.filename = filename
+    image.filename = os.path.splitext(os.path.basename(filename))[0]
 
     if filename is 'random': # generate random data and populate the objects
         patch = Patch()
@@ -112,7 +118,7 @@ def read(filename='random', verbose=False):
          coordinate, mode, is_SW4) = parse_filename(filename)
 
     if is_SW4:
-        with open(image.filename,'rb') as f:
+        with open(filename,'rb') as f:
             readSW4hdr(image, f)
             image.precision = prec_dict[image.precision]
             image.plane = SW4_plane_dict[image.plane]
@@ -123,6 +129,8 @@ def read(filename='random', verbose=False):
                 readSW4patch(patch, f, image.precision)
 
         return image
+    else:
+        print "Error: %s is not an SW4 image. Other image formats are not implemented yet." %image.filename
 
 
 def parse_filename(filename):
@@ -141,9 +149,12 @@ def parse_filename(filename):
     basename = os.path.basename(filename)
     name, extention = os.path.splitext(basename)
     if extention == '.sw4img':
-        name, cycle, plane, mode = name.rsplit('.',3)
-        cycle = int(cycle.split('=')[-1])
-        plane, coordinate = plane.split('=')
+        pieces = name.rsplit('=',2)
+        name = pieces[0].rsplit('.',1)[0]
+        cycle = int(pieces[1].split('.')[0])
+        plane = pieces[1].split('.')[-1]
+        coordinate = float(pieces[2].rsplit('.',1)[0])
+        mode = pieces[2].rsplit('.',1)[-1]
         return name, cycle, plane, coordinate, mode, True
     else:
         name, cycle, plane, mode = basename.rsplit('.',3)

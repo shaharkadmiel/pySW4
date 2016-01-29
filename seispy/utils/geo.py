@@ -358,6 +358,30 @@ class GeoTIFF(object):
         self.dlat, self.dlon = (self.s-self.n)/(self.nlat-1), (self.e-self.w)/(self.nlon-1)
 
 
+    def extract(self, w, e, s, n):
+        """
+        Extract a subset array from a GeoTIFF file
+        """
+
+        lon_start = int((w - self.w)/self.dlon)
+        lon_stop  = int((e - self.w)/self.dlon)+1
+
+        lat_start = int((n - self.n)/self.dlat)
+        lat_stop  = int((s - self.n)/self.dlat)+1
+
+        # update class data
+        self.e = self.w + lon_stop  * self.dlon
+        self.w = self.w + lon_start * self.dlon
+        self.s = self.n + lat_stop  * self.dlat
+        self.n = self.n + lat_start * self.dlat
+
+        self.extent = (self.w, self.e, self.s, self.n)
+        self.elev = self.elev[lat_start:lat_stop, lon_start:lon_stop]
+
+        self.nlon = self.elev.shape[1]
+        self.nlat = self.elev.shape[0]
+
+
     def elevation_profile(self, lons, lats):
 
         rows = []; columns = []

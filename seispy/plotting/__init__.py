@@ -36,3 +36,4 @@ the task (preprocessing, post-processing and runtime visualization).
 from drape import *
 from utils import *
 from image_plot import *
+from png2mp4 import png2mp4

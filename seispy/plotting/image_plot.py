@@ -59,53 +59,61 @@ rc('ytick', **ticks)
 
 
 # core plotting routine
-def patch_plot(patch, ax=None, vmin='min', vmax='max', colorbar=True,
+def plot_patch(patch, ax=None, vmin='min', vmax='max', colorbar=True,
                **kwargs):
+    """ Plot a single patch object
+    """
 
-        if ax is None:
-            fig, ax = plt.subplots()
+    if ax is None:
+      fig, ax = plt.subplots()
 
-        ax.set_aspect(1)
+    ax.set_aspect(1)
 
-        if vmax is 'max':
-            vmax = patch.max
-        elif type(vmax) is str:
-            try:
-                factor = float(vmax)
-                vmax = factor*patch.rms
-                if patch.min < 0:
-                    vmin = -vmax
+    if vmax is 'max':
+      vmax = patch.max
+    elif type(vmax) is str:
+      try:
+          factor = float(vmax)
+          vmax = factor*patch.rms
+          if patch.min < 0:
+              vmin = -vmax
 
-            except ValueError:
-                print ('Warning! keyword vmax=$s in not understood...\n' %vmax,
-                       'Setting to max')
-                vmax = patch.max
+      except ValueError:
+          print ('Warning! keyword vmax=%s in not understood...\n' %vmax,
+                 'Setting to max')
+          vmax = patch.max
 
-        if vmin is 'min':
-            vmin = patch.min
+    if vmin is 'min':
+      vmin = patch.min
 
-        if vmin > patch.min and vmax < patch.max:
-            extend = 'both'
-        elif vmin == patch.min and vmax == patch.max:
-            extend = 'neither'
-        elif vmin > patch.min:
-            extend = 'min'
-        else:# vmax < patch.max:
-            extend = 'max'
+    if vmin > patch.min and vmax < patch.max:
+      extend = 'both'
+    elif vmin == patch.min and vmax == patch.max:
+      extend = 'neither'
+    elif vmin > patch.min:
+      extend = 'min'
+    else:# vmax < patch.max:
+      extend = 'max'
 
-        print vmin, vmax
-        im = ax.imshow(patch.data.T, extent=patch.extent, vmin=vmin, vmax=vmax,
-                       **kwargs)
-        if colorbar:
-            divider = make_axes_locatable(ax)
-            cax = divider.append_axes("right", size="3%", pad=0.1)
-            cb = plt.colorbar(im, cax=cax,
-                              extend=extend,
-                              label=colorbar if type(colorbar) is str else '')
-        else:
-            cb = None
+    print vmin, vmax
+    im = ax.imshow(patch.data.T, extent=patch.extent, vmin=vmin, vmax=vmax,
+                 **kwargs)
+    if colorbar:
+      divider = make_axes_locatable(ax)
+      cax = divider.append_axes("right", size="3%", pad=0.1)
+      cb = plt.colorbar(im, cax=cax,
+                        extend=extend,
+                        label=colorbar if type(colorbar) is str else '')
+    else:
+      cb = None
 
-        try:
-            return fig, ax, cb
-        except NameError:
-            return cb
+    try:
+      return fig, ax, cb
+    except NameError:
+      return cb
+
+def plot_image():
+    """ Plot an entire image which may contain a single patch or several patches
+    """
+
+    pass

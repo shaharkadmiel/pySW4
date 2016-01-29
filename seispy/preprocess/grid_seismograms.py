@@ -1,12 +1,17 @@
 from shutil import copyfile
 import numpy as np
 
-def grid_seismograms(x_extent,y_extent,mode='displacement',x_n_of_stations=11.,y_n_of_stations=11.,
-                     x_spacing=None,y_spacing=None,xmin=None,xmax=None,ymin=None,ymax=None,z=0.,
-                     wpp_input_file=None,grid_name='grid',writeEvery=100):
+def grid_seismograms(x_extent, y_extent, mode='displacement',
+                     x_n_of_stations=11, y_n_of_stations=11,
+                     x_spacing=None, y_spacing=None,
+                     xmin=None, xmax=None,
+                     ymin=None, ymax=None,
+                     z=0.,
+                     infile=None, name='grid', writeEvery=100):
 
     """
-    A function to make a grid of evenly spaced reciver stations for an sw4 simulation
+    Setup a grid of stations.
+
     Takes the x,y extens of the grid and outputs a string for the infile
     If an infile name is given the function copys the file,appends '+traces' to it's name
     and appends the string to the file
@@ -47,24 +52,27 @@ def grid_seismograms(x_extent,y_extent,mode='displacement',x_n_of_stations=11.,y
 
     x=np.linspace(xmin,xmax,x_n_of_stations)
     y=np.linspace(ymin,ymax,y_n_of_stations)
-    sac_string = 'sac x=%.3f y=%.3f depth=%.3f file=%s_x=%.3f_y=%.3f_ writeEvery=%d variables=%s\n'
+    sac_string = 'rec x=%.3f y=%.3f depth=%.3f file=%s_x=%.3f_y=%.3f_ writeEvery=%d variables=%s\n'
 
-    string = "\n\n#-----------------%d seismograms added for grid: %s -------------------\n\n" %(len(x)*len(y), grid_name)
+    string = "\n\n#-----------------%d seismograms added for grid: %s -------------------\n\n" %(len(x)*len(y), name)
 
     for i in x:
         for j in y:
             string += (sac_string
-                %(i,j,z,grid_name,i,j,writeEvery,mode))
+                %(i,j,z,name,i,j,writeEvery,mode))
 
-    if wpp_input_file is None:
+    if infile is None:
         return string
     else:
-        if 'traces' not in wpp_input_file:
-            filename,extention = wpp_input_file.rsplit('.',1)
-            filename += '+traces.' + extention
-            copyfile(wpp_input_file, filename)
-        else:
-            filename = wpp_input_file
+        try:
+            if 'traces' not in infile:
+                filename,extention = infile.rsplit('.',1)
+                filename += '+traces.' + extention
+                copyfile(infile, filename)
+            else:
+                filename = infile
+        except IOError:
+            filename=infile
 
         with open(filename, "a") as f:
             f.write(string)
