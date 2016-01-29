@@ -472,6 +472,9 @@ def image_files_to_movie(
             abs_max = max(abs(global_min), abs(global_max))
             plot_kwargs["vmin"] = -abs_max
             plot_kwargs["vmax"] = abs_max
+        else:
+            plot_kwargs["vmin"] = global_min
+            plot_kwargs["vmax"] = global_max
 
     cmdstring = (
         'ffmpeg', '-r', '%d' % frames_per_second, '-f', 'image2pipe',
