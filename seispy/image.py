@@ -216,6 +216,13 @@ class Patch(object):
 
         ax.set_aspect(1)
 
+        # center colormap around zero if image's data is divergent
+        if self._image.is_divergent:
+            if vmin is None and vmax is None:
+                abs_max = max(abs(self.min), abs(self.max))
+                vmax = abs_max
+                vmin = -abs_max
+
         if (vmin is not None and self.min < vmin) and \
                 (vmax is not None and self.max > vmax):
             extend = 'both'
@@ -378,8 +385,10 @@ def image_files_to_movie(
             patch = image.patches[patch_number]
             global_min = min(global_min, patch.min)
             global_max = max(global_max, patch.max)
-        plot_kwargs["vmin"] = global_min
-        plot_kwargs["vmax"] = global_max
+        if image.is_divergent:
+            abs_max = max(abs(global_min), abs(global_max))
+            plot_kwargs["vmin"] = -abs_max
+            plot_kwargs["vmax"] = abs_max
 
     cmdstring = (
         'ffmpeg', '-r', '%d' % frames_per_second, '-f', 'image2pipe',
