@@ -16,6 +16,7 @@ from StringIO import StringIO
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from obspy.core.util import AttribDict
 try:
     from obspy.imaging.cm import obspy_divergent as cmap_divergent
     from obspy.imaging.cm import obspy_divergent_r as cmap_divergent_r
@@ -27,6 +28,7 @@ except ImportError:
     cmap_sequential = None
     cmap_sequential_r = None
 
+from seispy.config import read_input_file
 from seispy.header import (
     SW4_IMAGE_HEADER_DTYPE, SW4_PATCH_HEADER_DTYPE, SW4_IMAGE_PLANE,
     SW4_IMAGE_MODE_DISPLACEMENT, SW4_IMAGE_MODE_VELOCITY, SW4_IMAGE_PRECISION)
@@ -45,8 +47,11 @@ class Image(object):
             "sequential": cmap_sequential,
             "sequential_r": cmap_sequential_r}
 
-    def __init__(self, source_time_function_type="displacement"):
+    def __init__(self, source_time_function_type="displacement", config=None):
         self.patches = []
+        if config is not None and not isinstance(config, AttribDict):
+            config = read_input_file(config)
+        self._config = config
         # set mode code mapping, depending on the type of source time function
         if source_time_function_type == "displacement":
             self._mode_dict = SW4_IMAGE_MODE_DISPLACEMENT
@@ -277,7 +282,7 @@ class Patch(object):
 
 
 def read_SW4_image(filename='random', source_time_function_type="displacement",
-                   verbose=False):
+                   verbose=False, config=None):
     """
     Read image data, cross-section or map into a SeisPy Image object.
 
@@ -294,7 +299,8 @@ def read_SW4_image(filename='random', source_time_function_type="displacement",
 
     an Image object with a list of Patch objects
     """
-    image = Image(source_time_function_type=source_time_function_type)
+    image = Image(source_time_function_type=source_time_function_type,
+                  config=config)
     image.filename = filename
 
     if filename is 'random':  # generate random data and populate the objects
@@ -351,7 +357,7 @@ def _create_random_SW4_patch():
 
 def image_files_to_movie(
         input_files, output_filename, source_time_function_type,
-        patch_number=0, frames_per_second=5, overwrite=False,
+        config=None, patch_number=0, frames_per_second=5, overwrite=False,
         global_colorlimits=True, debug=False, **plot_kwargs):
     """
     Convert SW4 images to an mp4 movie using command line ffmpeg.
@@ -402,7 +408,8 @@ def image_files_to_movie(
         # plot all images and pipe the pngs to ffmpeg
         for file_ in files:
             image = read_SW4_image(
-                file_, source_time_function_type=source_time_function_type)
+                file_, source_time_function_type=source_time_function_type,
+                config=config)
             patch = image.patches[patch_number]
             fig, _, _ = patch.plot(**plot_kwargs)
             fig.savefig(string_io, format='png')
