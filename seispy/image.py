@@ -15,6 +15,7 @@ from StringIO import StringIO
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import patheffects as path_effects
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from obspy.core.util import AttribDict
 try:
@@ -46,6 +47,15 @@ class Image(object):
             "divergent_r": cmap_divergent_r,
             "sequential": cmap_sequential,
             "sequential_r": cmap_sequential_r}
+    MPL_SCATTER_PROPERTIES = {
+        "source": {"s": 200, "marker": "*", "edgecolors": "k",
+                   "facecolors": "", "alpha": 1, "linewidths": 1.5},
+        "rec": {"s": 200, "marker": "v", "edgecolors": "k",
+                "facecolors": "", "alpha": 1, "linewidths": 1.5},
+        }
+    MPL_SCATTER_PATH_EFFECTS = [
+        path_effects.Stroke(linewidth=1.5+0.7, foreground='w'),
+        path_effects.Normal()]
 
     def __init__(self, source_time_function_type="displacement", config=None):
         self.patches = []
@@ -112,6 +122,37 @@ class Image(object):
         else:
             for i in patches:
                 self.patches[i].plot(*args, **kwargs)
+
+    def _get_plot_coordinates_from_config(self, key):
+        """
+        Gets coordinates for config keys that have x, y, z values (e.g.
+        'source', 'rec') in plotting coordinates for use in :meth:`plot`.
+        """
+        if not self._config:
+            return None
+        items = self._config.get(key, [])
+        if not items:
+            return None
+        x = []
+        y = []
+        for item in items:
+            if self._plane == 0:
+                x_ = item.y
+                y_ = item.z
+            elif self._plane == 1:
+                x_ = item.x
+                y_ = item.z
+            elif self._plane == 2:
+                x_ = item.y
+                y_ = item.x
+            x.append(x_)
+            y.append(y_)
+        if not x:
+            return None
+        return x, y
+
+    def get_source_coordinates(self):
+        return self._get_plot_coordinates_from_config("source")
 
     @property
     def is_cross_section(self):
@@ -241,6 +282,23 @@ class Patch(object):
         im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
                        origin="lower", interpolation="nearest", cmap=cmap,
                        **kwargs)
+        # plot receiver, source etc.
+        if self._image._config:
+            for key, kwargs in self._image.MPL_SCATTER_PROPERTIES.items():
+                coordinates = \
+                    self._image._get_plot_coordinates_from_config(key)
+                if not coordinates:
+                    continue
+                x, y = coordinates
+                collection = ax.scatter(
+                    x, y, **kwargs)
+                collection.set_path_effects(
+                    self._image.MPL_SCATTER_PATH_EFFECTS)
+            # reset axes limits to data, they sometimes get changed by the
+            # scatter plot
+            ax.set_xlim(*self.extent[:2])
+            ax.set_ylim(*self.extent[2:])
+
         # invert Z axis if not a map view
         if self._image.is_cross_section:
             ax.invert_yaxis()

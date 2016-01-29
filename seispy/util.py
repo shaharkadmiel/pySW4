@@ -2,25 +2,41 @@
 import glob
 import os
 import re
+import warnings
 import matplotlib.pyplot as plt
 from seispy.image import read_SW4_image, image_files_to_movie
+from seispy.config import read_input_file
 
 
 def create_all_plots(
-        folder, source_time_function_type, frames_per_second=5,
-        cmap=None):
+        folder, source_time_function_type=None, frames_per_second=5,
+        cmap=None, input_file=None):
     """
     Create all plots for an SW4 output folder.
 
     Currently always only uses first patch in each SW4 image file.
+    If the path/filename of the SW4 input file is provided, additional
+    information is included in the plots (e.g. receiver/source location,
+    automatic determination of source time function type, ..)
     """
+    if source_time_function_type is None and input_file is None:
+        msg = ("Source time function type not specified and input file not "
+               "provided. Assuming a displacement type source time function..")
+        warnings.warn(msg)
     if not os.path.isdir(folder):
         msg = "Not a folder: '{}'".format(folder)
         raise ValueError(msg)
+
     all_files = glob.glob(os.path.join(folder, "*.sw4img"))
     if not all_files:
         msg = "No *.sw4img files in folder '{}'".format(folder)
         return Exception(msg)
+
+    if input_file:
+        config = read_input_file(input_file)
+    else:
+        config = None
+
     # build individual lists, one for each specific property
     grouped_files = {}
     for file_ in all_files:
@@ -32,7 +48,8 @@ def create_all_plots(
         # create individual plots as .png
         for file_ in files:
             image = read_SW4_image(
-                file_, source_time_function_type=source_time_function_type)
+                file_, source_time_function_type=source_time_function_type,
+                config=config)
             outfile = file_.rsplit(".", 1)[0] + ".png"
             fig, _, _ = image.patches[0].plot(cmap=cmap)
             fig.savefig(outfile)
@@ -46,7 +63,7 @@ def create_all_plots(
             image_files_to_movie(
                 files, movie_filename, frames_per_second=frames_per_second,
                 source_time_function_type=source_time_function_type,
-                overwrite=True, cmap=cmap)
+                overwrite=True, cmap=cmap, config=config)
 
 if __name__ == "__main__":
     create_all_plots(
