@@ -478,9 +478,10 @@ def image_files_to_movie(
             plot_kwargs["vmax"] = global_max
 
     cmdstring = (
-        'ffmpeg', '-r', '%d' % frames_per_second, '-f', 'image2pipe',
-        '-vcodec', 'png', '-i', 'pipe:', '-vcodec', 'libx264', '-pass', '1',
-        '-vb', '6M', '-pix_fmt', 'yuv420p', output_filename)
+        'ffmpeg', '-loglevel', 'fatal',  '-r', '%d' % frames_per_second,
+        '-f', 'image2pipe', '-vcodec', 'png', '-i', 'pipe:',
+        '-vcodec', 'libx264', '-pass', '1', '-vb', '6M', '-pix_fmt', 'yuv420p',
+        output_filename)
 
     string_io = StringIO()
     backend = plt.get_backend()
@@ -507,5 +508,9 @@ def image_files_to_movie(
             print("###### ffmpeg stderr")
             print(stderr)
         sub.wait()
+        for ffmpeg_tmp_file in ("ffmpeg2pass-0.log",
+                                "ffmpeg2pass-0.log.mbtree"):
+            if os.path.exists(ffmpeg_tmp_file):
+                os.remove(ffmpeg_tmp_file)
     finally:
         plt.switch_backend(backend)
