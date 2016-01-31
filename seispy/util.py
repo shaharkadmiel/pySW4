@@ -9,20 +9,42 @@ from seispy.config import read_input_file
 
 
 def create_all_plots(
-        folder, config=None, source_time_function_type=None,
+        config=None, folder=None, source_time_function_type=None,
         frames_per_second=5, cmap=None):
     """
-    Create all plots for an SW4 output folder.
+    Create all plots for a SW4 run.
 
     Currently always only uses first patch in each SW4 image file.
     If the path/filename of the SW4 input file is provided, additional
     information is included in the plots (e.g. receiver/source location,
     automatic determination of source time function type, ..)
     """
+    if config is None and folder is None:
+        msg = ("At least one of `config` or `folder` has to be specified.")
+        raise ValueError(msg)
+
+    if config:
+        config_folder = os.path.dirname(os.path.abspath(config))
+        config = read_input_file(config)
+    else:
+        config = None
+
+    if config:
+        folder_ = os.path.join(config_folder, config.fileio[0].path)
+        if folder and os.path.abspath(folder) != folder_:
+            msg = ("Both `config` and `folder` option specified. Overriding "
+                   "folder found in config file ({}) with user specified "
+                   "folder ({}).").format(folder_, folder)
+            warnings.warn(msg)
+        else:
+            folder = folder_
+
     if source_time_function_type is None and config is None:
-        msg = ("Source time function type not specified and input file not "
-               "provided. Assuming a displacement type source time function..")
-        warnings.warn(msg)
+        msg = ("No input configuration file specified (option `config`) and "
+               "source time function type not specified explicitely (option "
+               "`source_time_function_type`).")
+        ValueError(msg)
+
     if not os.path.isdir(folder):
         msg = "Not a folder: '{}'".format(folder)
         raise ValueError(msg)
@@ -31,11 +53,6 @@ def create_all_plots(
     if not all_files:
         msg = "No *.sw4img files in folder '{}'".format(folder)
         return Exception(msg)
-
-    if config:
-        config = read_input_file(config)
-    else:
-        config = None
 
     # build individual lists, one for each specific property
     grouped_files = {}
@@ -67,4 +84,5 @@ def create_all_plots(
 
 if __name__ == "__main__":
     create_all_plots(
-        "/tmp/UH_01_simplemost", config="/tmp/UH_01_simplemost.in")
+        # config="/tmp/UH_01_simplemost.in", folder="/tmp/UH_01_simplemost33")
+        config="/tmp/UH_01_simplemost.in")
