@@ -4,6 +4,9 @@ import os
 import re
 import warnings
 import matplotlib.pyplot as plt
+from matplotlib.dates import date2num
+import obspy
+from seispy.header import SW4_SOURCE_TIME_FUNCTION_TYPE
 from seispy.image import read_SW4_image, image_files_to_movie
 from seispy.config import read_input_file
 
@@ -90,6 +93,116 @@ def create_image_plots(
                     files, movie_filename, frames_per_second=frames_per_second,
                     source_time_function_type=source_time_function_type,
                     overwrite=True, cmap=cmap, config=config)
+
+
+# SW4 uses a right handed coordinate system:
+#   - X == Northing
+#   - Y == Easting
+#   - Z == Vertical (inverted!)
+#
+#    _ X
+#    /`
+#   /
+#  /_____\  y
+#  |     /
+#  |
+#  V
+#   Z
+def create_seismogram_plots(
+        config_file, folder, stream_observed, inventory, water_level, pre_filt,
+        filter_kwargs=None, channel_map={"-Vz": "Z", "Vx": "N", "Vy": "E"},
+        used_stations=None, synthetic_starttime=None):
+    """
+    """
+    config, folder = _parse_config_file_and_folder(config_file, folder)
+
+    stf_type = SW4_SOURCE_TIME_FUNCTION_TYPE[config.source[0].type]
+    if stf_type == 0:
+        evalresp_output = "DISP"
+        unit_label = "m"
+    elif stf_type == 1:
+        evalresp_output = "VEL"
+        unit_label = "m/s"
+    else:
+        raise NotImplementedError()
+
+    st_synth = obspy.read(os.path.join(folder, "*.?v"))
+    st_real = stream_observed
+    if used_stations is not None:
+        st_synth.traces = [tr for tr in st_synth
+                           if tr.stats.station in used_stations]
+    stations = set([tr.stats.station for tr in st_synth])
+    st_real.traces = [tr for tr in st_real
+                      if tr.stats.station in stations]
+    for tr in st_synth:
+        # SW4 vertical channel is positive in coordinate direction, which
+        # is depth positive down. So we have to invert it to get the normal
+        # seismometer vertical up trace.
+        if tr.stats.channel == "Vz":
+            tr.stats.channel = "-Vz"
+            tr.data *= -1
+    t_min = min([tr.stats.starttime for tr in st_synth])
+    t_max = min([tr.stats.endtime for tr in st_synth])
+    st_real.attach_response(inventory)
+    st_real.remove_response(
+        output=evalresp_output, water_level=water_level, pre_filt=pre_filt)
+    if filter_kwargs:
+        st_real.filter(**filter_kwargs)
+    st_real.trim(t_min, t_max)
+
+    outfile = os.path.join(folder, "seismograms.png")
+    _plot_seismograms(st_synth, st_real, channel_map, unit_label, outfile)
+    for station in stations:
+        outfile = os.path.join(folder, "seismograms.{}.png".format(station))
+        st_synth_ = st_synth.select(station=station)
+        st_real_ = st_real.select(station=station)
+        _plot_seismograms(
+            st_synth_, st_real_, channel_map, unit_label, outfile,
+            figsize=(10, 8))
+
+
+def _plot_seismograms(
+        st_synth_, st_real_, channel_map, unit_label, outfile, figsize=None):
+    """
+    """
+    if figsize is None:
+        figsize = (10, len(st_synth_))
+
+    fig = plt.figure(figsize=figsize)
+    st_synth_.plot(fig=fig)
+
+    # print("Real data:")
+    # print(st_real)
+    # print(st_real.max())
+    # print("Synthetic data:")
+    # print(st_synth)
+    # print(st_synth.max())
+
+    for ax in fig.axes:
+        id = ax.texts[0].get_text()
+        _, sta, _, cha = id.split(".")
+        real_component = channel_map[cha]
+        # find appropriate synthetic trace
+        for tr_real in st_real_:
+            if tr_real.stats.station != sta:
+                continue
+            # SW4 synthetics channel codes (for velocity traces) are "V[xyz]"
+            if tr_real.stats.channel[-1] != real_component:
+                continue
+            break
+        else:
+            continue
+        ax.text(0.95, 0.9, tr_real.id, ha="right", va="top", color="r",
+                transform=ax.transAxes)
+        t = date2num([tr_real.stats.starttime + t_ for
+                      t_ in tr_real.times()])
+        ax.plot(t, tr_real.data, "r-")
+        ax.set_ylabel(unit_label)
+    fig.tight_layout()
+    fig.subplots_adjust(left=0.15, hspace=0.0, wspace=0.0)
+    fig.savefig(outfile)
+    plt.close(fig)
+
 
 if __name__ == "__main__":
     create_image_plots(
