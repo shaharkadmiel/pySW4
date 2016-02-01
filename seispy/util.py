@@ -8,24 +8,17 @@ from seispy.image import read_SW4_image, image_files_to_movie
 from seispy.config import read_input_file
 
 
-def create_all_plots(
-        config=None, folder=None, source_time_function_type=None,
-        frames_per_second=5, cmap=None):
+def _parse_config_file_and_folder(config_file=None, folder=None):
     """
-    Create all plots for a SW4 run.
-
-    Currently always only uses first patch in each SW4 image file.
-    If the path/filename of the SW4 input file is provided, additional
-    information is included in the plots (e.g. receiver/source location,
-    automatic determination of source time function type, ..)
     """
-    if config is None and folder is None:
-        msg = ("At least one of `config` or `folder` has to be specified.")
+    if config_file is None and folder is None:
+        msg = ("At least one of `config_file` or `folder` has to be "
+               "specified.")
         raise ValueError(msg)
 
-    if config:
-        config_folder = os.path.dirname(os.path.abspath(config))
-        config = read_input_file(config)
+    if config_file:
+        config_folder = os.path.dirname(os.path.abspath(config_file))
+        config = read_input_file(config_file)
     else:
         config = None
 
@@ -38,11 +31,26 @@ def create_all_plots(
             warnings.warn(msg)
         else:
             folder = folder_
+    return config, folder
+
+
+def create_image_plots(
+        config_file=None, folder=None, source_time_function_type=None,
+        frames_per_second=5, cmap=None, movies=True):
+    """
+    Create all image plots/movies for a SW4 run.
+
+    Currently always only uses first patch in each SW4 image file.
+    If the path/filename of the SW4 input file is provided, additional
+    information is included in the plots (e.g. receiver/source location,
+    automatic determination of source time function type, ..)
+    """
+    config, folder = _parse_config_file_and_folder(config_file, folder)
 
     if source_time_function_type is None and config is None:
-        msg = ("No input configuration file specified (option `config`) and "
-               "source time function type not specified explicitely (option "
-               "`source_time_function_type`).")
+        msg = ("No input configuration file specified (option `config_file`) "
+               "and source time function type not specified explicitely "
+               "(option `source_time_function_type`).")
         ValueError(msg)
 
     if not os.path.isdir(folder):
@@ -72,17 +80,19 @@ def create_all_plots(
             fig.savefig(outfile)
             plt.close(fig)
         # if several individual files in the group, also create a movie as .mp4
-        if len(files) > 2:
-            files = sorted(files)
-            movie_filename = re.sub(
-                r'([^.]*)\.cycle=[0-9]*\.(.*?)\.sw4img',
-                r'\1.cycle=XXX.\2.mp4', files[0])
-            image_files_to_movie(
-                files, movie_filename, frames_per_second=frames_per_second,
-                source_time_function_type=source_time_function_type,
-                overwrite=True, cmap=cmap, config=config)
+        if movies:
+            if len(files) > 2:
+                files = sorted(files)
+                movie_filename = re.sub(
+                    r'([^.]*)\.cycle=[0-9]*\.(.*?)\.sw4img',
+                    r'\1.cycle=XXX.\2.mp4', files[0])
+                image_files_to_movie(
+                    files, movie_filename, frames_per_second=frames_per_second,
+                    source_time_function_type=source_time_function_type,
+                    overwrite=True, cmap=cmap, config=config)
 
 if __name__ == "__main__":
-    create_all_plots(
-        # config="/tmp/UH_01_simplemost.in", folder="/tmp/UH_01_simplemost33")
-        config="/tmp/UH_01_simplemost.in")
+    create_image_plots(
+        # config_file="/tmp/UH_01_simplemost.in",
+        # folder="/tmp/UH_01_simplemost33")
+        config_file="/tmp/UH_01_simplemost.in")
