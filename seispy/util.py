@@ -13,6 +13,19 @@ from seispy.config import read_input_file
 
 def _parse_config_file_and_folder(config_file=None, folder=None):
     """
+    Helper function to unify config location (or `None`) and output folder to
+    work on.
+
+    Use cases (in order of preference):
+
+     * `config_file="/path/to/config", folder=None`:
+       Config file is used for metadata and location of output folder
+     * `config_file="/path/to/config", folder="/path/to/output"`:
+       Config file is used for metadata, folder location is specified
+       separately (make sure to not mismatch).
+     * `config_file=None, folder="/path/to/output"`:
+       Do not use metadata from config (station locations etc. will not show up
+       in plots) and only use output files from specified location.
     """
     if config_file is None and folder is None:
         msg = ("At least one of `config_file` or `folder` has to be "
@@ -38,7 +51,7 @@ def _parse_config_file_and_folder(config_file=None, folder=None):
 
 
 def create_image_plots(
-        config_file=None, folder=None, source_time_function_type=None,
+        config_file, folder, source_time_function_type=None,
         frames_per_second=5, cmap=None, movies=True):
     """
     Create all image plots/movies for a SW4 run.
@@ -47,6 +60,27 @@ def create_image_plots(
     If the path/filename of the SW4 input file is provided, additional
     information is included in the plots (e.g. receiver/source location,
     automatic determination of source time function type, ..)
+
+    :type config_file: str
+    :param config_file: Filename (potentially with absolute/relative path) of
+        SW4 input/config file used to control the simulation. Use `None` to
+        work on folder with SW4 output without using metadata from config.
+    :type folder: str
+    :param folder: Folder with SW4 output files or `None` if output folder
+        location can be used from config file. Only needed when no config file
+        is specified or if output folder was moved to a different location
+        after the simulation.
+    :type source_time_function_type: str
+    :param source_time_function_type: `displacement` or `velocity`.
+    :type frames_per_second: float
+    :param frames_per_second: Image frames to show per second in output videos.
+    :type cmap: str or :class:`matplotlib.colors.Colormap`
+    :param cmap: Matplotlib colormap or colormap string understood by
+        matplotlib.
+    :type movies: bool
+    :param movies: Whether to produce movies from image files present at
+        different cycles of the simulation. Needs `ffmpeg` to be installed and
+        callable on command line.
     """
     config, folder = _parse_config_file_and_folder(config_file, folder)
 
@@ -113,6 +147,46 @@ def create_seismogram_plots(
         filter_kwargs=None, channel_map={"-Vz": "Z", "Vx": "N", "Vy": "E"},
         used_stations=None, synthetic_starttime=None):
     """
+    Create all waveform plots, comparing synthetic and observed data.
+
+    Ideally works on a SW4 input/config file, or explicitely on an folder with
+    SW4 output files. Assumes output in SAC format. Observed/real data and
+    station metadata can be specified, along with deconvolution parameters to
+    get to physical units.
+
+    :type config_file: str
+    :param config_file: Filename (potentially with absolute/relative path) of
+        SW4 input/config file used to control the simulation. Use `None` to
+        work on folder with SW4 output without using metadata from config.
+    :type folder: str
+    :param folder: Folder with SW4 output files or `None` if output folder
+        location can be used from config file. Only needed when no config file
+        is specified or if output folder was moved to a different location
+        after the simulation.
+    :type stream_observed: :class:`obspy.core.stream.Stream`
+    :param stream_observed: Observed/real data to compare with synthetics.
+    :type inventory: :class:`obspy.core.inventory.inventory.Inventory`
+    :param inventory: Station metadata for observed/real data.
+    :type water_level: float
+    :param water_level: Water level for instrument response removal (see
+        :meth:`obspy.core.trace.remove_response`).
+    :type pre_filt: 4-tuple of float
+    :param pre_filt: Frequency domain pre-filtering in response removal (see
+        :meth:`obspy.core.trace.Trace.remove_response`).
+    :type filter_kwargs: dict
+    :param filter_kwargs: Filter parameters for filtering applied to observed
+        data after response removal before comparison to synthetic data. Kwargs
+        are passed on to :meth:`obspy.core.stream.Stream.filter`).
+    :type channel_map: dict
+    :param channel_map: Mapping dictionary to match synthetic channel to
+        component in observed data.
+    :type used_stations: list
+    :param used_stations: Station codes to consider in plot output. Use all
+        stations if left `None`.
+    :type synthetic_starttime: :class:`obspy.core.utcdatetime.UTCDateTime`
+    :param synthetic_starttime: Start time of synthetic data, only needed if no
+        config file is specified or if config file did not set the correct
+        origin time of the event.
     """
     config, folder = _parse_config_file_and_folder(config_file, folder)
 
@@ -164,19 +238,28 @@ def create_seismogram_plots(
 def _plot_seismograms(
         st_synth_, st_real_, channel_map, unit_label, outfile, figsize=None):
     """
+    Helper function that plots synthetic vs. real data to an image file.
+
+    :type st_synth: :class:`obspy.core.stream.Stream`
+    :param st_synth: Synthetic waveform data.
+    :type st_real: :class:`obspy.core.stream.Stream`
+    :param st_real: Observed waveform data.
+    :type channel_map: dict
+    :param channel_map: Mapping dictionary to match synthetic channel to
+        component in observed data.
+    :type unit_label: str
+    :param unit_label: Label string for y-axis of waveforms.
+    :type outfile: str
+    :param outfile: Output filename (absolute or relative path) for image
+        including suffix (e.g. png).
+    :type figsize: 2-tuple of floats
+    :param figsize: Matplotlib figure size (inches x/y).
     """
     if figsize is None:
         figsize = (10, len(st_synth_))
 
     fig = plt.figure(figsize=figsize)
     st_synth_.plot(fig=fig)
-
-    # print("Real data:")
-    # print(st_real)
-    # print(st_real.max())
-    # print("Synthetic data:")
-    # print(st_synth)
-    # print(st_synth.max())
 
     for ax in fig.axes:
         id = ax.texts[0].get_text()
@@ -202,10 +285,3 @@ def _plot_seismograms(
     fig.subplots_adjust(left=0.15, hspace=0.0, wspace=0.0)
     fig.savefig(outfile)
     plt.close(fig)
-
-
-if __name__ == "__main__":
-    create_image_plots(
-        # config_file="/tmp/UH_01_simplemost.in",
-        # folder="/tmp/UH_01_simplemost33")
-        config_file="/tmp/UH_01_simplemost.in")

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-- image.py -
-
 Module to handle WPP and SW4 images of Maps or Cross-Sections
 
-By: Omri Volk & Shahar Shani-Kadmiel, June 2015, kadmiel@post.bgu.ac.il
-
+By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
+    kadmiel@post.bgu.ac.il
 """
 import glob
 import os
@@ -59,6 +57,17 @@ class Image(object):
         path_effects.Normal()]
 
     def __init__(self, config=None, source_time_function_type=None):
+        """
+        Initialize an empty Image object, preferentially specifying the config
+        (file) used to do the simulation.
+
+        :type config: str or AttribDict
+        :param config: Configuration (already parsed or filename) used to
+            compute the image output.
+        :type source_time_function_type: str
+        :param source_time_function_type: `displacement` or `velocity`. Only
+            needed if no metadata from original config is used.
+        """
         self.patches = []
         if config is not None and not isinstance(config, AttribDict):
             config = read_input_file(config)
@@ -95,6 +104,8 @@ class Image(object):
     def _read_header(self, f):
         """
         Read SW4 header information and store it in an Image object
+
+        :type f: Open file handle of SW4 image file (at correct position).
         """
         header = np.fromfile(f, SW4_IMAGE_HEADER_DTYPE, 1)[0]
         (self._precision,
@@ -110,8 +121,11 @@ class Image(object):
         """
         Read SW4 patch data and store it in a list of Patch objects
         under Image.patches
+
+        :type f: Open file handle of SW4 image file (at correct position).
         """
-        patch_info = np.fromfile(f,SW4_PATCH_HEADER_DTYPE,self._number_of_patches)
+        patch_info = np.fromfile(
+            f, SW4_PATCH_HEADER_DTYPE, self._number_of_patches)
         for i, header in enumerate(patch_info):
             patch = Patch(number=i, image=self)
             patch._set_header(header)
@@ -124,8 +138,12 @@ class Image(object):
         """
         Plot all (or specific) patches in Image.
 
+        See :meth:`Patch.plot` for args/kwargs.
+
         >>> my_image.plot()  # plots all patches
         >>> my_image.plot(patches=[0, 2])  # plots first and third patch
+
+        :type patches: list of int
         """
         if patches is None:
             for patch in self.patches:
@@ -136,8 +154,8 @@ class Image(object):
 
     def _get_plot_coordinates_from_config(self, key):
         """
-        Gets coordinates for config keys that have x, y, z values (e.g.
-        'source', 'rec') in plotting coordinates for use in :meth:`plot`.
+        Gets coordinates for config keys that have 3D x, y, z values (e.g.
+        'source', 'rec') in 2D plotting coordinates for use in :meth:`plot`.
         """
         if not self._config:
             return None
@@ -225,8 +243,16 @@ class Patch(object):
     """
     A class to hold WPP or SW4 patch data
     """
+    def __init__(self, image=None, number=None):
+        """
+        Initialize an empty Patch object, preferentially specifying the parent
+        Image.
 
-    def __init__(self, number=None, image=None):
+        :type image: :class:`Image`
+        :param image: Parent Image object.
+        :type number: int
+        :param number: Patch index in parent image (starts at `0`).
+        """
         self.number = number
         self._image = image  # link back to the image this patch belongs to
         self.h = None
@@ -271,6 +297,22 @@ class Patch(object):
 
     def plot(self, ax=None, vmin=None, vmax=None, colorbar=True,
              colorbar_label=None, cmap=None, **kwargs):
+        """
+        Plot patch and show plot.
+
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param ax: Use existing axes.
+        :type vmin: float
+        :param vmin: Manually set minimum of color scale.
+        :type vmax: float
+        :param vmax: Manually set maximum of color scale.
+        :type colorbar: bool
+        :param colorbar: Whether to plot colorbar
+        :type colorbar_label: str
+        :param colorbar_label: Label for colorbar
+        :type cmap: :class:`matplotlib.colors.Colormap`
+        :param cmap: Colormap for the plot
+        """
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -442,6 +484,9 @@ def image_files_to_movie(
     :type input_files: str or list
     :param input_files: Wildcarded filename pattern or list of individual
         filenames.
+    :type output_filename: str
+    :param output_filename: Output movie filename ('.mp4' extension will be
+        appended if not already present).
     """
     if not output_filename.endswith(".mp4"):
         output_filename += ".mp4"

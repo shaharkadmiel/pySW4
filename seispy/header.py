@@ -1,10 +1,8 @@
 """
-- dictionaries_and_dtypes.py-
-
 Some dictionaries and data_types for WPP and SW4 image files
 
-By: Omri Volk & Shahar Shani-Kadmiel, June 2015, kadmiel@post.bgu.ac.il
-
+By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
+    kadmiel@post.bgu.ac.il
 """
 import numpy as np
 

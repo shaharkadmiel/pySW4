@@ -7,6 +7,12 @@ def read_input_file(filename):
     Parses an SW4 input file to a nested
     :class:`obspy.core.util.attribdict.AttribDict` / list /
     :class:`obspy.core.util.attribdict.AttribDict` structure.
+
+    :type filename: str
+    :param filename: Filename (potentially with relative/absolute path) of SW4
+        config/input file.
+    :rtype: :class:`obspy.core.util.attribdict.AttribDict`
+    :returns: Parsed SW4 simulation input/config file.
     """
     with open(filename) as fh:
         lines = fh.readlines()
@@ -28,6 +34,14 @@ def _decode_string_value(string_item):
     """
     Converts string representations of int/float to the corresponding Python
     type.
+
+    :type string_item: str
+    :param string_item: Configuration value from SW4 input/config file in its
+        string representation.
+    :rtype: int or float or str
+    :returns: Configuration value from SW4 input/config file as the correct
+        Python type (bool values specified as `0` or `1` in SW4 config will
+        still be of `int` type).
     """
     try:
         return int(string_item)
