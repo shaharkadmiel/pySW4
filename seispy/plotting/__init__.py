@@ -35,4 +35,3 @@ the task (preprocessing, post-processing and runtime visualization).
 """
 from drape import *
 from utils import *
-from image_plot import *
