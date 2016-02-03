@@ -5,11 +5,7 @@ Module to handle WPP and SW4 images of Maps or Cross-Sections
 By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
     kadmiel@post.bgu.ac.il
 """
-import glob
-import os
-import subprocess
 import warnings
-from StringIO import StringIO
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,15 +23,11 @@ except ImportError:
     cmap_sequential = None
     cmap_sequential_r = None
 
-from pySW4.config import read_input_file
-from pySW4.header import (
+from .config import read_input_file
+from .header import (
     IMAGE_HEADER_DTYPE, PATCH_HEADER_DTYPE, IMAGE_PLANE,
     IMAGE_MODE_DISPLACEMENT, IMAGE_MODE_VELOCITY, IMAGE_PRECISION,
     SOURCE_TIME_FUNCTION_TYPE)
-from pySW4.plotting import set_matplotlib_rc_params
-
-
-set_matplotlib_rc_params()
 
 
 class Image(object):
@@ -401,15 +393,15 @@ class Patch(object):
 
 
 def read_image(filename='random', config=None,
-                   source_time_function_type="displacement", verbose=False):
+               source_time_function_type="displacement", verbose=False):
     """
     Read image data, cross-section or map into a SeisPy Image object.
 
     Params:
     --------
 
-    filename : if no filename is passed, by default, a random image is generated
-        if filename is None, an empty Image object is returned.
+    filename : if no filename is passed, by default, a random image is
+        generated if filename is None, an empty Image object is returned.
 
     verbose : if True, print some information while reading the file.
 
@@ -472,90 +464,3 @@ def _create_random_patch():
     patch.ib = 1
     patch.jb = 1
     return patch
-
-
-def image_files_to_movie(
-        input_files, output_filename, config=None,
-        source_time_function_type=None, patch_number=0, frames_per_second=5,
-        overwrite=False, global_colorlimits=True, debug=False, **plot_kwargs):
-    """
-    Convert SW4 images to an mp4 movie using command line ffmpeg.
-
-    :type input_files: str or list
-    :param input_files: Wildcarded filename pattern or list of individual
-        filenames.
-    :type output_filename: str
-    :param output_filename: Output movie filename ('.mp4' extension will be
-        appended if not already present).
-    """
-    if not output_filename.endswith(".mp4"):
-        output_filename += ".mp4"
-    if os.path.exists(output_filename):
-        if overwrite:
-            os.remove(output_filename)
-    if os.path.exists(output_filename):
-        msg = ("Output path '{}' exists.").format(output_filename)
-        raise IOError(msg)
-
-    if isinstance(input_files, str):
-        files = sorted(glob.glob(input_files))
-    else:
-        files = input_files
-
-    # parse all files to determine global value range extrema before doing
-    # the plotting
-    if global_colorlimits:
-        global_min = np.inf
-        global_max = -np.inf
-        for file_ in files:
-            image = read_image(
-                file_, config=config,
-                source_time_function_type=source_time_function_type)
-            patch = image.patches[patch_number]
-            global_min = min(global_min, patch.min)
-            global_max = max(global_max, patch.max)
-        if image.is_divergent:
-            abs_max = max(abs(global_min), abs(global_max))
-            plot_kwargs["vmin"] = -abs_max
-            plot_kwargs["vmax"] = abs_max
-        else:
-            plot_kwargs["vmin"] = global_min
-            plot_kwargs["vmax"] = global_max
-
-    cmdstring = (
-        'ffmpeg', '-loglevel', 'fatal',  '-r', '%d' % frames_per_second,
-        '-f', 'image2pipe', '-vcodec', 'png', '-i', 'pipe:',
-        '-vcodec', 'libx264', '-pass', '1', '-vb', '6M', '-pix_fmt', 'yuv420p',
-        output_filename)
-
-    string_io = StringIO()
-    backend = plt.get_backend()
-    try:
-        plt.switch_backend('AGG')
-        # plot all images and pipe the pngs to ffmpeg
-        for file_ in files:
-            image = read_image(
-                file_, source_time_function_type=source_time_function_type,
-                config=config)
-            patch = image.patches[patch_number]
-            fig, _, _ = patch.plot(**plot_kwargs)
-            fig.savefig(string_io, format='png')
-            plt.close(fig)
-        string_io.seek(0)
-        png_data = string_io.read()
-        string_io.close()
-        sub = subprocess.Popen(cmdstring, stdin=subprocess.PIPE,
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = sub.communicate(png_data)
-        if debug:
-            print("###### ffmpeg stdout")
-            print(stdout)
-            print("###### ffmpeg stderr")
-            print(stderr)
-        sub.wait()
-        for ffmpeg_tmp_file in ("ffmpeg2pass-0.log",
-                                "ffmpeg2pass-0.log.mbtree"):
-            if os.path.exists(ffmpeg_tmp_file):
-                os.remove(ffmpeg_tmp_file)
-    finally:
-        plt.switch_backend(backend)

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+import warnings
 from obspy.core.util import AttribDict
 
 
@@ -52,3 +54,42 @@ def _decode_string_value(string_item):
     except ValueError:
         pass
     return string_item
+
+
+def _parse_config_file_and_folder(config_file=None, folder=None):
+    """
+    Helper function to unify config location (or `None`) and output folder to
+    work on.
+
+    Use cases (in order of preference):
+
+     * `config_file="/path/to/config", folder=None`:
+       Config file is used for metadata and location of output folder
+     * `config_file="/path/to/config", folder="/path/to/output"`:
+       Config file is used for metadata, folder location is specified
+       separately (make sure to not mismatch).
+     * `config_file=None, folder="/path/to/output"`:
+       Do not use metadata from config (station locations etc. will not show up
+       in plots) and only use output files from specified location.
+    """
+    if config_file is None and folder is None:
+        msg = ("At least one of `config_file` or `folder` has to be "
+               "specified.")
+        raise ValueError(msg)
+
+    if config_file:
+        config_folder = os.path.dirname(os.path.abspath(config_file))
+        config = read_input_file(config_file)
+    else:
+        config = None
+
+    if config:
+        folder_ = os.path.join(config_folder, config.fileio[0].path)
+        if folder and os.path.abspath(folder) != folder_:
+            msg = ("Both `config` and `folder` option specified. Overriding "
+                   "folder found in config file ({}) with user specified "
+                   "folder ({}).").format(folder_, folder)
+            warnings.warn(msg)
+        else:
+            folder = folder_
+    return config, folder

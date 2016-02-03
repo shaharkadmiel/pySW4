@@ -1,132 +1,10 @@
 # -*- coding: utf-8 -*-
-import glob
 import os
-import re
-import warnings
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 import obspy
-from pySW4.header import SOURCE_TIME_FUNCTION_TYPE
-from pySW4.image import read_image, image_files_to_movie
-from pySW4.config import read_input_file
-
-
-def _parse_config_file_and_folder(config_file=None, folder=None):
-    """
-    Helper function to unify config location (or `None`) and output folder to
-    work on.
-
-    Use cases (in order of preference):
-
-     * `config_file="/path/to/config", folder=None`:
-       Config file is used for metadata and location of output folder
-     * `config_file="/path/to/config", folder="/path/to/output"`:
-       Config file is used for metadata, folder location is specified
-       separately (make sure to not mismatch).
-     * `config_file=None, folder="/path/to/output"`:
-       Do not use metadata from config (station locations etc. will not show up
-       in plots) and only use output files from specified location.
-    """
-    if config_file is None and folder is None:
-        msg = ("At least one of `config_file` or `folder` has to be "
-               "specified.")
-        raise ValueError(msg)
-
-    if config_file:
-        config_folder = os.path.dirname(os.path.abspath(config_file))
-        config = read_input_file(config_file)
-    else:
-        config = None
-
-    if config:
-        folder_ = os.path.join(config_folder, config.fileio[0].path)
-        if folder and os.path.abspath(folder) != folder_:
-            msg = ("Both `config` and `folder` option specified. Overriding "
-                   "folder found in config file ({}) with user specified "
-                   "folder ({}).").format(folder_, folder)
-            warnings.warn(msg)
-        else:
-            folder = folder_
-    return config, folder
-
-
-def create_image_plots(
-        config_file, folder, source_time_function_type=None,
-        frames_per_second=5, cmap=None, movies=True):
-    """
-    Create all image plots/movies for a SW4 run.
-
-    Currently always only uses first patch in each SW4 image file.
-    If the path/filename of the SW4 input file is provided, additional
-    information is included in the plots (e.g. receiver/source location,
-    automatic determination of source time function type, ..)
-
-    :type config_file: str
-    :param config_file: Filename (potentially with absolute/relative path) of
-        SW4 input/config file used to control the simulation. Use `None` to
-        work on folder with SW4 output without using metadata from config.
-    :type folder: str
-    :param folder: Folder with SW4 output files or `None` if output folder
-        location can be used from config file. Only needed when no config file
-        is specified or if output folder was moved to a different location
-        after the simulation.
-    :type source_time_function_type: str
-    :param source_time_function_type: `displacement` or `velocity`.
-    :type frames_per_second: float
-    :param frames_per_second: Image frames to show per second in output videos.
-    :type cmap: str or :class:`matplotlib.colors.Colormap`
-    :param cmap: Matplotlib colormap or colormap string understood by
-        matplotlib.
-    :type movies: bool
-    :param movies: Whether to produce movies from image files present at
-        different cycles of the simulation. Needs `ffmpeg` to be installed and
-        callable on command line.
-    """
-    config, folder = _parse_config_file_and_folder(config_file, folder)
-
-    if source_time_function_type is None and config is None:
-        msg = ("No input configuration file specified (option `config_file`) "
-               "and source time function type not specified explicitely "
-               "(option `source_time_function_type`).")
-        ValueError(msg)
-
-    if not os.path.isdir(folder):
-        msg = "Not a folder: '{}'".format(folder)
-        raise ValueError(msg)
-
-    all_files = glob.glob(os.path.join(folder, "*.sw4img"))
-    if not all_files:
-        msg = "No *.sw4img files in folder '{}'".format(folder)
-        return Exception(msg)
-
-    # build individual lists, one for each specific property
-    grouped_files = {}
-    for file_ in all_files:
-        # e.g. shakemap.cycle=000.z=0.hmag.sw4img
-        prefix, _, coordinate, type_ = \
-            os.path.basename(file_).rsplit(".", 4)[:-1]
-        grouped_files.setdefault((prefix, coordinate, type_), []).append(file_)
-    for files in grouped_files.values():
-        # create individual plots as .png
-        for file_ in files:
-            image = read_image(
-                file_, source_time_function_type=source_time_function_type,
-                config=config)
-            outfile = file_.rsplit(".", 1)[0] + ".png"
-            fig, _, _ = image.patches[0].plot(cmap=cmap)
-            fig.savefig(outfile)
-            plt.close(fig)
-        # if several individual files in the group, also create a movie as .mp4
-        if movies:
-            if len(files) > 2:
-                files = sorted(files)
-                movie_filename = re.sub(
-                    r'([^.]*)\.cycle=[0-9]*\.(.*?)\.sw4img',
-                    r'\1.cycle=XXX.\2.mp4', files[0])
-                image_files_to_movie(
-                    files, movie_filename, frames_per_second=frames_per_second,
-                    source_time_function_type=source_time_function_type,
-                    overwrite=True, cmap=cmap, config=config)
+from ..core.config import _parse_config_file_and_folder
+from ..core.header import SOURCE_TIME_FUNCTION_TYPE
 
 
 # SW4 uses a right handed coordinate system:
@@ -143,9 +21,10 @@ def create_image_plots(
 #  V
 #   Z
 def create_seismogram_plots(
-        config_file, folder, stream_observed, inventory, water_level, pre_filt,
-        filter_kwargs=None, channel_map={"-Vz": "Z", "Vx": "N", "Vy": "E"},
-        used_stations=None, synthetic_starttime=None):
+        config_file, folder=None, stream_observed=None, inventory=None,
+        water_level=None, pre_filt=None, filter_kwargs=None,
+        channel_map={"-Vz": "Z", "Vx": "N", "Vy": "E"}, used_stations=None,
+        synthetic_starttime=None):
     """
     Create all waveform plots, comparing synthetic and observed data.
 
@@ -201,7 +80,7 @@ def create_seismogram_plots(
         raise NotImplementedError()
 
     st_synth = obspy.read(os.path.join(folder, "*.?v"))
-    st_real = stream_observed
+    st_real = stream_observed or obspy.Stream()
     if used_stations is not None:
         st_synth.traces = [tr for tr in st_synth
                            if tr.stats.station in used_stations]
