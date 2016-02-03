@@ -6,9 +6,9 @@ import warnings
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 import obspy
-from seispy.header import SW4_SOURCE_TIME_FUNCTION_TYPE
-from seispy.image import read_SW4_image, image_files_to_movie
-from seispy.config import read_input_file
+from pySW4.header import SOURCE_TIME_FUNCTION_TYPE
+from pySW4.image import read_image, image_files_to_movie
+from pySW4.config import read_input_file
 
 
 def _parse_config_file_and_folder(config_file=None, folder=None):
@@ -109,7 +109,7 @@ def create_image_plots(
     for files in grouped_files.values():
         # create individual plots as .png
         for file_ in files:
-            image = read_SW4_image(
+            image = read_image(
                 file_, source_time_function_type=source_time_function_type,
                 config=config)
             outfile = file_.rsplit(".", 1)[0] + ".png"
@@ -190,7 +190,7 @@ def create_seismogram_plots(
     """
     config, folder = _parse_config_file_and_folder(config_file, folder)
 
-    stf_type = SW4_SOURCE_TIME_FUNCTION_TYPE[config.source[0].type]
+    stf_type = SOURCE_TIME_FUNCTION_TYPE[config.source[0].type]
     if stf_type == 0:
         evalresp_output = "DISP"
         unit_label = "m"

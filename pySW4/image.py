@@ -27,12 +27,12 @@ except ImportError:
     cmap_sequential = None
     cmap_sequential_r = None
 
-from seispy.config import read_input_file
-from seispy.header import (
-    SW4_IMAGE_HEADER_DTYPE, SW4_PATCH_HEADER_DTYPE, SW4_IMAGE_PLANE,
-    SW4_IMAGE_MODE_DISPLACEMENT, SW4_IMAGE_MODE_VELOCITY, SW4_IMAGE_PRECISION,
-    SW4_SOURCE_TIME_FUNCTION_TYPE)
-from seispy.plotting import set_matplotlib_rc_params
+from pySW4.config import read_input_file
+from pySW4.header import (
+    IMAGE_HEADER_DTYPE, PATCH_HEADER_DTYPE, IMAGE_PLANE,
+    IMAGE_MODE_DISPLACEMENT, IMAGE_MODE_VELOCITY, IMAGE_PRECISION,
+    SOURCE_TIME_FUNCTION_TYPE)
+from pySW4.plotting import set_matplotlib_rc_params
 
 
 set_matplotlib_rc_params()
@@ -84,9 +84,9 @@ class Image(object):
             source_time_function_type = source_time_function_type_
         # set mode code mapping, depending on the type of source time function
         if source_time_function_type == "displacement":
-            self._mode_dict = SW4_IMAGE_MODE_DISPLACEMENT
+            self._mode_dict = IMAGE_MODE_DISPLACEMENT
         elif source_time_function_type == "velocity":
-            self._mode_dict = SW4_IMAGE_MODE_VELOCITY
+            self._mode_dict = IMAGE_MODE_VELOCITY
         else:
             msg = ("Unrecognized 'source_time_function_type': '{}'")
             msg = msg.format(source_time_function_type)
@@ -107,7 +107,7 @@ class Image(object):
 
         :type f: Open file handle of SW4 image file (at correct position).
         """
-        header = np.fromfile(f, SW4_IMAGE_HEADER_DTYPE, 1)[0]
+        header = np.fromfile(f, IMAGE_HEADER_DTYPE, 1)[0]
         (self._precision,
          self._number_of_patches,
          self.time,
@@ -125,7 +125,7 @@ class Image(object):
         :type f: Open file handle of SW4 image file (at correct position).
         """
         patch_info = np.fromfile(
-            f, SW4_PATCH_HEADER_DTYPE, self._number_of_patches)
+            f, PATCH_HEADER_DTYPE, self._number_of_patches)
         for i, header in enumerate(patch_info):
             patch = Patch(number=i, image=self)
             patch._set_header(header)
@@ -200,7 +200,7 @@ class Image(object):
     def source_time_function_type(self):
         if not self._config:
             return None
-        stf_type = SW4_SOURCE_TIME_FUNCTION_TYPE[self._config.source[0].type]
+        stf_type = SOURCE_TIME_FUNCTION_TYPE[self._config.source[0].type]
         return {0: "displacement", 1: "velocity"}.get(stf_type, None)
 
     @property
@@ -213,11 +213,11 @@ class Image(object):
 
     @property
     def precision(self):
-        return SW4_IMAGE_PRECISION[self._precision]
+        return IMAGE_PRECISION[self._precision]
 
     @property
     def plane(self):
-        return SW4_IMAGE_PLANE[self._plane]
+        return IMAGE_PLANE[self._plane]
 
     @property
     def type(self):
@@ -400,7 +400,7 @@ class Patch(object):
             return cb
 
 
-def read_SW4_image(filename='random', config=None,
+def read_image(filename='random', config=None,
                    source_time_function_type="displacement", verbose=False):
     """
     Read image data, cross-section or map into a SeisPy Image object.
@@ -423,13 +423,13 @@ def read_SW4_image(filename='random', config=None,
     image.filename = filename
 
     if filename is 'random':  # generate random data and populate the objects
-        image = _create_random_SW4_image(
+        image = _create_random_image(
             source_time_function_type=source_time_function_type)
     elif filename is None:
         pass
     else:
         if not filename.endswith('.sw4img'):
-            msg = ("Using 'read_SW4_image()' on file with uncommon file "
+            msg = ("Using 'read_image()' on file with uncommon file "
                    "extension: '{}'.").format(filename)
             warnings.warn(msg)
         with open(image.filename, 'rb') as f:
@@ -438,7 +438,7 @@ def read_SW4_image(filename='random', config=None,
     return image
 
 
-def _create_random_SW4_image(source_time_function_type="displacement"):
+def _create_random_image(source_time_function_type="displacement"):
     """
     """
     image = Image(source_time_function_type=source_time_function_type)
@@ -451,11 +451,11 @@ def _create_random_SW4_image(source_time_function_type="displacement"):
     image.max = 0
     image.std = 0
     image.rms = 0
-    image.patches = [_create_random_SW4_patch()]
+    image.patches = [_create_random_patch()]
     return image
 
 
-def _create_random_SW4_patch():
+def _create_random_patch():
     patch = Patch()
     patch.ni = 100
     patch.nj = 200
@@ -508,7 +508,7 @@ def image_files_to_movie(
         global_min = np.inf
         global_max = -np.inf
         for file_ in files:
-            image = read_SW4_image(
+            image = read_image(
                 file_, config=config,
                 source_time_function_type=source_time_function_type)
             patch = image.patches[patch_number]
@@ -534,7 +534,7 @@ def image_files_to_movie(
         plt.switch_backend('AGG')
         # plot all images and pipe the pngs to ffmpeg
         for file_ in files:
-            image = read_SW4_image(
+            image = read_image(
                 file_, source_time_function_type=source_time_function_type,
                 config=config)
             patch = image.patches[patch_number]

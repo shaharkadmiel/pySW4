@@ -7,7 +7,7 @@ By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
 import numpy as np
 
 # image header is 61 bytes
-SW4_IMAGE_HEADER_DTYPE = np.dtype([
+IMAGE_HEADER_DTYPE = np.dtype([
     ('precision', np.int32),
     ('number of patches', np.int32),
     ('time', np.float64),
@@ -18,7 +18,7 @@ SW4_IMAGE_HEADER_DTYPE = np.dtype([
     ('creation time', 'S25')])
 
 # patch header is 32 bytes
-SW4_PATCH_HEADER_DTYPE = np.dtype([
+PATCH_HEADER_DTYPE = np.dtype([
     ('h', np.float64),
     ('zmin', np.float64),
     ('ib', np.int32),
@@ -26,7 +26,7 @@ SW4_PATCH_HEADER_DTYPE = np.dtype([
     ('jb', np.int32),
     ('nj', np.int32)])
 
-SW4_IMAGE_MODE_COMMON = {
+IMAGE_MODE_COMMON = {
     4: {'name': 'Density',
         'symbol': 'rho',
         'cmap_type': "sequential",
@@ -72,7 +72,7 @@ SW4_IMAGE_MODE_COMMON = {
          'cmap_type': "sequential",
          'unit': 'm'},
     }
-SW4_IMAGE_MODE_DISPLACEMENT = {
+IMAGE_MODE_DISPLACEMENT = {
     1: {'name': 'X Displacement',
         'symbol': 'ux',
         'cmap_type': "divergent",
@@ -158,8 +158,8 @@ SW4_IMAGE_MODE_DISPLACEMENT = {
          'cmap_type': "sequential",
          'unit': 'm'},
     }
-SW4_IMAGE_MODE_DISPLACEMENT.update(SW4_IMAGE_MODE_COMMON)
-SW4_IMAGE_MODE_VELOCITY = {
+IMAGE_MODE_DISPLACEMENT.update(IMAGE_MODE_COMMON)
+IMAGE_MODE_VELOCITY = {
     1: {'name': 'X Velocity',
         'symbol': 'ux',
         'cmap_type': "divergent",
@@ -245,14 +245,14 @@ SW4_IMAGE_MODE_VELOCITY = {
          'cmap_type': "sequential",
          'unit': 'm/s'},
     }
-SW4_IMAGE_MODE_VELOCITY.update(SW4_IMAGE_MODE_COMMON)
+IMAGE_MODE_VELOCITY.update(IMAGE_MODE_COMMON)
 
-SW4_IMAGE_PLANE = {0: 'x', 1: 'y', 2: 'z'}
+IMAGE_PLANE = {0: 'x', 1: 'y', 2: 'z'}
 
-SW4_IMAGE_PRECISION = {4: np.float32, 8: np.float64}
+IMAGE_PRECISION = {4: np.float32, 8: np.float64}
 
 # 0: displacement, 1: velocity
-SW4_SOURCE_TIME_FUNCTION_TYPE = {
+SOURCE_TIME_FUNCTION_TYPE = {
     "Gaussian": 1,
     "GaussianInt": 0,
     "Ricker": 1,

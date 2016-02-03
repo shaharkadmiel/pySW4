@@ -20,23 +20,22 @@ def find_packages():
     """
     modules = []
     for dirpath, _, filenames in os.walk(
-            os.path.join(SETUP_DIRECTORY, "seispy")):
+            os.path.join(SETUP_DIRECTORY, "pySW4")):
         if "__init__.py" in filenames:
             modules.append(os.path.relpath(dirpath, SETUP_DIRECTORY))
     return [_i.replace(os.sep, ".") for _i in modules]
 
 
 setup(
-    name="seispy",
+    name="pySW4",
     version="0.1.0",
-    description="A Python Toolbox for processing Seismic-wave propagation "
-                "simulations",
+    description="Python routines for interaction with SW4",
     author="Shahar Shani-Kadmiel, Omry Volk, Tobias Megies",
     author_email="kadmiel@post.bgu.ac.il",
-    url="https://github.com/shaharkadmiel/seispy",
-    download_url="https://github.com/shaharkadmiel/seispy.git",
+    url="https://github.com/shaharkadmiel/pySW4",
+    download_url="https://github.com/shaharkadmiel/pySW4.git",
     install_requires=INSTALL_REQUIRES,
-    keywords=["seispy", "seismology", "SW4", "WPP"],
+    keywords=["pySW4", "seismology", "SW4", "WPP"],
     packages=find_packages(),
     entry_points={},
     classifiers=[
@@ -49,8 +48,8 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         ],
     long_description="""\
-SeisPy is an open-source project dedicated to provide a Python framework for
-processing numerical simulations of seismic-wave propagation in all phases of
-the task (preprocessing, post-processing and runtime visualization).
+pySW4 is an open-source project dedicated to provide a Python framework for
+working with numerical simulations of seismic-wave propagation with SW4 in all
+phases of the task (preprocessing, post-processing and runtime visualization).
 """
 )
