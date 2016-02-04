@@ -34,7 +34,8 @@ def source_frequency(fmax, t0=0):
     """Calculate the angular frequency omega (``freq``) which goes on the source
     command of the WPP inputfile for Gaussian and GaussianInt Source
     Time Functions (GSTF/GISTF). Calculate the optimal t0 parameter for
-    the STF.
+    the STF. t0 must be equal to or greater then this optimal value and STF[0]
+    should be < 1e-8.
     fmax is in Hz
 
     returns: f0, omega, t0"""
