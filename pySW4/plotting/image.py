@@ -9,6 +9,7 @@ import glob
 import os
 import re
 import subprocess
+import warnings
 from StringIO import StringIO
 
 import numpy as np
@@ -79,6 +80,10 @@ def image_files_to_movie(
         else:
             plot_kwargs["vmin"] = global_min
             plot_kwargs["vmax"] = global_max
+        if global_min == np.inf and global_max == -np.inf:
+            msg = ("Invalid global data limits for files '{}'").format(
+                input_files)
+            raise ValueError(msg)
 
     cmdstring = (
         'ffmpeg', '-loglevel', 'fatal',  '-r', '%d' % frames_per_second,
@@ -192,7 +197,12 @@ def create_image_plots(
                 movie_filename = re.sub(
                     r'([^.]*)\.cycle=[0-9]*\.(.*?)\.sw4img',
                     r'\1.cycle=XXX.\2.mp4', files[0])
-                image_files_to_movie(
-                    files, movie_filename, frames_per_second=frames_per_second,
-                    source_time_function_type=source_time_function_type,
-                    overwrite=True, cmap=cmap, config=config)
+                try:
+                    image_files_to_movie(
+                        files, movie_filename,
+                        frames_per_second=frames_per_second,
+                        source_time_function_type=source_time_function_type,
+                        overwrite=True, cmap=cmap, config=config)
+                except Exception as e:
+                    msg = ("Failed to create a movie: {}").format(str(e))
+                    warnings.warn(msg)
