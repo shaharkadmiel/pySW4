@@ -12,6 +12,9 @@ INSTALL_REQUIRES = [
     ]
 SETUP_DIRECTORY = os.path.dirname(os.path.abspath(inspect.getfile(
     inspect.currentframe())))
+ENTRY_POINTS = {
+    'console_scripts': [
+        'pySW4-create-plots = pySW4.core.scripts.plotting:main']}
 
 
 def find_packages():
@@ -37,7 +40,7 @@ setup(
     install_requires=INSTALL_REQUIRES,
     keywords=["pySW4", "seismology", "SW4", "WPP"],
     packages=find_packages(),
-    entry_points={},
+    entry_points=ENTRY_POINTS,
     classifiers=[
         "Programming Language :: Python",
         "Development Status :: 4 - Beta",

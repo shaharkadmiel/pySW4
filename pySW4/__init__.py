@@ -13,8 +13,8 @@
     ____  __  __/ ___/ |     / / // /
    / __ \/ / / /\__ \| | /| / / // /_
   / /_/ / /_/ /___/ /| |/ |/ /__  __/
- / .___/\__, //____/ |__/|__/  /_/   
-/_/    /____/                        
+ / .___/\__, //____/ |__/|__/  /_/
+/_/    /____/
 
 
 
@@ -34,4 +34,4 @@ phases of the task (preprocessing, post-processing and runtime visualization).
     (http://www.gnu.org/copyleft/gpl.html)
     See ./LICENSE.txt
 """
-__version__ = 0.1
+__version__ = "0.1"
