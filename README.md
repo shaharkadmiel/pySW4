@@ -20,3 +20,7 @@ all plots and movies for a SW4 simulation run can be created using the `pySW4-cr
 pySW4-create-plots -c /tmp/UH_01_simplemost.in -s UH1 -s UH2 -s UH3 --pre-filt 0.05,0.1,100,200
    --filter type=lowpass,freq=10,corners=4 ~/data/stations/stationxml/*UH* ~/data/waveforms/*20100622214704*
 ```
+
+![Wavefield](/images/shakemap.cycle=286.z=0.hmag.png)
+![PGV map](/images/shakemap.cycle=477.z=0.hmax.png)
+![Seismograms](/images/seismograms.png)
