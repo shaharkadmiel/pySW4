@@ -7,14 +7,15 @@ INSTALL_REQUIRES = [
     'scipy',
     'matplotlib',
     'obspy',
-    'PIL',
+    # 'PIL',
     'gdal',
     ]
 SETUP_DIRECTORY = os.path.dirname(os.path.abspath(inspect.getfile(
     inspect.currentframe())))
 ENTRY_POINTS = {
     'console_scripts': [
-        'pySW4-create-plots = pySW4.core.scripts.plotting:main']}
+        'pySW4-create-plots = pySW4.core.scripts.plotting:main',
+        'png2mp4 = pySW4.core.scripts.png2mp4:main']}
 
 
 def find_packages():
