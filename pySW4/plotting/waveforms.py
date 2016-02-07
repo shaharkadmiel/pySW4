@@ -12,14 +12,14 @@ from ..core.header import SOURCE_TIME_FUNCTION_TYPE
 #   - Y == Easting
 #   - Z == Vertical (inverted!)
 #
-#    _ X
-#    /`
-#   /
-#  /_____\  y
-#  |     /
-#  |
-#  V
-#   Z
+#          X
+#        ⋰
+#      ⋰
+#     o----->Y
+#     |
+#     |
+#     V
+#     Z
 def create_seismogram_plots(
         config_file, folder=None, stream_observed=None, inventory=None,
         water_level=None, pre_filt=None, filter_kwargs=None,
