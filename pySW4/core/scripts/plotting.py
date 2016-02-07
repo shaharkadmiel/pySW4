@@ -5,7 +5,8 @@ Create all plots for an SW4 simulation run.
 from argparse import ArgumentParser
 import warnings
 
-from obspy import read, Stream, read_inventory, Inventory
+from obspy import read, Stream, read_inventory
+from obspy.station.inventory import Inventory
 
 from pySW4 import __version__
 from pySW4.core.config import _decode_string_value
