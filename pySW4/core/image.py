@@ -118,6 +118,7 @@ class Image(object):
         """
         patch_info = np.fromfile(
             f, PATCH_HEADER_DTYPE, self._number_of_patches)
+
         for i, header in enumerate(patch_info):
             patch = Patch(number=i, image=self)
             patch._set_header(header)
@@ -379,12 +380,23 @@ class Patch(object):
         elif self._image._plane == 2:
             xlabel = "Y"
             ylabel = "X"
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
+        ax.set_xlabel(xlabel + ' [m]')
+        ax.set_ylabel(ylabel + ' [m]')
+
+        # setup the title so that it is not too long
+        # I guess for some purposes you would want the
+        # entire path to show so we might want to just
+        # brake it into lines?
+        # For now I am truncating it at -40: chars and
+        # getting rid of the .sw4img extention... That's
+        # kind of obvious.
+        title = self._image.filename.rsplit('.',1)[0]
+        if len(title) > 40:
+            title = '...' + title[-40:]
 
         fig.suptitle("{}\n{}={}  t={:.2f} seconds".format(
-            self._image.filename, self._image.plane, self._image.coordinate,
-            self._image.time))
+            title, self._image.plane, self._image.coordinate,
+            self._image.time),y=1.03)
 
         try:
             return fig, ax, cb
