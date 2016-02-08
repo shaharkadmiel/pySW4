@@ -20,13 +20,15 @@ def read_input_file(filename):
         lines = fh.readlines()
     config = AttribDict()
     for line in lines:
-        line = line.strip().split()
-        if not line or line[0].startswith("#"):
+        # get rid of comments
+        line = line.split("#")[0].strip()
+        if not line:
             continue
+        line = line.split()
         config_category = config.setdefault(line.pop(0), [])
         config_item = AttribDict()
         for item in line:
-            key, value = item.split("=")
+            key, value = item.split("=", 1)
             config_item[key] = _decode_string_value(value)
         config_category.append(config_item)
     return config
