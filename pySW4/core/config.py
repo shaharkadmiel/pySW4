@@ -16,21 +16,21 @@ def read_input_file(filename):
     :rtype: :class:`obspy.core.util.attribdict.AttribDict`
     :returns: Parsed SW4 simulation input/config file.
     """
-    with open(filename) as fh:
-        lines = fh.readlines()
+
     config = AttribDict()
-    for line in lines:
-        # get rid of comments
-        line = line.split("#")[0].strip()
-        if not line:
-            continue
-        line = line.split()
-        config_category = config.setdefault(line.pop(0), [])
-        config_item = AttribDict()
-        for item in line:
-            key, value = item.split("=", 1)
-            config_item[key] = _decode_string_value(value)
-        config_category.append(config_item)
+    with open(filename) as fh:
+        for line in fh:
+            # get rid of comments
+            line = line.split("#")[0].strip()
+            if not line:
+                continue
+            line = line.split()
+            config_category = config.setdefault(line.pop(0), [])
+            config_item = AttribDict()
+            for item in line:
+                key, value = item.split("=", 1)
+                config_item[key] = _decode_string_value(value)
+            config_category.append(config_item)
     return config
 
 
