@@ -131,12 +131,25 @@ class Image(object):
         """
         Plot all (or specific) patches in Image.
 
-        See :meth:`Patch.plot` for args/kwargs.
-
         >>> my_image.plot()  # plots all patches
         >>> my_image.plot(patches=[0, 2])  # plots first and third patch
 
         :type patches: list of int
+
+        From :meth:`Patch.plot` args/kwargs:
+
+        :type ax: :class:`matplotlib.axes.Axes`
+        :param ax: Use existing axes.
+        :type vmin: float
+        :param vmin: Manually set minimum of color scale.
+        :type vmax: float
+        :param vmax: Manually set maximum of color scale.
+        :type colorbar: bool
+        :param colorbar: Whether to plot colorbar
+        :type colorbar_label: str
+        :param colorbar_label: Label for colorbar
+        :type cmap: :class:`matplotlib.colors.Colormap`
+        :param cmap: Colormap for the plot
         """
         if patches is None:
             for patch in self.patches:
@@ -394,9 +407,9 @@ class Patch(object):
         if len(title) > 40:
             title = '...' + title[-40:]
 
-        fig.suptitle("{}\n{}={}  t={:.2f} seconds".format(
+        ax.set_title("{}\n{}={}  t={:.2f} seconds".format(
             title, self._image.plane, self._image.coordinate,
-            self._image.time),y=1.03)
+            self._image.time), y=1.03, fontsize=12)
 
         try:
             return fig, ax, cb
