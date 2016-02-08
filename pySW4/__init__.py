@@ -36,6 +36,7 @@ phases of the task (preprocessing, post-processing and runtime visualization).
 """
 __version__ = "0.1"
 
-from .core import *
-from .plotting import *
-from .preprocess import *
+from .core.image import read_image
+from .plotting.drape import drape_plot
+import preprocess
+import utils
