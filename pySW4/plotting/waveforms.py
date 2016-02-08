@@ -15,7 +15,7 @@ from ..core.header import SOURCE_TIME_FUNCTION_TYPE
 #          X
 #        ⋰
 #      ⋰
-#     o----->Y
+#     o------->Y
 #     |
 #     |
 #     V
