@@ -237,8 +237,16 @@ class Image(object):
         return self._mode_dict[self._mode]['name']
 
     @property
+    def quantity_altname(self):
+        return self._mode_dict[self._mode]['altname']
+
+    @property
     def quantity_symbol(self):
         return self._mode_dict[self._mode]['symbol']
+
+    @property
+    def quantity_altsymbol(self):
+        return self._mode_dict[self._mode]['altsymbol']
 
     @property
     def quantity_unit(self):
@@ -270,6 +278,7 @@ class Patch(object):
         self.data = None
         self.extent = None
 
+
     def _set_header(self, header):
         """
         Set SW4 patch header information
@@ -280,6 +289,7 @@ class Patch(object):
          self.ni,
          self.jb,
          self.nj) = header
+
 
     def _set_data(self, data):
         self.data = data
@@ -300,6 +310,8 @@ class Patch(object):
         self.max = data.max()
         self.std = data.std()
         self.rms = np.sqrt(np.mean(data**2))
+        self.shape = data.shape
+
 
     def plot(self, ax=None, vmin=None, vmax=None, colorbar=True,
              colorbar_label=None, cmap=None, **kwargs):
