@@ -35,8 +35,9 @@ set_matplotlib_rc_params()
 
 def image_files_to_movie(
         input_files, output_filename, config=None,
-        source_time_function_type=None, patch_number=0, frames_per_second=5,
-        overwrite=False, global_colorlimits=True, debug=False, **plot_kwargs):
+        source_time_function_type=None, patch_number=0,
+        frames_per_second=5, overwrite=False, global_colorlimits=True,
+        debug=False, **plot_kwargs):
     """
     Convert SW4 images to an mp4 movie using command line ffmpeg.
 
@@ -102,6 +103,7 @@ def image_files_to_movie(
                 config=config)
             patch = image.patches[patch_number]
             fig, _, _ = patch.plot(**plot_kwargs)
+            fig.tight_layout()
             fig.savefig(string_io, format='png')
             plt.close(fig)
         string_io.seek(0)
