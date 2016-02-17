@@ -39,7 +39,7 @@ setup(
     url="https://github.com/shaharkadmiel/pySW4",
     download_url="https://github.com/shaharkadmiel/pySW4.git",
     install_requires=INSTALL_REQUIRES,
-    keywords=["pySW4", "seismology", "SW4", "WPP"],
+    keywords=["pySW4", "seismology", "SW4"],
     packages=find_packages(),
     entry_points=ENTRY_POINTS,
     classifiers=[

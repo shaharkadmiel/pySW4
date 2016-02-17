@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-#  Purpose: Placing stations to record synthetic seismograms on WPP and SW4
+#  Purpose: Placing stations to record synthetic seismograms on SW4
 #           simulations
 #   Author: Shahar Shani-Kadmiel
 #           kadmiel@post.bgu.ac.il
@@ -12,7 +12,7 @@
 """
 - stations.py -
 
-Python module for placing stations for recording synthetics in WPP and SW4
+Python module for placing stations for recording synthetics in SW4
 simulations.
 
 By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il
@@ -121,13 +121,17 @@ def place_station(x=None, y=None, lat=None, lon=None, depth=0,
                   name='st', mode='displacement',
                   writeEvery=100, nswe=0, simulator='sw4',
                   infile=None):
-    """This function places synthetic stations at locations (x,y) in grid coordinates
-    or at (lat, lon) in geographical coordinates.
+    """This function places synthetic stations at locations (x,y) in grid
+    coordinates or at (lat, lon) in geographical coordinates.
     A sequence (list or tuple) of station names can be passed on to name.
-    velocity and writeEvery are WPP parameters, see WPP userguide for more info.
+    velocity and writeEvery are SW4 parameters, see SW4 User Guide for more
+    info.
 
-    The function returns a formatted string which can be copied or appended to a WPP inputfile
-    if infile is None or adds the lines to the specified file.
+    If infile is None, the function returns a formatted string which can be
+    copied later to an inputfile. If a SW4 inputfile name is passed, the
+    formated lines are appended at the end of the file and the string '+st'
+    is appended to the file name if not already there. The original inputfile
+    is unaffaected.
     """
 
     if x is not None and y is not None:

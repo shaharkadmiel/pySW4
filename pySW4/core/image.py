@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Module to handle WPP and SW4 images of Maps or Cross-Sections
+Module to handle SW4 images of Maps or Cross-Sections
 
 By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
     kadmiel@post.bgu.ac.il
@@ -32,7 +32,7 @@ from .header import (
 
 class Image(object):
     """
-    A class to hold WPP or SW4 image files
+    A class to hold SW4 image files
     """
     CMAP = {"divergent": cmap_divergent,
             "divergent_r": cmap_divergent_r,
@@ -255,7 +255,7 @@ class Image(object):
 
 class Patch(object):
     """
-    A class to hold WPP or SW4 patch data
+    A class to hold SW4 patch data
     """
     def __init__(self, image=None, number=None):
         """
@@ -432,7 +432,7 @@ class Patch(object):
 def read_image(filename='random', config=None,
                source_time_function_type="displacement", verbose=False):
     """
-    Read image data, cross-section or map into a SeisPy Image object.
+    Read image data, cross-section or map into a pySW4 Image object.
 
     Params:
     --------

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Module to handle WPP and SW4 images of Maps or Cross-Sections
+Module to handle SW4 images of Maps or Cross-Sections
 
 By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
     kadmiel@post.bgu.ac.il

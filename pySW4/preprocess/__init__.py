@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-#  Purpose: Convenience imports for SeisPy
+#  Purpose: Convenience imports for pySW4
 #   Author: Shahar Shani-Kadmiel
 #           kadmiel@post.bgu.ac.il
 #
@@ -9,18 +9,19 @@
 # -----------------------------------------------------------------------------
 """
 
-   _____      _      ____
-  / ___/___  (_)____/ __ \__  __
-  \__ \/ _ \/ / ___/ /_/ / / / /
- ___/ /  __/ (__  ) ____/ /_/ /
-/____/\___/_/____/_/    \__, /
-                       /____/
+                 ______       ____ __
+    ____  __  __/ ___/ |     / / // /
+   / __ \/ / / /\__ \| | /| / / // /_
+  / /_/ / /_/ /___/ /| |/ |/ /__  __/
+ / .___/\__, //____/ |__/|__/  /_/
+/_/    /____/
 
 
-SeisPy: A Python Toolbox for processing Seismic-wave propagation simulations
+
+pySW4: A Python Toolbox for processing Seismic-wave propagation simulations
 ============================================================================
 
-SeisPy is an open-source project dedicated to provide a Python framework for
+pySW4 is an open-source project dedicated to provide a Python framework for
 processing numerical simulations of seismic-wave propagation in all phases of
 the task (preprocessing, post-processing and runtime visualization).
 

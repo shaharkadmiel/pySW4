@@ -281,7 +281,7 @@ def xy2latlon(x, y, origin=(37.0, -118.0), az=0, km2deg=111.3195):
 
     az : float or int, optional, default: 0 degrees
             rotation of the grid aroud the vertical (z-axis),
-            see the WPP User Guide for more information.
+            see the SW4 User Guide for more information.
 
     km2deg : float, optional, default: 111.3195 km
             how many km to a degree.
@@ -310,7 +310,7 @@ def latlon2xy(lat, lon, origin=(37.0, -118.0), az=0, km2deg=111.3195):
 
     az : float or int, optional, default: 0 degrees
             rotation of the grid aroud the vertical (z-axis),
-            see the WPP User Guide for more information.
+            see the SW4 User Guide for more information.
 
     km2deg : float, optional, default: 111.3195 km
             how many km to a degree.

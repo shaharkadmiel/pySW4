@@ -410,7 +410,7 @@ class GeoTIFF(object):
 
 
     def write_topo_file(self, filename):
-        """Write an ASCII Lon, Lat, z file for WPP topography"""
+        """Write an ASCII Lon, Lat, z file for SW4 topography"""
 
         header = '%d %d' %(self.nlon, self.nlat)
         lon,lat = self.lonlat2d()
