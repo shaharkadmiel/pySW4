@@ -14,7 +14,7 @@ try:
     import cv2
 except ImportError:
     warnings.warn('OpenCV not found, you will not be able to use '
-                  'pySW4.utils.resample` in `draft` mode.')
+                  '`pySW4.utils.resample` in `draft` mode.')
 from matplotlib.colors import LinearSegmentedColormap, ColorConverter
 
 def resample(data, extent, shape=None, method='linear',
