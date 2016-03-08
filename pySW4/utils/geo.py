@@ -34,6 +34,7 @@ class GeoTIFF(object):
 
         self.elev = np.array([])
 
+
     def _read(self, filename, rasterBand, verbose=False):
         self.path, self.name = os.path.split(filename)
 
@@ -65,6 +66,7 @@ class GeoTIFF(object):
                      .ExportToProj4()
 
         self.elev = band.ReadAsArray()
+
 
     def __str__(self):
         string = '\nGeoTIFF info:\n'
@@ -251,6 +253,7 @@ class GeoTIFF(object):
         except OSError:
             pass
 
+
     def keep(self, w, e, s, n):
         """
         Keep a subset array from a GeoTIFF file.
@@ -406,6 +409,7 @@ def read_GeoTIFF(filename=None, rasterBand=1, verbose=False):
         tif._read(filename,  rasterBand, verbose)
 
     return tif
+
 
 def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
                  epsg=None, proj4=None,
