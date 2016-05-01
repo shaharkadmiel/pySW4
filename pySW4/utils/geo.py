@@ -10,7 +10,8 @@ By: Shahar Shani-Kadmiel, May 2014, kadmiel@post.bgu.ac.il
 
 from scipy import ndimage
 import numpy as np
-import sys, os, zipfile, shutil, warnings
+import sys, os, zipfile, shutil
+from warnings import warn
 from osgeo import gdal, osr, gdal_array
 
 class GeoTIFF(object):
@@ -43,8 +44,6 @@ class GeoTIFF(object):
             sys.stdout.flush()
 
         src_ds = gdal.Open(filename)
-        if not src_ds:
-            raise IOError('Unable to read GeoTIFF file: {}'.format(filename))
 
         self._src_ds = src_ds
         band = src_ds.GetRasterBand(rasterBand)
@@ -105,22 +104,17 @@ class GeoTIFF(object):
     def resample(self, by=None, to=None, order=3):
         """Method to resample the data either *by* a factor or
         *to* the specified spacing. Uses `scipy.ndimage.zoom`.
-
         ** Watch Out **
         This operation is performed in place on the actual data. The
         raw data will no longer be accessible afterwards. To keep the
         original data, use the copy method `GeoTIFF.copy()` to create
         a copy of the current object.
-
         Params:
         -------
-
         by: if 1, nothing happens
             if < 1, the grid is sub-sampled by the factor
             if > 1, the grid is super-sampled byt the factor
-
         to: the specified spacing to which the grid is resampled to.
-
         order: int,
                 The order of the spline interpolation, default is 3.
                 The order has to be in the range 0-5
@@ -148,16 +142,13 @@ class GeoTIFF(object):
         """Reproject the data from the current projection to the specified
         target projection `epsg` or `proj4` or to match an existing GeoTIFF
         file `match`.
-
         ** Watch Out **
         This operation is performed in place on the actual data. The
         raw data will no longer be accessible afterwards. To keep the
         original data, use the copy method `GeoTIFF.copy()` to create
         a copy of the current object.
-
         Params:
         -------
-
         epsg : target EPSG code.
             a reference number to the EPSG Geodetic Parameter Dataset registry.
             examples of some EPSG codes and their equivalent Proj4 strings are:
@@ -166,23 +157,18 @@ class GeoTIFF(object):
             102009 -> +proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96
                       +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs
             ...
-
         proj4 : target Proj4 string
             if the EPSG code is unknown or a custom projection is required,
             a Proj4 string can be passed.
             See https://trac.osgeo.org/proj/wiki/GenParms for a list of
             general Proj4 parameters.
-
         match : filename of an existing GeoTIFF file or object (already in
             memory) to match size and projection. current data is resampled
             to match the shape and number of pixels of the existing GeoTIFF
             file or object.
-
             It is assumed that both data cover the same extent.
-
         error_threshold : error threshold for transformation approximation
             in pixel units. (default is 0.125 as in gdalwarp)
-
         target_filename : if a target filename is given then the reprojected
             data is saved as target_filename and read into memory replacing
             the current data. This is faster than reprojecting and then
@@ -257,7 +243,6 @@ class GeoTIFF(object):
     def keep(self, w, e, s, n):
         """
         Keep a subset array from a GeoTIFF file.
-
         ** Watch Out **
         This operation is performed in place on the actual data. The
         raw data will no longer be accessible afterwards. To keep the
@@ -303,18 +288,12 @@ class GeoTIFF(object):
                       scale=None, smooth=None):
         """This is a method to create an intensity array that can be used to
         create a shaded relief map.
-
         Params:
         -------
-
         azimuth: direction of light source, degrees from north
-
         altitude: height of light source, degrees above the horizon
-
         scale: scaling value of the data
-
         smooth: number of cells to average before intensity calculation
-
         """
         return calc_intensity(self.elev, azimuth, altitude, scale, smooth)
 
@@ -354,23 +333,15 @@ def calc_intensity(relief, azimuth=315., altitude=45.,
                    scale=None, smooth=None):
     """This is a method to create an intensity array that can be used to
     create a shaded relief map.
-
     Params:
     --------
-
     relief : 2d array of topography or other data to calculate intensity from
-
     azimuth : direction of light source, degrees from north
-
     altitude : height of light source, degrees above the horizon
-
     scale : scaling value of the data, higher number higher gradient
-
     smooth : number of cells to average before intensity calculation
-
     Returns:
     ---------
-
     2d array, same size as `relief`
     """
 
@@ -415,22 +386,14 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
                  epsg=None, proj4=None,
                  dtype=np.int16, nodata=np.nan, rasterBand=1):
     """Save data at a known projection as a GeoTIFF file.
-
     Params:
     -------
-
     filename : name of the output GeoTIFF file
-
     data : a 2d array of data to write to file
-
     tlx : top-left x (usually West-) coordinate of data
-
     tly : top-left y (usually North-) coordinate of data
-
     dx : pixel size of data in the x direction, positive in the East direction
-
     dy : pixel size of data in the y direction, positive in the North direction
-
     epsg : a reference number to the EPSG Geodetic Parameter Dataset registry.
         examples of some EPSG codes and their equivalent Proj4 strings are:
         4326   -> +proj=longlat +datum=WGS84 +no_defs
@@ -438,22 +401,17 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
         102009 -> +proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96
                   +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs
         ...
-
     proj4 : if the EPSG code is unknown or a custom projection is required,
         a Proj4 string can be passed.
         See https://trac.osgeo.org/proj/wiki/GenParms for a list of general
         Proj4 parameters.
-
     dtype : one of following dtypes should be used `numpy.int16` (default),
         `numpy.int32`,`numpy.float32`, or `numpy.float64`.
         * Note that `float` is not the same as `numpy.float32` *
-
     nodata : set the no data value in the GeoTIFF file (default is
         `numpy.nan`). Other options are -9999, -12345 or any other
         value that suits your purpose.
-
     rasterband : the band number to write. (default is 1)
-
     """
 
     if epsg and proj4:
@@ -522,7 +480,7 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
                 if not os.path.exists(fullname + '.zip'):
                     msg = 'Warning! missing file {}. '\
                           'Replacing tile with zeros.'
-                    warnings.warn(msg.format(fullname + '.zip'))
+                    warn(msg.format(fullname + '.zip'))
                     sys.stdout.flush()
                     tiles += [basename]
                     continue
@@ -545,7 +503,6 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
     tiles into memory, stitching them together if needed,
     and cutting to the extent given by lonmin, lonmax,
     latmin, latmax in decimal degrees.
-
     Returns a GeoTIFF class instance"""
 
 
@@ -562,7 +519,7 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
             if not keep_tiles:
                 shutil.rmtree(os.path.split(tile)[0])
 
-        except IOError:
+        except RuntimeError:
             empty = GeoTIFF()
             empty.name = tile
             empty.dtype = np.int16
