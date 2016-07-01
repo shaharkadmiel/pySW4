@@ -40,7 +40,7 @@ class GeoTIFF(object):
         self.path, self.name = os.path.split(filename)
 
         if verbose:
-            print 'Reading GeoTIFF file: %s' %filename
+            print('Reading GeoTIFF file: %s' %filename)
             sys.stdout.flush()
 
         src_ds = gdal.Open(filename)
@@ -471,7 +471,7 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
             f = os.path.join(pwd,basename,basename + '_dem.tif')
 
             if verbose:
-                print f
+                print(f)
 
             if os.path.exists(f):
                 tiles += [f]
@@ -486,7 +486,7 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
                     continue
 
                 if verbose:
-                    print 'Extracting tiles to %s' %pwd
+                    print('Extracting tiles to %s' %pwd)
 
                 with zipfile.ZipFile(fullname + '.zip') as zf:
                     zf.extract(os.path.join(basename,basename+'_dem.tif'))

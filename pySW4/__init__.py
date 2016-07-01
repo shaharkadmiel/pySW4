@@ -38,5 +38,5 @@ __version__ = "0.1"
 
 from .core.image import read_image
 from .plotting.drape import drape_plot
-import preprocess
-import utils
+from . import preprocess
+from . import utils

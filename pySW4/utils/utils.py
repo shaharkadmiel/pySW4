@@ -70,7 +70,7 @@ def resample(data, extent, shape=None, method='linear',
     elif data.ndim == 2:
         Z = data
     else:
-        print 'Error: data must be 3x2d tuple of (XYZ) or 2d Z array'
+        print('Error: data must be 3x2d tuple of (XYZ) or 2d Z array')
 
     w,e,s,n = extent
 
@@ -87,7 +87,7 @@ Accurately interpolating data onto a grid of shape
 %dx%d and extent %.2f,%.2f,%.2f,%.2f using X,Y,Z arrays.
 This may take a while...
             """
-            print message %(ny,nx,w,e,s,n)
+            print(message %(ny,nx,w,e,s,n))
             sys.stdout.flush()
         nx,ny = shape
         xi,yi = np.meshgrid(np.linspace(w, e, nx),
@@ -116,7 +116,7 @@ in the data to points:
 %s
 in the the output grid of shape %dx%d and extent %.2f,%.2f,%.2f,%.2f.
             """
-            print message %(src,dst,nx,ny,w,e,s,n)
+            print(message %(src,dst,nx,ny,w,e,s,n))
             sys.stdout.flush()
         # Compute the transformation matrix which places
         # the corners Z at the corners points bounding the
@@ -245,7 +245,7 @@ def xy2pixel_coordinates(x, y, extent, shape, origin='nw'):
         xc = (x - w)/dx
         yc = (y - s)/dy
     else:
-        print "Error: origin must be 'nw' or 'sw'."
+        print("Error: origin must be 'nw' or 'sw'.")
 
     return xc,yc
 

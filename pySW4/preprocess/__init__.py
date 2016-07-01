@@ -35,8 +35,8 @@ the task (preprocessing, post-processing and runtime visualization).
     See ./LICENSE.txt
 """
 
-from grid_seismograms import grid_seismograms
-from material_model import *
-from source import *
-from stations import *
-from rfileIO import *
+from .grid_seismograms import grid_seismograms
+from .material_model import *
+from .source import *
+from .stations import *
+from .rfileIO import *

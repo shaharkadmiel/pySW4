@@ -35,7 +35,7 @@ the task (preprocessing, post-processing and runtime visualization).
     See ./LICENSE.txt
 """
 
-from fourier_spectrum import fourier_spectrum
-from psde import psde
-from geo import *
-from utils import *
+from .fourier_spectrum import fourier_spectrum
+from .psde import psde
+from .geo import *
+from .utils import *

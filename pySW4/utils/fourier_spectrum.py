@@ -83,13 +83,13 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
     if type(data) in [tuple,list,np.ndarray]:
         if verbose:
             message = """Processing data as a sequence..."""
-            print message
+            print(message)
             sys.stdout.flush()
 
         signal  = np.array(data)
         if delta is None:
-            print 'Error: If data is not an `obspy.core.trace.Trace` object\n'+\
-                  '`delta` must be supplied.'
+            print('Error: If data is not an `obspy.core.trace.Trace` object\n'+\
+                  '`delta` must be supplied.')
             return
 
     # if data is an obspy Trace object
@@ -97,7 +97,7 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
         if verbose:
             message = """
 Processing data as an obspy.core.trace.Trace object..."""
-            print message
+            print(message)
             sys.stdout.flush()
 
         signal = data.data
@@ -111,7 +111,7 @@ Processing data as an obspy.core.trace.Trace object..."""
         if verbose:
             message = """
 Performing FFT on entire signal with %d point, no windoing..."""
-            print message %signal.size
+            print(message %signal.size)
             sys.stdout.flush()
 
         return _fft(signal, delta)
@@ -126,10 +126,10 @@ Performing FFT on entire signal with %d point, no windoing..."""
             stepsize = int(stepsize)
 
         if stepsize > winsize:
-            print 'Error: stepsize must be smaller than or equal to winsize'
+            print('Error: stepsize must be smaller than or equal to winsize')
             return
         if winsize > signal.size:
-            print 'Error: winsize must be smaller than or equal to npts'
+            print('Error: winsize must be smaller than or equal to npts')
             return
 
         overlap = winsize - stepsize
@@ -140,7 +140,7 @@ Performing FFT on entire signal with %d point, no windoing..."""
 Performing FFT on %d long signal with %d windows of size %d points
 and %d points overlap.
 May take a while if winsize or stepsize are small..."""
-            print message %(signal.size, n_of_win, winsize, overlap)
+            print(message %(signal.size, n_of_win, winsize, overlap))
             sys.stdout.flush()
 
         # pad the end of the signal with zeros
