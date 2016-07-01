@@ -7,7 +7,7 @@ INSTALL_REQUIRES = [
     'scipy',
     'matplotlib',
     'obspy',
-    # 'PIL',
+    'pillow',
     'gdal',
     ]
 SETUP_DIRECTORY = os.path.dirname(os.path.abspath(inspect.getfile(
