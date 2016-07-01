@@ -6,6 +6,7 @@ Python module with general utilities.
 By: Shahar Shani-Kadmiel, August 2012, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import sys, warnings
 from scipy.interpolate import griddata

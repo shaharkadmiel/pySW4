@@ -8,7 +8,6 @@
 # Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel
 # This code is distributed under the terms of the GNU General Public License
 # -----------------------------------------------------------------------------
-
 """
 - material_model.py -
 
@@ -18,6 +17,7 @@ domain.
 By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import os
 import numpy as np

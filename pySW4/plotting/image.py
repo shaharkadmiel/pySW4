@@ -5,6 +5,8 @@ Module to handle SW4 images of Maps or Cross-Sections
 By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
     kadmiel@post.bgu.ac.il
 """
+from __future__ import absolute_import, print_function, division
+
 import glob
 import os
 import re

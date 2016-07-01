@@ -7,6 +7,7 @@ gdal.
 By: Shahar Shani-Kadmiel, May 2014, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 from scipy import ndimage
 import numpy as np

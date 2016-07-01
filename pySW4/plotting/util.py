@@ -7,7 +7,6 @@
 # Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel
 # This code is distributed under the terms of the GNU General Public License
 # -----------------------------------------------------------------------------
-
 """
 - utils.py -
 
@@ -16,6 +15,8 @@ Python module with general utilities for making plotting easier.
 By: Shahar Shani-Kadmiel, August 2012, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
+
 from matplotlib import rc
 import numpy as np
 

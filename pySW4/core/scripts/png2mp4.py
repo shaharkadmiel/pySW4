@@ -8,8 +8,6 @@
 # Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel
 # This code is distributed under the terms of the GNU General Public License
 # -----------------------------------------------------------------------------
-
-
 """
 - png2mp4.py -
 
@@ -18,6 +16,7 @@ Python module for creating mp4 animations from a set of sequential png images.
 By: Shahar Shani-Kadmiel, September 2013, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import sys, os, time, argparse
 import subprocess as sub

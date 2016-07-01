@@ -16,6 +16,7 @@ Python module to read and write rfiles.
 By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import os, sys
 import numpy as np
