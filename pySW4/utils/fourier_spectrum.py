@@ -152,7 +152,7 @@ May take a while if winsize or stepsize are small..."""
 
         for i in xrange(n_of_win):
             if verbose:
-                print ('\rFTT window %d out of %d...' %(i+1, n_of_win)),
+                print ('\rFFT window %d out of %d...' %(i+1, n_of_win)),
                 sys.stdout.flush()
 
             start = i*stepsize
