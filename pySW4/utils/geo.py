@@ -10,9 +10,15 @@ By: Shahar Shani-Kadmiel, May 2014, kadmiel@post.bgu.ac.il
 
 from scipy import ndimage
 import numpy as np
-import sys, os, zipfile, shutil
+import sys, os, zipfile, shutil, copy
 from warnings import warn
-from osgeo import gdal, osr, gdal_array
+
+try:
+    from osgeo import gdal, osr, gdal_array
+except ImportError:
+    warnings.warn('gdal not found, you will not be able to use the geo tools'\
+                  ' in `pySW4.utils.geo` unless you install gdal.')
+
 
 class GeoTIFF(object):
     """class for GeoTIFF files"""
@@ -213,9 +219,6 @@ class GeoTIFF(object):
             if type(match) is str:
                 match = read_GeoTIFF(match,1)
 
-            if not dtype:
-                dtype = match.dtype
-
             gdal_dtype = gdal_array.NumericTypeCodeToGDALTypeCode(self.dtype)
             dstSRS.ImportFromProj4(match.proj4)
             dst_ds = gdal.GetDriverByName('GTiff').Create(target_filename,
@@ -249,6 +252,14 @@ class GeoTIFF(object):
         original data, use the copy method `GeoTIFF.copy()` to create
         a copy of the current object.
         """
+
+        if not (self.w < w < self.e or
+                self.w < e < self.e or
+                self.s < s < self.n or
+                self.s < n < self.n):
+            msg = 'One or more of the coordinates given is out of bounds:\n'\
+                  '{} < `w` and `e` < {} and {} < `s` and `n` < {}'
+            raise ValueError(msg.format(self.w, self.e, self.s, self.n))
 
         x_start = int((w - self.w)/self.dx)
         x_stop  = int((e - self.w)/self.dx)+1
@@ -377,7 +388,7 @@ def read_GeoTIFF(filename=None, rasterBand=1, verbose=False):
     if not filename: # return an empty GeoTIFF object
         return tif
     else:
-        tif._read(filename,  rasterBand, verbose)
+        tif._read(filename, rasterBand, verbose)
 
     return tif
 
