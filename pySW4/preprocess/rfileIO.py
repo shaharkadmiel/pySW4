@@ -16,6 +16,7 @@ Python module to read and write rfiles.
 By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import os, sys
 import numpy as np
@@ -115,7 +116,7 @@ def read(filename, verbose=False):
          model.nb) = read_hdr(f)
 
         if verbose:
-            print model
+            print(model)
             flush
 
         for b in range(model.nb):
@@ -132,7 +133,7 @@ def read(filename, verbose=False):
 
             model.blocks += [block]
             if verbose:
-                print block
+                print(block)
                 flush
 
         for b in range(model.nb):

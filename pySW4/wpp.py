@@ -9,6 +9,7 @@ processing phase.
 By: Shahar Shani-Kadmiel, August 2012, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 from matplotlib import rc
 import matplotlib.pyplot as plt
@@ -329,7 +330,7 @@ def visual(watch_for, path_to_watch="./", wait=10):
         after = [f for f in os.listdir (path_to_watch)]
         added = [f for f in after if not f in before]
         if watch_for in added:
-            print watch_for, "was added and is being plotted..."
+            print(watch_for, "was added and is being plotted...")
             #here is where the plotting happens...
 
         before = after
@@ -370,20 +371,20 @@ def readhdr(filename, verbose=True, n_o_p=None, p_i=None):
     elif precision == 8:
         p = "double"
     elif precision == 0 and n_o_p is None:
-        print '''Error: File header is empty.
+        print('''Error: File header is empty.
 Try passing the header information via the defaults keywords:
     n_o_p : int
-    p_i : [float, int,int,int,int]'''
+    p_i : [float, int,int,int,int]''')
     elif precision == 0 and n_o_p is not None:
         precision = 4
         p = '0'
-        print 'Overriding header...'
+        print('Overriding header...')
         number_of_patches = n_o_p
         patch_info = p_i
 
     if verbose:
-        print ("readhdr:    Processing a " + p +
-               " precision image file with " + str(number_of_patches) + " patches.")
+        print("readhdr:    Processing a " + p +
+              " precision image file with " + str(number_of_patches) + " patches.")
 
     return precision, number_of_patches, patch_info, f.tell()
 
@@ -407,8 +408,8 @@ def readonepatch(filename, precision=-1, nx=-1, ny=-1, position=-1, verbose=True
         data = np.fromfile(f, dtype='float64', count=((nx)*(ny)))
 
     if verbose:
-        print ("readonepatch:   Patch max is " + str(data.max()) +
-                ", patch min is " + str(data.min()))
+        print("readonepatch:   Patch max is " + str(data.max()) +
+               ", patch min is " + str(data.min()))
 
     return data.reshape(ny, nx), f.tell()
 
@@ -722,7 +723,7 @@ class ImageFile(object):
 
             # read each patch and append to the list of arrays at index 'i'
             if verbose:
-                print ("read:   Reading patch " + str(i) + ":" )
+                print("read:   Reading patch " + str(i) + ":" )
             data, position = readonepatch(self.filename,
                                                 precision,
                                                 nx, ny,
@@ -750,7 +751,7 @@ class CrossSection(ImageFile):
             self.grid = Grid(patch_info=self.patch_info, verbose=verbose)
         else:
             if verbose:
-                print self.grid_filename
+                print(self.grid_filename)
             self.grid = load_grid(self.grid_filename)
 
         self.extent = self.grid.extent
@@ -891,7 +892,7 @@ class Map(ImageFile):
             self.label_dict['xlabel'] = 'lon.'
             self.label_dict['ylabel'] = 'lat.'
             if verbose:
-                print "Geographical coordinates supplied..."
+                print("Geographical coordinates supplied...")
                 print("longitudes file: %s" %self.coordinate_files[0])
                 print("latitudes file: %s" %self.coordinate_files[1])
             self.lon = raw_read(self.coordinate_files[0])
@@ -1061,7 +1062,7 @@ class Grid(ImageFile):
         else:
             # make and store patch/s data
             if verbose:
-                print "Making a grid..."
+                print("Making a grid...")
             self.Zpatches = []
             self.Hpatches = []
 
@@ -1212,7 +1213,7 @@ class Input_file(object):
                 line = line.strip().rstrip()
 
                 if verbose:
-                    print j, ':', line
+                    print(j, ':', line)
 
                 if line.startswith('#') or len(line) < 2:
                     continue
@@ -1377,7 +1378,7 @@ def read_traces(results_dir, name, components=['xv','yv','zv']):
     traces.di           = di
     traces.ti           = ti
 
-    print traces
+    print(traces)
     return traces
 
 

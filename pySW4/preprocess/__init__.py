@@ -34,9 +34,10 @@ the task (preprocessing, post-processing and runtime visualization).
     (http://www.gnu.org/copyleft/gpl.html)
     See ./LICENSE.txt
 """
+from __future__ import absolute_import, print_function, division
 
-from grid_seismograms import grid_seismograms
-from material_model import *
-from source import *
-from stations import *
-from rfileIO import *
+from .grid_seismograms import grid_seismograms
+from .material_model import *
+from .source import *
+from .stations import *
+from .rfileIO import *

@@ -16,6 +16,7 @@ Python module to help specifying the source for a WPP/SW4 run
 By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import os
 import numpy as np

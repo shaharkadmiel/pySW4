@@ -34,8 +34,9 @@ the task (preprocessing, post-processing and runtime visualization).
     (http://www.gnu.org/copyleft/gpl.html)
     See ./LICENSE.txt
 """
+from __future__ import absolute_import, print_function, division
 
-from fourier_spectrum import fourier_spectrum
-from psde import psde
-from geo import *
-from utils import *
+from .fourier_spectrum import fourier_spectrum
+from .psde import psde
+from .geo import *
+from .utils import *
