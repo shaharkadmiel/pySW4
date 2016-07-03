@@ -438,7 +438,7 @@ def read_image(filename='random', config=None,
     --------
 
     filename : if no filename is passed, by default, a random image is
-        generated if filename is None, an empty Image object is returned.
+        generated. if filename is None, an empty Image object is returned.
 
     verbose : if True, print some information while reading the file.
 
