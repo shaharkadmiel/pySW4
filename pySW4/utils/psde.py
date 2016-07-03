@@ -7,6 +7,7 @@ spectral density of a signal.
 By: Shahar Shani-Kadmiel, August 2015, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import sys
 import numpy as np
@@ -86,13 +87,13 @@ def psde(data, womean=False, winsize='default', stepsize=None,
     if type(data) in [tuple,list,np.ndarray]:
         if verbose:
             message = """Processing data as a sequence..."""
-            print message
+            print(message)
             sys.stdout.flush()
 
         signal  = np.array(data)
         if delta is None:
-            print 'Error: If data is not an `obspy.core.trace.Trace` object\n'+\
-                  '`delta` must be supplied.'
+            print('Error: If data is not an `obspy.core.trace.Trace` object\n'+\
+                  '`delta` must be supplied.')
             return
 
     # if data is an obspy Trace object
@@ -100,7 +101,7 @@ def psde(data, womean=False, winsize='default', stepsize=None,
         if verbose:
             message = """
 Processing data as an obspy.core.trace.Trace object..."""
-            print message
+            print(message)
             sys.stdout.flush()
 
         signal = data.data
@@ -113,7 +114,7 @@ Processing data as an obspy.core.trace.Trace object..."""
         if verbose:
             message = """
 Performing FFT on padded signal with %d point, no windoing..."""
-            print message %winsize
+            print(message %winsize)
             sys.stdout.flush()
 
     # fft the entire signal, no windoing...
@@ -123,7 +124,7 @@ Performing FFT on padded signal with %d point, no windoing..."""
         if verbose:
             message = """
 Performing FFT on entire signal with %d point, no windoing..."""
-            print message %winsize
+            print(message %winsize)
             sys.stdout.flush()
 
     # cut the signal into chuncks
@@ -134,7 +135,7 @@ Performing FFT on entire signal with %d point, no windoing..."""
 
         noverlap = winsize - stepsize
         if noverlap < 0:
-                print 'Error: stepsize must be smaller than or equal to winsize'
+                print('Error: stepsize must be smaller than or equal to winsize')
                 return
         n_of_win = signal.size//(winsize - noverlap)
 
@@ -143,7 +144,7 @@ Performing FFT on entire signal with %d point, no windoing..."""
 Performing FFT on %d long signal with %d windows of size %d points
 and %d points overlap.
 May take a while if winsize or stepsize are small..."""
-            print message %(signal.size, n_of_win, winsize, noverlap)
+            print(message %(signal.size, n_of_win, winsize, noverlap))
             sys.stdout.flush()
 
     if womean:

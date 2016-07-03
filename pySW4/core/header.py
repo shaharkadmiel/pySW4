@@ -4,6 +4,8 @@ Some dictionaries and data_types SW4 image files
 By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
     kadmiel@post.bgu.ac.il
 """
+from __future__ import absolute_import, print_function, division
+
 import numpy as np
 
 # image header is 61 bytes

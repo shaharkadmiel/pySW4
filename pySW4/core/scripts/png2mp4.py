@@ -8,8 +8,6 @@
 # Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel
 # This code is distributed under the terms of the GNU General Public License
 # -----------------------------------------------------------------------------
-
-
 """
 - png2mp4.py -
 
@@ -18,6 +16,7 @@ Python module for creating mp4 animations from a set of sequential png images.
 By: Shahar Shani-Kadmiel, September 2013, kadmiel@post.bgu.ac.il
 
 """
+from __future__ import absolute_import, print_function, division
 
 import sys, os, time, argparse
 import subprocess as sub
@@ -63,7 +62,7 @@ def png2mp4(outfile, inpath='./', crf=23, pts=1, fps=30, verbose=True):
         outfile += '.mp4'
 
     if verbose:
-        print '*** converting sequencial png files to mp4...\n'
+        print('*** converting sequencial png files to mp4...\n')
         sys.stdout.flush()
 
     t = time.time()
@@ -76,10 +75,10 @@ def png2mp4(outfile, inpath='./', crf=23, pts=1, fps=30, verbose=True):
     command = command.split()
 
     if verbose:
-        print '***\ncalling %s with the following arguments:\n' %command[0]
+        print('***\ncalling %s with the following arguments:\n' %command[0])
         for item in command[1:]:
-            print item,
-        print '\n***\n'
+            print(item, end="")
+        print('\n***\n')
         sys.stdout.flush()
 
     time.sleep(1)
@@ -91,7 +90,7 @@ def png2mp4(outfile, inpath='./', crf=23, pts=1, fps=30, verbose=True):
     p.wait()
 
     if verbose:
-        print '\n******\nconvertion took %f seconds' %(time.time()-t)
+        print('\n******\nconvertion took %f seconds' %(time.time()-t))
 
 
 def main(argv=None):

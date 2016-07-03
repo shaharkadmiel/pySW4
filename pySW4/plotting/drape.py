@@ -7,6 +7,7 @@
 # Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel
 # This code is distributed under the terms of the GNU General Public License
 # -----------------------------------------------------------------------------
+from __future__ import absolute_import, print_function, division
 
 import numpy as np
 import matplotlib.pyplot as plt
