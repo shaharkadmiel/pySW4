@@ -84,7 +84,10 @@ def png2mp4(outfile, inpath='./', crf=23, pts=1, fps=30, verbose=True):
 
     time.sleep(1)
 
-    p = sub.Popen(command)
+    p = sub.Popen(command,
+                  stdin=sub.PIPE,
+                  stdout=sub.PIPE,
+                  stderr=sub.PIPE)
     p.wait()
 
     if verbose:
