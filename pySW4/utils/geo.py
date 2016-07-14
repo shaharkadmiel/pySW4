@@ -12,7 +12,7 @@ from __future__ import absolute_import, print_function, division
 from scipy import ndimage
 import numpy as np
 import sys, os, zipfile, shutil, copy
-from warnings import warn
+import warnings
 
 try:
     from osgeo import gdal, osr, gdal_array
