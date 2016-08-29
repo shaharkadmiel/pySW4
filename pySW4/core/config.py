@@ -1,4 +1,28 @@
 # -*- coding: utf-8 -*-
+"""
+Parsing routines for SW4 input files and directories.
+
+.. module:: config
+
+:author:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
+
+:copyright:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
+
+:license:
+    This code is distributed under the terms of the
+    GNU Lesser General Public License, Version 3
+    (https://www.gnu.org/copyleft/lesser.html)
+"""
 from __future__ import absolute_import, print_function, division
 
 import os
@@ -9,14 +33,19 @@ from obspy.core.util import AttribDict
 def read_input_file(filename):
     """
     Parses an SW4 input file to a nested
-    :class:`obspy.core.util.attribdict.AttribDict` / list /
-    :class:`obspy.core.util.attribdict.AttribDict` structure.
+    :class:`obspy.core.util.attribdict.AttribDict` list of
+    :class:`~obspy.core.util.attribdict.AttribDict` structure.
 
-    :type filename: str
-    :param filename: Filename (potentially with relative/absolute path) of SW4
+    Parameters
+    ----------
+    filename : str
+        Filename (potentially with relative/absolute path) of SW4
         config/input file.
-    :rtype: :class:`obspy.core.util.attribdict.AttribDict`
-    :returns: Parsed SW4 simulation input/config file.
+
+    Returns
+    -------
+    :class:`obspy.core.util.attribdict.AttribDict`
+        Parsed SW4 simulation input/config file.
     """
 
     config = AttribDict()
@@ -38,17 +67,23 @@ def read_input_file(filename):
 
 def _decode_string_value(string_item):
     """
-    Converts string representations of int/float to the corresponding Python
-    type.
+    Converts string representations of int/float to the corresponding
+    Python type.
 
-    :type string_item: str
-    :param string_item: Configuration value from SW4 input/config file in its
-        string representation.
-    :rtype: int or float or str
-    :returns: Configuration value from SW4 input/config file as the correct
-        Python type (bool values specified as `0` or `1` in SW4 config will
-        still be of `int` type).
+    Parameters
+    ----------
+    string_item: str
+        Configuration value from SW4 input/config file in its string
+        representation.
+
+    Returns
+    -------
+    int or float or str
+        Configuration value from SW4 input/config file as the correct
+        Python type (bool values specified as `0` or `1` in SW4 config
+        will still be of `int` type).
     """
+
     try:
         return int(string_item)
     except ValueError:
@@ -62,19 +97,20 @@ def _decode_string_value(string_item):
 
 def _parse_config_file_and_folder(config_file=None, folder=None):
     """
-    Helper function to unify config location (or `None`) and output folder to
-    work on.
+    Helper function to unify config location (or `None`) and output
+    folder to work on.
 
     Use cases (in order of preference):
 
-     * `config_file="/path/to/config", folder=None`:
+     * ``config_file="/path/to/config", folder=None``:
        Config file is used for metadata and location of output folder
-     * `config_file="/path/to/config", folder="/path/to/output"`:
+     * ``config_file="/path/to/config", folder="/path/to/output"``:
        Config file is used for metadata, folder location is specified
        separately (make sure to not mismatch).
-     * `config_file=None, folder="/path/to/output"`:
-       Do not use metadata from config (station locations etc. will not show up
-       in plots) and only use output files from specified location.
+     * ``config_file=None, folder="/path/to/output"``:
+       Do not use metadata from config (station locations etc. will not
+       show up in plots) and only use output files from specified
+       location.
     """
     if config_file is None and folder is None:
         msg = ("At least one of `config_file` or `folder` has to be "

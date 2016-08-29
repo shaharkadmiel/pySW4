@@ -217,6 +217,7 @@ def get_corners(x,y):
 
     return xc,yc
 
+
 def line_in_loglog(x, m, b):
     """
     Function to calculate the y values of a line

@@ -1,9 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-Module to handle SW4 images of Maps or Cross-Sections
+Python module to handle SW4 images of Maps or Cross-Sections.
 
-By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
-    kadmiel@post.bgu.ac.il
+.. module:: image
+
+:author:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
+
+:copyright:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
+
+:license:
+    This code is distributed under the terms of the
+    GNU Lesser General Public License, Version 3
+    (https://www.gnu.org/copyleft/lesser.html)
 """
 from __future__ import absolute_import, print_function, division
 
@@ -34,34 +52,45 @@ from .header import (
 
 class Image(object):
     """
-    A class to hold SW4 image files
+    A class to hold SW4 image files.
+
+    Initialize an empty Image object, preferentially specifying the
+    config (file) used to run the simulation.
+
+    Parameters
+    ----------
+    config : str or :class:`~obspy.core.util.attribdict.AttribDict`
+        Configuration (already parsed or filename) used to compute the
+        image output.
+
+    source_time_function_type : str
+        `'displacement'` or `'velocity'`. Only needed if no metadata
+        from original config is used.
     """
-    CMAP = {"divergent": cmap_divergent,
-            "divergent_r": cmap_divergent_r,
-            "sequential": cmap_sequential,
-            "sequential_r": cmap_sequential_r}
+    CMAP = {"divergent"    : cmap_divergent,
+            "divergent_r"  : cmap_divergent_r,
+            "sequential"   : cmap_sequential,
+            "sequential_r" : cmap_sequential_r}
     MPL_SCATTER_PROPERTIES = {
-        "source": {"s": 200, "marker": "*", "edgecolors": "k",
-                   "facecolors": "", "alpha": 1, "linewidths": 1.5},
-        "rec": {"s": 200, "marker": "v", "edgecolors": "k",
-                "facecolors": "", "alpha": 1, "linewidths": 1.5},
+        "source" : {"s"          : 200,
+                    "marker"     : "*",
+                    "edgecolors" : "k",
+                    "facecolors" : "",
+                    "alpha"      : 1,
+                    "linewidths" : 1.5},
+        "rec"    : {"s"          : 200,
+                    "marker"     : "v",
+                    "edgecolors" : "k",
+                    "facecolors" : "",
+                    "alpha"      : 1,
+                    "linewidths" : 1.5}
         }
     MPL_SCATTER_PATH_EFFECTS = [
-        path_effects.Stroke(linewidth=1.5+0.7, foreground='w'),
+        path_effects.Stroke(linewidth=1.5 + 0.7, foreground='w'),
         path_effects.Normal()]
 
     def __init__(self, config=None, source_time_function_type=None):
-        """
-        Initialize an empty Image object, preferentially specifying the config
-        (file) used to do the simulation.
 
-        :type config: str or AttribDict
-        :param config: Configuration (already parsed or filename) used to
-            compute the image output.
-        :type source_time_function_type: str
-        :param source_time_function_type: `displacement` or `velocity`. Only
-            needed if no metadata from original config is used.
-        """
         self.patches = []
         if config is not None and not isinstance(config, AttribDict):
             config = read_input_file(config)
@@ -97,9 +126,13 @@ class Image(object):
 
     def _read_header(self, f):
         """
-        Read SW4 header information and store it in an Image object
+        Read SW4 header information and store it in an :class:`~.Image`
+        object.
 
-        :type f: Open file handle of SW4 image file (at correct position).
+        Parameters
+        ----------
+        f : file
+            Open file handle of SW4 image file (at correct position).
         """
         header = np.fromfile(f, IMAGE_HEADER_DTYPE, 1)[0]
         (self._precision,
@@ -113,10 +146,13 @@ class Image(object):
 
     def _read_patches(self, f):
         """
-        Read SW4 patch data and store it in a list of Patch objects
-        under Image.patches
+        Read SW4 patch data and store it in a list of :class:`~.Patch`
+        objects under :obj:`~.Image.patches`.
 
-        :type f: Open file handle of SW4 image file (at correct position).
+        Parameters
+        ----------
+        f : file
+            Open file handle of SW4 image file (at correct position).
         """
         patch_info = np.fromfile(
             f, PATCH_HEADER_DTYPE, self._number_of_patches)
@@ -124,34 +160,48 @@ class Image(object):
         for i, header in enumerate(patch_info):
             patch = Patch(number=i, image=self)
             patch._set_header(header)
-            data = np.fromfile(f, self.precision, patch.ni*patch.nj)
+            data = np.fromfile(f, self.precision, patch.ni * patch.nj)
             data = data.reshape(patch.nj, patch.ni)
             patch._set_data(data)
             self.patches.append(patch)
 
     def plot(self, patches=None, *args, **kwargs):
         """
-        Plot all (or specific) patches in Image.
+        Plot all (or specific) patches in :class:`~.Image`.
 
+        Parameters
+        ----------
+        patches : list of int
+            Patches to plot
+
+
+        .. rubric:: **Other keywoard arguments from**
+            :meth:`.Patch.plot` **args/kwargs:**
+
+        Keyword Arguments
+        -----------------
+        ax : :class:`~matplotlib.axes.Axes`
+            Use existing axes.
+
+        vmin : float
+            Manually set minimum of color scale.
+
+        vmax : float
+            Manually set maximum of color scale.
+
+        colorbar : bool
+            Whether to plot colorbar.
+
+        colorbar_label : str
+            Label for colorbar.
+
+        cmap : :class:`~matplotlib.colors.Colormap`
+            Colormap for the plot
+
+        Example
+        -------
         >>> my_image.plot()  # plots all patches
         >>> my_image.plot(patches=[0, 2])  # plots first and third patch
-
-        :type patches: list of int
-
-        From :meth:`Patch.plot` args/kwargs:
-
-        :type ax: :class:`matplotlib.axes.Axes`
-        :param ax: Use existing axes.
-        :type vmin: float
-        :param vmin: Manually set minimum of color scale.
-        :type vmax: float
-        :param vmax: Manually set maximum of color scale.
-        :type colorbar: bool
-        :param colorbar: Whether to plot colorbar
-        :type colorbar_label: str
-        :param colorbar_label: Label for colorbar
-        :type cmap: :class:`matplotlib.colors.Colormap`
-        :param cmap: Colormap for the plot
         """
         if patches is None:
             for patch in self.patches:
@@ -162,8 +212,9 @@ class Image(object):
 
     def _get_plot_coordinates_from_config(self, key):
         """
-        Gets coordinates for config keys that have 3D x, y, z values (e.g.
-        'source', 'rec') in 2D plotting coordinates for use in :meth:`plot`.
+        Gets coordinates for config keys that have 3D x, y, z values
+        (e.g. 'source', 'rec') in 2D plotting coordinates for use in
+        :meth:`.plot`.
         """
         if not self._config:
             return None
@@ -257,18 +308,21 @@ class Image(object):
 
 class Patch(object):
     """
-    A class to hold SW4 patch data
+    A class to hold SW4 patch data.
+
+    Initialize an empty Patch object, preferentially specifying the
+    parent :class:`.Image`.
+
+    Parameters
+    ----------
+    image : :class:`.Image`
+        Parent Image object.
+
+    number : int
+        Patch index in parent image (starts at `0`).
     """
     def __init__(self, image=None, number=None):
-        """
-        Initialize an empty Patch object, preferentially specifying the parent
-        Image.
 
-        :type image: :class:`Image`
-        :param image: Parent Image object.
-        :type number: int
-        :param number: Patch index in parent image (starts at `0`).
-        """
         self.number = number
         self._image = image  # link back to the image this patch belongs to
         self.h = None
@@ -280,7 +334,6 @@ class Patch(object):
         self.data = None
         self.extent = None
 
-
     def _set_header(self, header):
         """
         Set SW4 patch header information
@@ -291,7 +344,6 @@ class Patch(object):
          self.ni,
          self.jb,
          self.nj) = header
-
 
     def _set_data(self, data):
         self.data = data
@@ -314,24 +366,36 @@ class Patch(object):
         self.rms = np.sqrt(np.mean(data**2))
         self.shape = data.shape
 
-
     def plot(self, ax=None, vmin=None, vmax=None, colorbar=True,
              colorbar_label=None, cmap=None, **kwargs):
         """
         Plot patch and show plot.
 
-        :type ax: :class:`matplotlib.axes.Axes`
-        :param ax: Use existing axes.
-        :type vmin: float
-        :param vmin: Manually set minimum of color scale.
-        :type vmax: float
-        :param vmax: Manually set maximum of color scale.
-        :type colorbar: bool
-        :param colorbar: Whether to plot colorbar
-        :type colorbar_label: str
-        :param colorbar_label: Label for colorbar
-        :type cmap: :class:`matplotlib.colors.Colormap`
-        :param cmap: Colormap for the plot
+        Parameters
+        ----------
+        ax : :class:`~matplotlib.axes.Axes`
+            Use existing axes.
+
+        vmin : float
+            Manually set minimum of color scale.
+
+        vmax : float
+            Manually set maximum of color scale.
+
+        colorbar : bool
+            Whether to plot colorbar.
+
+        colorbar_label : str
+            Label for colorbar.
+
+        cmap : :class:`~matplotlib.colors.Colormap`
+            Colormap for the plot
+
+
+        Note
+        ----
+        For other keywoard arguments (``**kwargs``) see:
+        :func:`matplotlib.pyplot.imshow`.
         """
 
         if ax is None:
@@ -390,8 +454,8 @@ class Patch(object):
                     name=self._image.quantity_name,
                     unit=self._image.quantity_unit)
             cb = plt.colorbar(im, cax=cax, extend=extend, label=colorbar_label)
-            # invert Z axis for cross-section plots and certain quantities that
-            # usually increase with depths
+            # invert Z axis for cross-section plots and certain
+            # quantities that usually increase with depths
             if self._image.is_cross_section and \
                     self._image._mode in (4, 7, 8):
                 cax.invert_yaxis()
@@ -417,7 +481,7 @@ class Patch(object):
         # For now I am truncating it at -40: chars and
         # getting rid of the .sw4img extention... That's
         # kind of obvious.
-        title = self._image.filename.rsplit('.',1)[0]
+        title = self._image.filename.rsplit('.', 1)[0]
         if len(title) > 40:
             title = '...' + title[-40:]
 
@@ -434,26 +498,39 @@ class Patch(object):
 def read_image(filename='random', config=None,
                source_time_function_type="displacement", verbose=False):
     """
-    Read image data, cross-section or map into a pySW4 Image object.
+    Read image data, cross-section or map into a
+    :class:`.Image` object.
 
-    Params:
-    --------
+    Parameters
+    ----------
+    filename : str
+        If no filename is passed, by default, a random image is
+        generated. if filename is ``None``, an empty :class:`.Image`
+        object is returned.
 
-    filename : if no filename is passed, by default, a random image is
-        generated. if filename is None, an empty Image object is returned.
+    config : str or AttribDict
+        Configuration (already parsed or filename) used to compute the
+        image output.
 
-    verbose : if True, print some information while reading the file.
+    source_time_function_type : str
+        `'displacement'` or `'velocity'`. Only needed if no metadata
+        from original config is used.
 
-    Returns:
-    ---------
+    verbose : bool
+        If set to ``True``, print some information while reading the
+        file.
 
-    an Image object with a list of Patch objects
+    Returns
+    -------
+    :class:`.Image`
+        An :class:`~.Image` object with a list of :class:`~.Patch`
+        objects.
     """
     image = Image(source_time_function_type=source_time_function_type,
                   config=config)
     image.filename = filename
 
-    if filename is 'random':  # generate random data and populate the objects
+    if filename is 'random':  # generate random data, populate objects
         image = _create_random_image(
             source_time_function_type=source_time_function_type)
     elif filename is None:
@@ -470,8 +547,6 @@ def read_image(filename='random', config=None,
 
 
 def _create_random_image(source_time_function_type="displacement"):
-    """
-    """
     image = Image(source_time_function_type=source_time_function_type)
     image.filename = None
     image._number_of_patches = 1

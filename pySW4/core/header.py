@@ -1,8 +1,27 @@
+# -*- coding: utf-8 -*-
 """
-Some dictionaries and data_types SW4 image files
+Some dictionaries and data_types for SW4 output files.
 
-By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,
-    kadmiel@post.bgu.ac.il
+.. module:: header
+
+:author:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
+
+:copyright:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
+
+:license:
+    This code is distributed under the terms of the
+    GNU Lesser General Public License, Version 3
+    (https://www.gnu.org/copyleft/lesser.html)
 """
 from __future__ import absolute_import, print_function, division
 
@@ -270,19 +289,19 @@ IMAGE_PRECISION = {4: np.float32, 8: np.float64}
 
 # 0: displacement, 1: velocity
 SOURCE_TIME_FUNCTION_TYPE = {
-    "Gaussian": 1,
-    "GaussianInt": 0,
-    "Ricker": 1,
-    "RickerInt": 1,
-    "Brune": 0,
-    "BruneSmoothed": 0,
-    "Liu": 0,
-    "Triangle": 1,
-    "Sawtooth": 1,
-    "Ramp": 0,
-    "Smoothwave": 1,
-    "VerySmoothBump": 1,
-    "C6SmoothBump": 1,
-    "GaussianWindow": 1,
-    "Dirac": 1,
+    "Gaussian"       : 1,
+    "GaussianInt"    : 0,
+    "Ricker"         : 1,
+    "RickerInt"      : 1,
+    "Brune"          : 0,
+    "BruneSmoothed"  : 0,
+    "Liu"            : 0,
+    "Triangle"       : 1,
+    "Sawtooth"       : 1,
+    "Ramp"           : 0,
+    "Smoothwave"     : 1,
+    "VerySmoothBump" : 1,
+    "C6SmoothBump"   : 1,
+    "GaussianWindow" : 1,
+    "Dirac"          : 1,
     }

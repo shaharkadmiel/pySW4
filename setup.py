@@ -10,11 +10,12 @@ INSTALL_REQUIRES = [
     'pillow',
     'gdal',
     ]
+
 SETUP_DIRECTORY = os.path.dirname(os.path.abspath(inspect.getfile(
     inspect.currentframe())))
 ENTRY_POINTS = {
     'console_scripts': [
-        'pySW4-create-plots = pySW4.core.scripts.plotting:main',
+        'pySW4-create-plots = pySW4.core.scripts.create_all_plots:main',
         'png2mp4 = pySW4.core.scripts.png2mp4:main']}
 
 
@@ -29,10 +30,14 @@ def find_packages():
             modules.append(os.path.relpath(dirpath, SETUP_DIRECTORY))
     return [_i.replace(os.sep, ".") for _i in modules]
 
+# get the package version from from the main __init__ file.
+for line in open('pySW4/__init__.py'):
+    if '__version__' in line:
+        package_version = line.split()[-1]
 
 setup(
     name="pySW4",
-    version="0.1.0",
+    version=package_version,
     description="Python routines for interaction with SW4",
     author="Shahar Shani-Kadmiel, Omry Volk, Tobias Megies",
     author_email="kadmiel@post.bgu.ac.il",
@@ -51,9 +56,9 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Libraries :: Python Modules",
         ],
-    long_description="""\
-pySW4 is an open-source project dedicated to provide a Python framework for
-working with numerical simulations of seismic-wave propagation with SW4 in all
-phases of the task (preprocessing, post-processing and runtime visualization).
-"""
-)
+    long_description='pySW4 is an open-source project dedicated to '
+                     'provide a Python framework for working with '
+                     'numerical simulations of seismic-wave propagation '
+                     'with SW4 in all phases of the task (preprocessing, '
+                     'post-processing and runtime visualization).'
+    )
