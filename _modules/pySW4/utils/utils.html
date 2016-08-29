@@ -1,0 +1,426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.utils.utils &mdash; pySW4 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 0.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pySW4.utils.utils</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">- utils.py -</span>
+
+<span class="sd">Python module with general utilities.</span>
+
+<span class="sd">By: Shahar Shani-Kadmiel, August 2012, kadmiel@post.bgu.ac.il</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cv2</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;OpenCV not found, you will not be able to use &#39;</span>
+                  <span class="s1">&#39;`pySW4.utils.resample` in `draft` mode.&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="k">import</span> <span class="n">LinearSegmentedColormap</span><span class="p">,</span> <span class="n">ColorConverter</span>
+
+<div class="viewcode-block" id="resample"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.resample">[docs]</a><span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+             <span class="n">draft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;nw&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Resample or interpolate an array on to a grid with new extent.</span>
+<span class="sd">    If no shape is passed, output grid is same shape as input array.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    data : either a tuple of 3x2d arrays `(X,Y,Z)` or a single</span>
+<span class="sd">        2d array `Z`. If a single `Z` array is passed, `corners` must</span>
+<span class="sd">        be passed.</span>
+
+<span class="sd">    extent : tuple/list the extent of the output grid to which the</span>
+<span class="sd">        array is interpolated.</span>
+
+<span class="sd">    shape : the shape of the output grid, tuple, defaults to the shape</span>
+<span class="sd">        of the input array.</span>
+
+<span class="sd">    method : &#39;linear&#39; interpolation (default), &#39;nearest or &#39;cubic&#39;</span>
+<span class="sd">        interpolation are also possible.</span>
+
+<span class="sd">    draft : if set to True, a very fast OpenCV algorithem is used to</span>
+<span class="sd">        interpolate the array by reprojection the data corners onto</span>
+<span class="sd">        arbitrary corners. See http://stackoverflow.com/a/31724678/1579211</span>
+<span class="sd">        for explanation.</span>
+
+<span class="sd">    corners : a tuple of 4 points to which the corners of `Z` will</span>
+<span class="sd">        be tranformed to.</span>
+<span class="sd">        After transformation, the TL,TR,BR,BL corners of the `Z` array</span>
+<span class="sd">        will be transformed to the coordinates in:</span>
+<span class="sd">        `corners=(top-left, top-right, bottom-right, bottom-left)` where</span>
+<span class="sd">        each point is a tuple of `(lon,lat)`.</span>
+<span class="sd">        Optionally, corners can be a `(src,dst)` tuple, where src,dst are</span>
+<span class="sd">        each a tuple of n points. Each point in src is transformed to the</span>
+<span class="sd">        respective point in extent coordinates in dst.</span>
+
+<span class="sd">    origin : corresponds to Z[0,0] of the array or grid,</span>
+<span class="sd">        either &#39;nw&#39; (default), or &#39;sw&#39;.</span>
+
+<span class="sd">    verbose : if set to True, some information about the transformation is</span>
+<span class="sd">        provided.</span>
+
+<span class="sd">    Returns :</span>
+<span class="sd">    ---------</span>
+<span class="sd">    If `data` is a tuple of 3x2d arrays `(X,Y,Z)` and `draft` is False,</span>
+<span class="sd">    xi, yi, zi are returned. If `draft` is True, only zi is returned</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: data must be 3x2d tuple of (XYZ) or 2d Z array&#39;</span><span class="p">)</span>
+
+    <span class="n">w</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">n</span> <span class="o">=</span> <span class="n">extent</span>
+
+    <span class="c1"># if no output shape is supplied</span>
+    <span class="c1"># use the shape of the input array Z</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">shape</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">ny</span><span class="p">,</span><span class="n">nx</span> <span class="o">=</span> <span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">draft</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="c1"># the long and accurate way...</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Accurately interpolating data onto a grid of shape</span>
+<span class="si">%d</span><span class="s2">x</span><span class="si">%d</span><span class="s2"> and extent </span><span class="si">%.2f</span><span class="s2">,</span><span class="si">%.2f</span><span class="s2">,</span><span class="si">%.2f</span><span class="s2">,</span><span class="si">%.2f</span><span class="s2"> using X,Y,Z arrays.</span>
+<span class="s2">This may take a while...</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span> <span class="o">%</span><span class="p">(</span><span class="n">ny</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">nx</span><span class="p">,</span><span class="n">ny</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="n">xi</span><span class="p">,</span><span class="n">yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">nx</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">ny</span><span class="p">))</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">xi</span><span class="p">,</span><span class="n">yi</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span>
+
+    <span class="k">elif</span> <span class="n">draft</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span> <span class="c1"># the fast and less accurate way...</span>
+        <span class="k">try</span><span class="p">:</span> <span class="c1"># both src and dst are passed</span>
+            <span class="n">src</span><span class="p">,</span><span class="n">dst</span> <span class="o">=</span> <span class="n">corners</span>
+            <span class="n">src</span><span class="p">,</span><span class="n">dst</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">src</span><span class="p">),</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c1"># only dst corners passed</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="n">nx</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="n">ny</span><span class="p">))</span>
+            <span class="n">dst</span> <span class="o">=</span> <span class="n">corners</span>
+
+        <span class="n">xc</span><span class="p">,</span><span class="n">yc</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dst</span><span class="p">],[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dst</span><span class="p">]</span>
+        <span class="n">xc</span><span class="p">,</span><span class="n">yc</span> <span class="o">=</span> <span class="n">xy2pixel_coordinates</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span><span class="n">yc</span><span class="p">,</span><span class="n">extent</span><span class="p">,</span><span class="n">shape</span><span class="p">,</span><span class="n">origin</span><span class="p">)</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span><span class="n">yc</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Transforming points:</span>
+<span class="si">%s</span><span class="s2"></span>
+<span class="s2">in the data to points:</span>
+<span class="si">%s</span><span class="s2"></span>
+<span class="s2">in the the output grid of shape </span><span class="si">%d</span><span class="s2">x</span><span class="si">%d</span><span class="s2"> and extent </span><span class="si">%.2f</span><span class="s2">,</span><span class="si">%.2f</span><span class="s2">,</span><span class="si">%.2f</span><span class="s2">,</span><span class="si">%.2f</span><span class="s2">.</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span> <span class="o">%</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dst</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="c1"># Compute the transformation matrix which places</span>
+        <span class="c1"># the corners Z at the corners points bounding the</span>
+        <span class="c1"># data in output grid pixel coordinates</span>
+        <span class="n">tranformation_matrix</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getPerspectiveTransform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">src</span><span class="p">),</span>
+                                                           <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">dst</span><span class="p">))</span>
+
+        <span class="c1"># Make the transformation</span>
+        <span class="n">interpolation</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nearest&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="s1">&#39;linear&#39;</span>  <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                         <span class="s1">&#39;cubic&#39;</span>   <span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpPerspective</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="n">tranformation_matrix</span><span class="p">,</span>
+                                 <span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">),</span>
+                                 <span class="n">flags</span><span class="o">=</span><span class="n">interpolation</span><span class="p">[</span><span class="n">method</span><span class="p">],</span>
+                                 <span class="n">borderMode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                 <span class="n">borderValue</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">zi</span></div>
+
+
+<div class="viewcode-block" id="make_cmap"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.make_cmap">[docs]</a><span class="k">def</span> <span class="nf">make_cmap</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">named</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a color map compatible with matplotlib plotting functions.</span>
+
+<span class="sd">    Params :</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    colors : a list of matplotlib named colors, see</span>
+<span class="sd">        http://matplotlib.org/examples/color/named_colors.html</span>
+<span class="sd">        for color names. Arrange your colors so that the first color is</span>
+<span class="sd">        the lowest value for the colorbar and the last is the highest.</span>
+
+<span class="sd">    position : a list of values from 0 to 1, controls the position of</span>
+<span class="sd">        each color on the cmap. If None (default), an evenly spaced cmap</span>
+<span class="sd">        is created.</span>
+
+<span class="sd">    named : if set to False, colors are regarded as tuples of RGB values.</span>
+<span class="sd">        The RGB values may either be in 8-bit [0 to 255], in which case</span>
+<span class="sd">        bit must be set to True or arithmetic [0 to 1] (default).</span>
+
+<span class="sd">    Returns :</span>
+<span class="sd">    ---------</span>
+<span class="sd">    a cmap (an instance of `matplotlib.colors.LinearSegmentedColormap`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bit_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">256</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">position</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Error! position length must be the same as colors</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Error! position must start with 0 and end with 1</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">bit</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)):</span>
+            <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bit_rgb</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
+                         <span class="n">bit_rgb</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>
+                         <span class="n">bit_rgb</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">cdict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;red&#39;</span><span class="p">:[],</span> <span class="s1">&#39;green&#39;</span><span class="p">:[],</span> <span class="s1">&#39;blue&#39;</span><span class="p">:[]}</span>
+    <span class="k">if</span> <span class="n">named</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">ColorConverter</span><span class="p">()</span><span class="o">.</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;green&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s1">&#39;my_colormap&#39;</span><span class="p">,</span><span class="n">cdict</span><span class="p">,</span><span class="mi">256</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cmap</span></div>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">ndarray</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Returns a flattened 1Darray from any multidimentional</span>
+<span class="sd">    array. This function is recursive and may take a long time</span>
+<span class="sd">    on large data&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subitem</span> <span class="ow">in</span> <span class="n">flatten</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">subitem</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="close_polygon"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.close_polygon">[docs]</a><span class="k">def</span> <span class="nf">close_polygon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a list of points with the first point added to the end&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="get_corners"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.get_corners">[docs]</a><span class="k">def</span> <span class="nf">get_corners</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;extract the corners of the data from</span>
+<span class="sd">    its coordinates arrays x and y.</span>
+
+<span class="sd">    returns 2 lists of longitudes and latitudes&quot;&quot;&quot;</span>
+
+    <span class="n">xc</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">yc</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">xc</span><span class="p">,</span><span class="n">yc</span></div>
+
+
+<div class="viewcode-block" id="line_in_loglog"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.line_in_loglog">[docs]</a><span class="k">def</span> <span class="nf">line_in_loglog</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to calculate the y values of a line</span>
+<span class="sd">    in log-log space according to b * 10**(log10(x**m))</span>
+<span class="sd">    where ``m`` is the slope of the line, ``b`` is the y</span>
+<span class="sd">    value at x=1 and x is a sequence of values on the x-axis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="xy2pixel_coordinates"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.xy2pixel_coordinates">[docs]</a><span class="k">def</span> <span class="nf">xy2pixel_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;nw&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get the pixel coordinates of xy points (can be lon,lat) on</span>
+<span class="sd">    a grid with `extent` and `shape`.</span>
+<span class="sd">    `origin` corresponds to Z[0,0] of the array or grid, either</span>
+<span class="sd">    &#39;nw&#39; (default), or &#39;sw&#39;.&quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+    <span class="n">w</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">n</span> <span class="o">=</span> <span class="n">extent</span>
+    <span class="n">ny</span><span class="p">,</span><span class="n">nx</span> <span class="o">=</span> <span class="n">shape</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">nx</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">s</span><span class="p">)</span><span class="o">/</span><span class="n">ny</span>
+
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="s1">&#39;nw&#39;</span><span class="p">:</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span>
+        <span class="n">yc</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="n">dy</span>
+    <span class="k">elif</span> <span class="n">origin</span> <span class="ow">is</span> <span class="s1">&#39;sw&#39;</span><span class="p">:</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">dx</span>
+        <span class="n">yc</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span><span class="o">/</span><span class="n">dy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: origin must be &#39;nw&#39; or &#39;sw&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">xc</span><span class="p">,</span><span class="n">yc</span></div>
+
+
+<div class="viewcode-block" id="rms"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.rms">[docs]</a><span class="k">def</span> <span class="nf">rms</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the Root Mean Square of numpy array&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="calc_stuff"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.calc_stuff">[docs]</a><span class="k">def</span> <span class="nf">calc_stuff</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate min,max,rms, and ptp on a list of 2darrays&quot;&quot;&quot;</span>
+
+    <span class="n">xmax</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">xrms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">xptp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">xmax</span> <span class="o">+=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
+        <span class="n">xmin</span> <span class="o">+=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">min</span><span class="p">()]</span>
+        <span class="n">xrms</span> <span class="o">+=</span> <span class="p">[</span><span class="n">rms</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span>
+    <span class="n">xrms</span> <span class="o">=</span> <span class="n">rms</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xrms</span><span class="p">))</span>
+    <span class="n">xptp</span> <span class="o">=</span> <span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span>
+    <span class="k">return</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xrms</span><span class="p">,</span> <span class="n">xptp</span></div>
+
+
+<div class="viewcode-block" id="xy2latlon"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.xy2latlon">[docs]</a><span class="k">def</span> <span class="nf">xy2latlon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">37.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">118.0</span><span class="p">),</span> <span class="n">az</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">km2deg</span><span class="o">=</span><span class="mf">111.3195</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Project cartesian x,y coordinates to geographical lat,lon.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    x and y : 2darrays in km.</span>
+
+<span class="sd">    origin : tuple or list, optional, default: lat=37.0 lon=-118.0</span>
+<span class="sd">            lat,lon coordinates of the south-west corner of the x,y grid</span>
+
+<span class="sd">    az : float or int, optional, default: 0 degrees</span>
+<span class="sd">            rotation of the grid aroud the vertical (z-axis),</span>
+<span class="sd">            see the SW4 User Guide for more information.</span>
+
+<span class="sd">    km2deg : float, optional, default: 111.3195 km</span>
+<span class="sd">            how many km to a degree.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    lat and lon 2darrays.&quot;&quot;&quot;</span>
+
+    <span class="n">az</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az</span><span class="p">)</span> <span class="o">-</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az</span><span class="p">))</span> <span class="o">/</span> <span class="n">km2deg</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="p">(</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az</span><span class="p">))</span> <span class="o">/</span>
+           <span class="p">(</span><span class="n">km2deg</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))))</span>
+
+    <span class="k">return</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span></div>
+
+
+<div class="viewcode-block" id="latlon2xy"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.utils.latlon2xy">[docs]</a><span class="k">def</span> <span class="nf">latlon2xy</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">37.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">118.0</span><span class="p">),</span> <span class="n">az</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">km2deg</span><span class="o">=</span><span class="mf">111.3195</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Project cartesian x,y coordinates to geographical lat,lon.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    lat and lon : 2darrays in decimal degrees.</span>
+
+<span class="sd">    origin : tuple or list, optional, default: lat=37.0 lon=-118.0</span>
+<span class="sd">            lat,lon coordinates of the south-west corner of the x,y grid</span>
+
+<span class="sd">    az : float or int, optional, default: 0 degrees</span>
+<span class="sd">            rotation of the grid aroud the vertical (z-axis),</span>
+<span class="sd">            see the SW4 User Guide for more information.</span>
+
+<span class="sd">    km2deg : float, optional, default: 111.3195 km</span>
+<span class="sd">            how many km to a degree.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    x and y 2darrays.&quot;&quot;&quot;</span>
+
+    <span class="n">az</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">km2deg</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="p">((</span><span class="n">lat</span> <span class="o">-</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span>
+         <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">az</span><span class="p">))</span> <span class="o">/</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">az</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">km2deg</span> <span class="o">*</span> <span class="p">((</span><span class="n">lon</span> <span class="o">-</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">)))</span> <span class="o">/</span>
+         <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az</span><span class="p">))</span> <span class="o">-</span> <span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

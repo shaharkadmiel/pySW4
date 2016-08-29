@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.preprocess.stations &mdash; pySW4 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 0.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pySW4.preprocess.stations</h1><div class="highlight"><pre>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1">#  Purpose: Placing stations to record synthetic seismograms on SW4</span>
+<span class="c1">#           simulations</span>
+<span class="c1">#   Author: Shahar Shani-Kadmiel</span>
+<span class="c1">#           kadmiel@post.bgu.ac.il</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel</span>
+<span class="c1"># This code is distributed under the terms of the GNU General Public License</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">- stations.py -</span>
+
+<span class="sd">Python module for placing stations for recording synthetics in SW4</span>
+<span class="sd">simulations.</span>
+
+<span class="sd">By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">shutil</span>
+
+
+<div class="viewcode-block" id="line_of_stations"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.stations.line_of_stations">[docs]</a><span class="k">def</span> <span class="nf">line_of_stations</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="kc">None</span>    <span class="p">,</span><span class="n">x2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">y1</span><span class="o">=</span><span class="kc">None</span>    <span class="p">,</span><span class="n">y2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">lon1</span><span class="o">=</span><span class="kc">None</span>  <span class="p">,</span><span class="n">lon2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">lat1</span><span class="o">=</span><span class="kc">None</span>  <span class="p">,</span><span class="n">lat2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">depth1</span><span class="o">=</span><span class="mi">0</span>   <span class="p">,</span><span class="n">depth2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                     <span class="n">number_of_stations</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;displacement&#39;</span><span class="p">,</span>
+                     <span class="n">writeEvery</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nswe</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">simulator</span><span class="o">=</span><span class="s1">&#39;sw4&#39;</span><span class="p">,</span>
+                     <span class="n">infile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function places stations to record synthetics on a line:</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    (x1   , y1   , depth1) and (x2   , y2   , depth2) or</span>
+<span class="sd">    (lon1 , lat1 , depth1) and (lon2 , lat2 , depth2) are the ends</span>
+<span class="sd">    of the line</span>
+
+<span class="sd">    number_of_stations : Number of stations to place on the line (defaults to 3)</span>
+
+<span class="sd">    name : prefix of the sac file name</span>
+
+<span class="sd">    mode : &#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, or &#39;strains&#39;</span>
+
+<span class="sd">    writeEvery : cycle interval to write the data to disk</span>
+
+<span class="sd">    nsew : the components of the station, default is 0 (x,y,z) but can be set to</span>
+<span class="sd">        1 (East,North,Vertical)</span>
+
+<span class="sd">    simulator : &#39;sw4&#39; (default, or &#39;wpp&#39;)</span>
+
+<span class="sd">    infile : if not None stations are added to the a copy of the specified file</span>
+<span class="sd">        and saved with the string &#39;+name&#39; where name is line (by default).</span>
+<span class="sd">        Otherwise, a formated string id printed to stdout which can then be</span>
+<span class="sd">        copied to the input file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">x1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">x2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;rec x=</span><span class="si">%.3f</span><span class="s1"> y=</span><span class="si">%.3f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1">_x=</span><span class="si">%.3f</span><span class="s1">_y=</span><span class="si">%.3f</span><span class="s1">_z=</span><span class="si">%.3f</span><span class="s1">__x=</span><span class="si">%.3f</span><span class="s1">_y=</span><span class="si">%.3f</span><span class="s1">_z=</span><span class="si">%.3f</span><span class="s1">_ writeEvery=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;sac x=</span><span class="si">%.3f</span><span class="s1"> y=</span><span class="si">%.3f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1">_x=</span><span class="si">%.3f</span><span class="s1">_y=</span><span class="si">%.3f</span><span class="s1">_z=</span><span class="si">%.3f</span><span class="s1">_ writeEvery=</span><span class="si">%d</span><span class="s1"> velocity=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+
+    <span class="k">elif</span> <span class="n">lon1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lon2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lon1</span><span class="p">,</span> <span class="n">lon2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;rec lon=</span><span class="si">%.10f</span><span class="s1"> lat=</span><span class="si">%.10f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1">_lon=</span><span class="si">%.10f</span><span class="s1">_lat=</span><span class="si">%.10f</span><span class="s1">_depth=</span><span class="si">%.3f</span><span class="s1">_ writeEvery=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;sac lon=</span><span class="si">%.10f</span><span class="s1"> lat=</span><span class="si">%.10f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1">_lon=</span><span class="si">%.10f</span><span class="s1">_lat=</span><span class="si">%.10f</span><span class="s1">_depth=</span><span class="si">%.3f</span><span class="s1">_ writeEvery=</span><span class="si">%d</span><span class="s1"> velocity=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+
+    <span class="k">if</span> <span class="n">y1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">lat1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lat2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">depth1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">depth2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">depth1</span><span class="p">,</span> <span class="n">depth2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
+
+    <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">#------------------- stations on a line: </span><span class="si">%s</span><span class="s2"> -------------------</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">name</span>
+    <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span> <span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                    <span class="n">name</span><span class="p">,</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">writeEvery</span><span class="p">,</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;displacement&#39;</span><span class="p">:</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;solution&#39;</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;velocity&#39;</span><span class="p">:</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;solution&#39;</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;curl&#39;</span><span class="p">,</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="s1">&#39;strains&#39;</span><span class="p">):</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span> <span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                    <span class="n">name</span><span class="p">,</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">writeEvery</span><span class="p">,</span>
+                                    <span class="n">velocity</span><span class="p">,</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">infile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">string</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># copy the premade input file,</span>
+        <span class="c1"># add &#39;+name&#39; to the filename</span>
+        <span class="c1"># and open the new file in append mode</span>
+        <span class="n">filename</span><span class="p">,</span><span class="n">extention</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">+=</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="n">extention</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+<div class="viewcode-block" id="place_station"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.stations.place_station">[docs]</a><span class="k">def</span> <span class="nf">place_station</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;st&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;displacement&#39;</span><span class="p">,</span>
+                  <span class="n">writeEvery</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nswe</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">simulator</span><span class="o">=</span><span class="s1">&#39;sw4&#39;</span><span class="p">,</span>
+                  <span class="n">infile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function places synthetic stations at locations (x,y) in grid</span>
+<span class="sd">    coordinates or at (lat, lon) in geographical coordinates.</span>
+<span class="sd">    A sequence (list or tuple) of station names can be passed on to name.</span>
+<span class="sd">    velocity and writeEvery are SW4 parameters, see SW4 User Guide for more</span>
+<span class="sd">    info.</span>
+
+<span class="sd">    If infile is None, the function returns a formatted string which can be</span>
+<span class="sd">    copied later to an inputfile. If a SW4 inputfile name is passed, the</span>
+<span class="sd">    formated lines are appended at the end of the file and the string &#39;+st&#39;</span>
+<span class="sd">    is appended to the file name if not already there. The original inputfile</span>
+<span class="sd">    is unaffaected.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;rec x=</span><span class="si">%.3f</span><span class="s1"> y=</span><span class="si">%.3f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1"> writeEvery=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;sac x=</span><span class="si">%.3f</span><span class="s1"> y=</span><span class="si">%.3f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1"> writeEvery=</span><span class="si">%d</span><span class="s1"> velocity=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">elif</span> <span class="n">lon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">lon</span><span class="p">,</span><span class="n">lat</span>
+        <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;rec lon=</span><span class="si">%.10f</span><span class="s1"> lat=</span><span class="si">%.10f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1"> writeEvery=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+            <span class="n">sac_string</span> <span class="o">=</span> <span class="s1">&#39;sac lon=</span><span class="si">%.10f</span><span class="s1"> lat=</span><span class="si">%.10f</span><span class="s1"> depth=</span><span class="si">%.3f</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1"> writeEvery=</span><span class="si">%d</span><span class="s1"> velocity=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">#------------------- stations at locations: -------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span> <span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">depth</span><span class="p">,</span>
+                           <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">writeEvery</span><span class="p">,</span><span class="n">mode</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;displacement&#39;</span><span class="p">:</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;solution&#39;</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;velocity&#39;</span><span class="p">:</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;solution&#39;</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;curl&#39;</span><span class="p">,</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="s1">&#39;strains&#39;</span><span class="p">):</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span>
+                            <span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">depth</span><span class="p">,</span>
+                            <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">writeEvery</span><span class="p">,</span><span class="n">velocity</span><span class="p">,</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;sw4&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span> <span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span>
+                           <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">writeEvery</span><span class="p">,</span><span class="n">mode</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">simulator</span> <span class="ow">is</span> <span class="s1">&#39;wpp&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;displacement&#39;</span><span class="p">:</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;solution&#39;</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;velocity&#39;</span><span class="p">:</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;solution&#39;</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;curl&#39;</span><span class="p">,</span> <span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="s1">&#39;strains&#39;</span><span class="p">):</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span>
+                            <span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span>
+                            <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">writeEvery</span><span class="p">,</span><span class="n">velocity</span><span class="p">,</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">infile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">string</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># copy the premade input file,</span>
+        <span class="c1"># add &#39;+st&#39; to the filename</span>
+        <span class="c1"># and open the new file in append mode</span>
+        <span class="k">if</span> <span class="s1">&#39;st&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">filename</span><span class="p">,</span><span class="n">extention</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">+=</span> <span class="s1">&#39;+st&#39;</span> <span class="o">+</span> <span class="n">extention</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">infile</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">filename</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

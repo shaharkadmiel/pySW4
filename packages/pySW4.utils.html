@@ -1,0 +1,652 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.utils package &mdash; pySW4 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 0.2.0 documentation" href="../index.html" />
+    <link rel="up" title="pySW4 Library Reference" href="index.html" />
+    <link rel="prev" title="pySW4.preprocess package" href="pySW4.preprocess.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.preprocess.html" title="pySW4.preprocess package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">pySW4 Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pySW4.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pySW4.utils.fourier_spectrum">pySW4.utils.fourier_spectrum module</a></li>
+<li><a class="reference internal" href="#module-pySW4.utils.geo">pySW4.utils.geo module</a></li>
+<li><a class="reference internal" href="#module-pySW4.utils.psde">pySW4.utils.psde module</a></li>
+<li><a class="reference internal" href="#module-pySW4.utils.utils">pySW4.utils.utils module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pySW4.preprocess.html"
+                        title="previous chapter">pySW4.preprocess package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/packages/pySW4.utils.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pySW4.utils">
+<span id="pysw4-utils-package"></span><h1>pySW4.utils package<a class="headerlink" href="#module-pySW4.utils" title="Permalink to this headline">¶</a></h1>
+<p>Various utilities for pySW4.</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pySW4.utils.fourier_spectrum">
+<span id="pysw4-utils-fourier-spectrum-module"></span><h2>pySW4.utils.fourier_spectrum module<a class="headerlink" href="#module-pySW4.utils.fourier_spectrum" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>fourier_spectrum.py -</li>
+</ul>
+<p>Python wrapper for <cite>numpy.fft</cite> for conviniently computing the Fourier transform
+of a signal.</p>
+<p>By: Shahar Shani-Kadmiel, August 2015, <a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a></p>
+<dl class="function">
+<dt id="pySW4.utils.fourier_spectrum.fourier_spectrum">
+<code class="descname">fourier_spectrum</code><span class="sig-paren">(</span><em>data</em>, <em>womean=False</em>, <em>winsize=None</em>, <em>stepsize=None</em>, <em>delta=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/fourier_spectrum.html#fourier_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.fourier_spectrum.fourier_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Fourier spectrum of a signal either as a whole or as
+a series of windows with or without overlaps for smoother spectrum.</p>
+<p>The reason for windowing a signal into smaller chunks is to smooth a
+&#8216;noisy&#8217; Fourier spectrum of a very long signal. The frequency
+resolution of the FFT is related to the number of points (npts) passed
+into the FFT. The number of evenly spaced frequencies, sometimes refered
+to as bins, resolved between 0 and the nyquist frequency, 0.5/delta are
+(0.5*npts)+1 if npts is even or 0.5*(npts+1) if npts is odd.
+So the FFT of a signal of length 2048 npts and delta of 0.01 will have
+a nyquist frequency of 50 Hz and 1025 (aka FFT size or bins) resolved
+frequencies making the lowest resolved frequency 0.0488 Hz.
+Had the signal been longer, say 10000 points (100 seconds), the FFT size
+would be 5001 and the frequency resolution would be 0.01 Hz making the
+the spectrum very noisy numerically with many frequencies that don&#8217;t
+contain any real information.</p>
+<p>Pay attention to the <cite>stepsize</cite> parameter. Leave it None if you are not
+sure what is the correct value. If a high energy peak in the time domain
+is picked up by more than one window due to ovelap, that can be accumulated
+to affect the over all amplitude in the frequency domain. On the other hand,
+if by slicing the signal into windows you introduce step-functions as the
+windowed signal starts with a steep rise or ends with a steep fall, the
+resulting frequency domain will contain false amplitudes at high frequencies
+as a result. Setting an overlap will get rid of this problem as these unwanted
+effects will be canceled out by one another or averaged by several windows.</p>
+<dl class="docutils">
+<dt>data</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">either a sequence (say, values of a time-history) or an obspy</span><dd>Trace object. If a sequence is passed <cite>delta</cite> must be supplied.</dd>
+<dt>womean</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">remove mean before transform. Default is False, transform</span><dd>as is. This is usefull in cases that the signal does not revolve
+around zero but rather around some other constant value.</dd>
+<dt>winsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">by default <cite>winsize</cite> is None, taking the FFT of the entire</span><dd>signal as-is. Otherwise, <cite>winsize</cite> sets the size of the sliding
+window, taking <cite>winsize</cite> points of the signal at a time.
+Works fastest when <cite>winsize</cite> is a whole power of 2, i.e., 128, 512
+1024, 2048, 4096 etc.</dd>
+<dt>stepsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">the number of points by which the window slides each time.</span><dd>By default, <cite>stepsize</cite> is None, making it equal to <cite>winsize</cite>,
+no overlap. Setting <cite>stepsize</cite> to half <cite>winsize</cite> is common practice
+and will cause a 50% overlap.</dd>
+<dt>delta</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">the dt from one sample to the next such that 1/delta is the</span><dd>sampling rate.</dd>
+</dl>
+<p>verbose : if True some information about the process is printed.</p>
+<p>a frequency array and an amplitude array.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pySW4.utils.geo">
+<span id="pysw4-utils-geo-module"></span><h2>pySW4.utils.geo module<a class="headerlink" href="#module-pySW4.utils.geo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>geo.py -</li>
+</ul>
+<p>Python module for handling DEM/GDEM/DTM and other raster data readable with
+gdal.</p>
+<p>By: Shahar Shani-Kadmiel, May 2014, <a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a></p>
+<dl class="class">
+<dt id="pySW4.utils.geo.GeoTIFF">
+<em class="property">class </em><code class="descname">GeoTIFF</code><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>class for GeoTIFF files</p>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deepcopy of the GeoTIFF object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.elevation_profile">
+<code class="descname">elevation_profile</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.elevation_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.elevation_profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.get_intensity">
+<code class="descname">get_intensity</code><span class="sig-paren">(</span><em>azimuth=315.0</em>, <em>altitude=45.0</em>, <em>scale=None</em>, <em>smooth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.get_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.get_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a method to create an intensity array that can be used to
+create a shaded relief map.
+Params:
+&#8212;&#8212;-
+azimuth: direction of light source, degrees from north
+altitude: height of light source, degrees above the horizon
+scale: scaling value of the data
+smooth: number of cells to average before intensity calculation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.keep">
+<code class="descname">keep</code><span class="sig-paren">(</span><em>w</em>, <em>e</em>, <em>s</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.keep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep a subset array from a GeoTIFF file.
+** Watch Out **
+This operation is performed in place on the actual data. The
+raw data will no longer be accessible afterwards. To keep the
+original data, use the copy method <cite>GeoTIFF.copy()</cite> to create
+a copy of the current object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.reproject">
+<code class="descname">reproject</code><span class="sig-paren">(</span><em>epsg=None</em>, <em>proj4=None</em>, <em>match=None</em>, <em>error_threshold=0.125</em>, <em>target_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.reproject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.reproject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reproject the data from the current projection to the specified
+target projection <cite>epsg</cite> or <cite>proj4</cite> or to match an existing GeoTIFF
+file <cite>match</cite>.
+** Watch Out **
+This operation is performed in place on the actual data. The
+raw data will no longer be accessible afterwards. To keep the
+original data, use the copy method <cite>GeoTIFF.copy()</cite> to create
+a copy of the current object.
+Params:
+&#8212;&#8212;-
+epsg : target EPSG code.</p>
+<blockquote>
+<div><p>a reference number to the EPSG Geodetic Parameter Dataset registry.
+examples of some EPSG codes and their equivalent Proj4 strings are:
+4326   -&gt; +proj=longlat +datum=WGS84 +no_defs
+32636  -&gt; +proj=utm +zone=36 +datum=WGS84 +units=m +no_defs
+102009 -&gt; +proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96</p>
+<blockquote>
+<div>+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs</div></blockquote>
+<p>...</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>proj4</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">target Proj4 string</span><dd>if the EPSG code is unknown or a custom projection is required,
+a Proj4 string can be passed.
+See <a class="reference external" href="https://trac.osgeo.org/proj/wiki/GenParms">https://trac.osgeo.org/proj/wiki/GenParms</a> for a list of
+general Proj4 parameters.</dd>
+<dt>match</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">filename of an existing GeoTIFF file or object (already in</span><dd>memory) to match size and projection. current data is resampled
+to match the shape and number of pixels of the existing GeoTIFF
+file or object.
+It is assumed that both data cover the same extent.</dd>
+<dt>error_threshold</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">error threshold for transformation approximation</span><dd>in pixel units. (default is 0.125 as in gdalwarp)</dd>
+<dt>target_filename</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">if a target filename is given then the reprojected</span><dd>data is saved as target_filename and read into memory replacing
+the current data. This is faster than reprojecting and then
+saving. Otherwise the <cite>GeoTIFF.write_GeoTIFF</cite> method can be used
+to save the data at a later point if further manipulations are
+needed.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.resample">
+<code class="descname">resample</code><span class="sig-paren">(</span><em>by=None</em>, <em>to=None</em>, <em>order=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to resample the data either <em>by</em> a factor or
+<em>to</em> the specified spacing. Uses <cite>scipy.ndimage.zoom</cite>.
+** Watch Out **
+This operation is performed in place on the actual data. The
+raw data will no longer be accessible afterwards. To keep the
+original data, use the copy method <cite>GeoTIFF.copy()</cite> to create
+a copy of the current object.
+Params:
+&#8212;&#8212;-
+by: if 1, nothing happens</p>
+<blockquote>
+<div>if &lt; 1, the grid is sub-sampled by the factor
+if &gt; 1, the grid is super-sampled byt the factor</div></blockquote>
+<p>to: the specified spacing to which the grid is resampled to.
+order: int,</p>
+<blockquote>
+<div>The order of the spline interpolation, default is 3.
+The order has to be in the range 0-5
+0 - nearest
+1 - bi-linear
+3 - cubic
+...</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.write_GeoTIFF">
+<code class="descname">write_GeoTIFF</code><span class="sig-paren">(</span><em>filename</em>, <em>nodata=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.write_GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.write_GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a GeoTIFF file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.write_topo_file">
+<code class="descname">write_topo_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.write_topo_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.write_topo_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write an ASCII Lon, Lat, z file for SW4 topography</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.utils.geo.GeoTIFF.x">
+<code class="descname">x</code><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.utils.geo.GeoTIFF.xy2d">
+<code class="descname">xy2d</code><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.xy2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.utils.geo.GeoTIFF.y">
+<code class="descname">y</code><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.geo._get_tiles">
+<code class="descname">_get_tiles</code><span class="sig-paren">(</span><em>path</em>, <em>lonmin</em>, <em>lonmax</em>, <em>latmin</em>, <em>latmax</em>, <em>tilename='ASTGTM2_N%02dE%03d'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#_get_tiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo._get_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a helper function for <cite>get_dem</cite>.
+It extracts the GeoTIFF tiles needed to stitch an elevation model
+with the extent given by lonmin, lonmax, latmin, latmax
+in decimal degrees and
+returns a list pointing to these tiles.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.geo.calc_intensity">
+<code class="descname">calc_intensity</code><span class="sig-paren">(</span><em>relief</em>, <em>azimuth=315.0</em>, <em>altitude=45.0</em>, <em>scale=None</em>, <em>smooth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#calc_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.calc_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a method to create an intensity array that can be used to
+create a shaded relief map.
+Params:
+&#8212;&#8212;&#8211;
+relief : 2d array of topography or other data to calculate intensity from
+azimuth : direction of light source, degrees from north
+altitude : height of light source, degrees above the horizon
+scale : scaling value of the data, higher number higher gradient
+smooth : number of cells to average before intensity calculation
+Returns:
+&#8212;&#8212;&#8212;
+2d array, same size as <cite>relief</cite></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.geo.get_dem">
+<code class="descname">get_dem</code><span class="sig-paren">(</span><em>path</em>, <em>lonmin</em>, <em>lonmax</em>, <em>latmin</em>, <em>latmax</em>, <em>tilename='ASTGTM2_N%02dE%03d'</em>, <em>rasterBand=1</em>, <em>dx=0.000277777777778</em>, <em>dy=-0.000277777777778</em>, <em>keep_tiles=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#get_dem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.get_dem" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function reads all relevant AsterGDEM GeoTIFF
+tiles into memory, stitching them together if needed,
+and cutting to the extent given by lonmin, lonmax,
+latmin, latmax in decimal degrees.
+Returns a GeoTIFF class instance</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.geo.read_GeoTIFF">
+<code class="descname">read_GeoTIFF</code><span class="sig-paren">(</span><em>filename=None</em>, <em>rasterBand=1</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#read_GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.read_GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads GeoTIFF_file and return a GeoTIFF class instance.
+If <cite>filename</cite> is None, an empty GeoTIFF object is returnd.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.geo.save_GeoTIFF">
+<code class="descname">save_GeoTIFF</code><span class="sig-paren">(</span><em>filename</em>, <em>data</em>, <em>tlx</em>, <em>tly</em>, <em>dx</em>, <em>dy</em>, <em>epsg=None</em>, <em>proj4=None</em>, <em>dtype=&lt;type 'numpy.int16'&gt;</em>, <em>nodata=nan</em>, <em>rasterBand=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#save_GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.save_GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data at a known projection as a GeoTIFF file.
+Params:
+&#8212;&#8212;-
+filename : name of the output GeoTIFF file
+data : a 2d array of data to write to file
+tlx : top-left x (usually West-) coordinate of data
+tly : top-left y (usually North-) coordinate of data
+dx : pixel size of data in the x direction, positive in the East direction
+dy : pixel size of data in the y direction, positive in the North direction
+epsg : a reference number to the EPSG Geodetic Parameter Dataset registry.</p>
+<blockquote>
+<div><p>examples of some EPSG codes and their equivalent Proj4 strings are:
+4326   -&gt; +proj=longlat +datum=WGS84 +no_defs
+32636  -&gt; +proj=utm +zone=36 +datum=WGS84 +units=m +no_defs
+102009 -&gt; +proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96</p>
+<blockquote>
+<div>+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs</div></blockquote>
+<p>...</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>proj4</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">if the EPSG code is unknown or a custom projection is required,</span><dd>a Proj4 string can be passed.
+See <a class="reference external" href="https://trac.osgeo.org/proj/wiki/GenParms">https://trac.osgeo.org/proj/wiki/GenParms</a> for a list of general
+Proj4 parameters.</dd>
+<dt>dtype</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">one of following dtypes should be used <cite>numpy.int16</cite> (default),</span><dd><cite>numpy.int32</cite>,`numpy.float32`, or <cite>numpy.float64</cite>.
+* Note that <cite>float</cite> is not the same as <cite>numpy.float32</cite> *</dd>
+<dt>nodata</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">set the no data value in the GeoTIFF file (default is</span><dd><cite>numpy.nan</cite>). Other options are -9999, -12345 or any other
+value that suits your purpose.</dd>
+</dl>
+<p>rasterband : the band number to write. (default is 1)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.geo.xy2gridpoints">
+<code class="descname">xy2gridpoints</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grid_shape</em>, <em>grid_extent</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#xy2gridpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.xy2gridpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the grid coordinates of the data coordinates in <cite>x</cite>, <cite>y</cite></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pySW4.utils.psde">
+<span id="pysw4-utils-psde-module"></span><h2>pySW4.utils.psde module<a class="headerlink" href="#module-pySW4.utils.psde" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>psde.py -</li>
+</ul>
+<p>Python wrapper for <cite>matplotlib.mlab.psd</cite> for conveniently estimate the power
+spectral density of a signal.</p>
+<p>By: Shahar Shani-Kadmiel, August 2015, <a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a></p>
+<dl class="function">
+<dt id="pySW4.utils.psde.next_power_2">
+<code class="descname">next_power_2</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/psde.html#next_power_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.psde.next_power_2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.psde.psde">
+<code class="descname">psde</code><span class="sig-paren">(</span><em>data</em>, <em>womean=False</em>, <em>winsize='default'</em>, <em>stepsize=None</em>, <em>delta=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/psde.html#psde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.psde.psde" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Fourier spectrum of a signal either as a whole or as
+a series of windows with or without overlaps for smoother spectrum.</p>
+<p>The reason for windowing a signal into smaller chunks is to smooth a
+&#8216;noisy&#8217; Fourier spectrum of a very long signal. The frequency
+resolution of the FFT is related to the number of points (npts) passed
+into the FFT. The number of evenly spaced frequencies, sometimes refered
+to as bins, resolved between 0 and the nyquist frequency, 0.5/delta are
+(0.5*npts)+1 if npts is even or 0.5*(npts+1) if npts is odd.
+So the FFT of a signal of length 2048 npts and delta of 0.01 will have
+a nyquist frequency of 50 Hz and 1025 (aka FFT size or bins) resolved
+frequencies making the lowest resolved frequency 0.0488 Hz.
+Had the signal been longer, say 10000 points (100 seconds), the FFT size
+would be 5001 and the frequency resolution would be 0.01 Hz making the
+the spectrum very noisy numerically with many frequencies that don&#8217;t
+contain any real information.</p>
+<p>Pay attention to the <cite>stepsize</cite> parameter. Leave it None if you are not
+sure what is the correct value. If a high energy peak in the time domain
+is picked up by more than one window due to ovelap, that can be accumulated
+to affect the over all amplitude in the frequency domain. On the other hand,
+if by slicing the signal into windows you introduce step-functions as the
+windowed signal starts with a steep rise or ends with a steep fall, the
+resulting frequency domain will contain false amplitudes at high frequencies
+as a result. Setting an overlap will get rid of this problem as these
+unwanted effects will be canceled out by one another or averaged by several
+windows.</p>
+<dl class="docutils">
+<dt>data</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">either a sequence (say, values of a time-history) or an obspy</span><dd>Trace object. If a sequence is passed <cite>delta</cite> must be supplied.</dd>
+<dt>womean</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">remove mean before transform. Default is False, transform</span><dd>as is. This is usefull in cases that the signal does not revolve
+around zero but rather around some other constant value.</dd>
+<dt>winsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">by &#8216;default&#8217;, <cite>winsize</cite> is the next power of 2, padding the signal</span><dd>to the next whole power of 2, making a 10000 points singnal be
+2**14=16384.
+If None, signal is transformed as-is which might be slightly slower but
+take up less memory space.
+Otherwise, <cite>winsize</cite> sets the size of the sliding window, taking
+<cite>winsize</cite> points of the signal at a time. Most efficient when <cite>winsize</cite>
+is a whole power of 2, i.e., 128, 512, 1024, 2048, 4096 etc.</dd>
+<dt>stepsize</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">the number of points by which the window slides each time.</span><dd>By default, <cite>stepsize</cite> is None, making it equal to <cite>winsize</cite>,
+no overlap. Setting <cite>stepsize</cite> to half <cite>winsize</cite> is common practice
+and will cause a 50% overlap.</dd>
+<dt>delta</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">the dt from one sample to the next such that 1/delta is the</span><dd>sampling rate.</dd>
+</dl>
+<p>verbose : if True some information about the process is printed.</p>
+<p>a frequency array and an amplitude array.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pySW4.utils.utils">
+<span id="pysw4-utils-utils-module"></span><h2>pySW4.utils.utils module<a class="headerlink" href="#module-pySW4.utils.utils" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>utils.py -</li>
+</ul>
+<p>Python module with general utilities.</p>
+<p>By: Shahar Shani-Kadmiel, August 2012, <a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a></p>
+<dl class="function">
+<dt id="pySW4.utils.utils.calc_stuff">
+<code class="descname">calc_stuff</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#calc_stuff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.calc_stuff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate min,max,rms, and ptp on a list of 2darrays</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.close_polygon">
+<code class="descname">close_polygon</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#close_polygon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.close_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of points with the first point added to the end</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.flatten">
+<code class="descname">flatten</code><span class="sig-paren">(</span><em>ndarray</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a flattened 1Darray from any multidimentional
+array. This function is recursive and may take a long time
+on large data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.get_corners">
+<code class="descname">get_corners</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#get_corners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.get_corners" title="Permalink to this definition">¶</a></dt>
+<dd><p>extract the corners of the data from
+its coordinates arrays x and y.</p>
+<p>returns 2 lists of longitudes and latitudes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.latlon2xy">
+<code class="descname">latlon2xy</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>origin=(37.0</em>, <em>-118.0)</em>, <em>az=0</em>, <em>km2deg=111.3195</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#latlon2xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.latlon2xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project cartesian x,y coordinates to geographical lat,lon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>and lon</strong> (<em>lat</em>) &#8211; </li>
+<li><strong>origin</strong> (<em>tuple or list, optional, default: lat=37.0 lon=-118.0</em>) &#8211; lat,lon coordinates of the south-west corner of the x,y grid</li>
+<li><strong>az</strong> (<em>float or int, optional, default: 0 degrees</em>) &#8211; rotation of the grid aroud the vertical (z-axis),
+see the SW4 User Guide for more information.</li>
+<li><strong>km2deg</strong> (<em>float, optional, default: 111.3195 km</em>) &#8211; how many km to a degree.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>x and y 2darrays.</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.line_in_loglog">
+<code class="descname">line_in_loglog</code><span class="sig-paren">(</span><em>x</em>, <em>m</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#line_in_loglog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.line_in_loglog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate the y values of a line
+in log-log space according to b * 10**(log10(x**m))
+where <code class="docutils literal"><span class="pre">m</span></code> is the slope of the line, <code class="docutils literal"><span class="pre">b</span></code> is the y
+value at x=1 and x is a sequence of values on the x-axis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.make_cmap">
+<code class="descname">make_cmap</code><span class="sig-paren">(</span><em>colors</em>, <em>position=None</em>, <em>bit=False</em>, <em>named=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#make_cmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.make_cmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a color map compatible with matplotlib plotting functions.</p>
+<dl class="docutils">
+<dt>colors</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">a list of matplotlib named colors, see</span><dd><a class="reference external" href="http://matplotlib.org/examples/color/named_colors.html">http://matplotlib.org/examples/color/named_colors.html</a>
+for color names. Arrange your colors so that the first color is
+the lowest value for the colorbar and the last is the highest.</dd>
+<dt>position</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">a list of values from 0 to 1, controls the position of</span><dd>each color on the cmap. If None (default), an evenly spaced cmap
+is created.</dd>
+<dt>named</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">if set to False, colors are regarded as tuples of RGB values.</span><dd>The RGB values may either be in 8-bit [0 to 255], in which case
+bit must be set to True or arithmetic [0 to 1] (default).</dd>
+</dl>
+<p>a cmap (an instance of <cite>matplotlib.colors.LinearSegmentedColormap</cite>)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.resample">
+<code class="descname">resample</code><span class="sig-paren">(</span><em>data</em>, <em>extent</em>, <em>shape=None</em>, <em>method='linear'</em>, <em>draft=False</em>, <em>corners=None</em>, <em>origin='nw'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample or interpolate an array on to a grid with new extent.
+If no shape is passed, output grid is same shape as input array.</p>
+<dl class="docutils">
+<dt>data</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">either a tuple of 3x2d arrays <cite>(X,Y,Z)</cite> or a single</span><dd>2d array <cite>Z</cite>. If a single <cite>Z</cite> array is passed, <cite>corners</cite> must
+be passed.</dd>
+<dt>extent</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple/list the extent of the output grid to which the</span><dd>array is interpolated.</dd>
+<dt>shape</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">the shape of the output grid, tuple, defaults to the shape</span><dd>of the input array.</dd>
+<dt>method</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">&#8216;linear&#8217; interpolation (default), &#8216;nearest or &#8216;cubic&#8217;</span><dd>interpolation are also possible.</dd>
+<dt>draft</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">if set to True, a very fast OpenCV algorithem is used to</span><dd>interpolate the array by reprojection the data corners onto
+arbitrary corners. See <a class="reference external" href="http://stackoverflow.com/a/31724678/1579211">http://stackoverflow.com/a/31724678/1579211</a>
+for explanation.</dd>
+<dt>corners</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">a tuple of 4 points to which the corners of <cite>Z</cite> will</span><dd>be tranformed to.
+After transformation, the TL,TR,BR,BL corners of the <cite>Z</cite> array
+will be transformed to the coordinates in:
+<cite>corners=(top-left, top-right, bottom-right, bottom-left)</cite> where
+each point is a tuple of <cite>(lon,lat)</cite>.
+Optionally, corners can be a <cite>(src,dst)</cite> tuple, where src,dst are
+each a tuple of n points. Each point in src is transformed to the
+respective point in extent coordinates in dst.</dd>
+<dt>origin</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">corresponds to Z[0,0] of the array or grid,</span><dd>either &#8216;nw&#8217; (default), or &#8216;sw&#8217;.</dd>
+<dt>verbose</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">if set to True, some information about the transformation is</span><dd>provided.</dd>
+</dl>
+<p>If <cite>data</cite> is a tuple of 3x2d arrays <cite>(X,Y,Z)</cite> and <cite>draft</cite> is False,
+xi, yi, zi are returned. If <cite>draft</cite> is True, only zi is returned</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.rms">
+<code class="descname">rms</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.rms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Root Mean Square of numpy array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.xy2latlon">
+<code class="descname">xy2latlon</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>origin=(37.0</em>, <em>-118.0)</em>, <em>az=0</em>, <em>km2deg=111.3195</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#xy2latlon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.xy2latlon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project cartesian x,y coordinates to geographical lat,lon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>and y</strong> (<a class="reference internal" href="pySW4.preprocess.html#pySW4.preprocess.rfileIO.Block.x" title="pySW4.preprocess.rfileIO.Block.x"><em>x</em></a>) &#8211; </li>
+<li><strong>origin</strong> (<em>tuple or list, optional, default: lat=37.0 lon=-118.0</em>) &#8211; lat,lon coordinates of the south-west corner of the x,y grid</li>
+<li><strong>az</strong> (<em>float or int, optional, default: 0 degrees</em>) &#8211; rotation of the grid aroud the vertical (z-axis),
+see the SW4 User Guide for more information.</li>
+<li><strong>km2deg</strong> (<em>float, optional, default: 111.3195 km</em>) &#8211; how many km to a degree.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>lat and lon 2darrays.</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.utils.utils.xy2pixel_coordinates">
+<code class="descname">xy2pixel_coordinates</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>extent</em>, <em>shape</em>, <em>origin='nw'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#xy2pixel_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.xy2pixel_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the pixel coordinates of xy points (can be lon,lat) on
+a grid with <cite>extent</cite> and <cite>shape</cite>.
+<cite>origin</cite> corresponds to Z[0,0] of the array or grid, either
+&#8216;nw&#8217; (default), or &#8216;sw&#8217;.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.preprocess.html" title="pySW4.preprocess package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

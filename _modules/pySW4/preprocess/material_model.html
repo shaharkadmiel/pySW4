@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.preprocess.material_model &mdash; pySW4 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 0.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pySW4.preprocess.material_model</h1><div class="highlight"><pre>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1">#  Purpose: Helper module for specifying the material properties of the</span>
+<span class="c1">#           computational domain.</span>
+<span class="c1">#   Author: Shahar Shani-Kadmiel</span>
+<span class="c1">#           kadmiel@post.bgu.ac.il</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright ©(C) 2012-2014 Shahar Shani-Kadmiel</span>
+<span class="c1"># This code is distributed under the terms of the GNU General Public License</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">- material_model.py -</span>
+
+<span class="sd">Python module to help specifying the material properties of the computational</span>
+<span class="sd">domain.</span>
+
+<span class="sd">By: Shahar Shani-Kadmiel, September 2015, kadmiel@post.bgu.ac.il</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">UnivariateSpline</span>
+
+
+<div class="viewcode-block" id="get_vp"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_vp">[docs]</a><span class="k">def</span> <span class="nf">get_vp</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">vp0</span><span class="o">=</span><span class="mf">0.4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate a velocity gradient based on surface P-wave velocity</span>
+<span class="sd">    `vp0` in km/s.</span>
+
+<span class="sd">    returns vp in km/s&quot;&quot;&quot;</span>
+
+    <span class="n">vp</span> <span class="o">=</span> <span class="n">vp0</span>
+
+    <span class="k">return</span> <span class="n">vp</span></div>
+
+<div class="viewcode-block" id="get_vs"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_vs">[docs]</a><span class="k">def</span> <span class="nf">get_vs</span><span class="p">(</span><span class="n">vp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Shear-wave velocity based on Brocher (2008).</span>
+<span class="sd">    ``vp`` float or sequence, km/s</span>
+
+<span class="sd">    returns vs in km/s&quot;&quot;&quot;</span>
+
+    <span class="n">vs</span> <span class="o">=</span> <span class="mf">0.7858</span><span class="o">-</span><span class="mf">1.2344</span><span class="o">*</span><span class="n">vp</span><span class="o">+</span><span class="mf">0.7949</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mf">0.1238</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">3</span><span class="o">+</span><span class="mf">0.0064</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">4</span>
+    <span class="k">return</span> <span class="n">vs</span></div>
+
+
+<div class="viewcode-block" id="get_rho"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_rho">[docs]</a><span class="k">def</span> <span class="nf">get_rho</span><span class="p">(</span><span class="n">vp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate density based on Brocher (2008).</span>
+<span class="sd">    ``vp`` float or sequence, km/s</span>
+
+<span class="sd">    returns rho in gr/cm^3&quot;&quot;&quot;</span>
+
+    <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.6612</span><span class="o">*</span><span class="n">vp</span><span class="o">-</span><span class="mf">0.4721</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.0671</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">3</span><span class="o">-</span><span class="mf">0.0043</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">4</span><span class="o">+</span><span class="mf">0.000106</span><span class="o">*</span><span class="n">vp</span><span class="o">**</span><span class="mi">5</span>
+    <span class="k">return</span> <span class="n">rho</span></div>
+
+
+<div class="viewcode-block" id="get_qs"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_qs">[docs]</a><span class="k">def</span> <span class="nf">get_qs</span><span class="p">(</span><span class="n">vs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Shear Quality Factor based on Brocher (2008).</span>
+<span class="sd">    ``vs`` float or sequence, km/s</span>
+
+<span class="sd">    returns qs&quot;&quot;&quot;</span>
+
+    <span class="n">qs</span> <span class="o">=</span> <span class="o">-</span><span class="mi">16</span><span class="o">+</span><span class="mf">104.13</span><span class="o">*</span><span class="n">vs</span><span class="o">-</span><span class="mf">25.225</span><span class="o">*</span><span class="n">vs</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">8.2184</span><span class="o">*</span><span class="n">vs</span><span class="o">**</span><span class="mi">3</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">qs</span><span class="p">[</span><span class="n">vs</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vs</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="mi">13</span>
+
+    <span class="k">return</span> <span class="n">qs</span></div>
+
+
+<div class="viewcode-block" id="get_qp"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_qp">[docs]</a><span class="k">def</span> <span class="nf">get_qp</span><span class="p">(</span><span class="n">qs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Pressure Quality Factor based on Brocher (2008).</span>
+<span class="sd">    ``qs`` float or sequence</span>
+
+<span class="sd">    returns qp&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">qs</span></div>
+
+
+<div class="viewcode-block" id="sample_func"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.sample_func">[docs]</a><span class="k">def</span> <span class="nf">sample_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_Vfile"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.read_Vfile">[docs]</a><span class="k">def</span> <span class="nf">read_Vfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">vp</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">vs</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">rho</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">qp</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">qs</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">gmf</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="n">line</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fields</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="n">fields</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+                    <span class="n">ldepth</span><span class="p">,</span> <span class="n">lvp</span><span class="p">,</span> <span class="n">lvs</span><span class="p">,</span> <span class="n">lrho</span><span class="p">,</span> <span class="n">lqp</span><span class="p">,</span> <span class="n">lqs</span><span class="p">,</span> <span class="n">lgmf</span> <span class="o">=</span> <span class="n">fields</span>
+                    <span class="n">depth</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ldepth</span><span class="p">]</span>
+                    <span class="n">vp</span>    <span class="o">+=</span> <span class="p">[</span><span class="n">lvp</span><span class="p">]</span>
+                    <span class="n">vs</span>    <span class="o">+=</span> <span class="p">[</span><span class="n">lvs</span><span class="p">]</span>
+                    <span class="n">rho</span>   <span class="o">+=</span> <span class="p">[</span><span class="n">lrho</span><span class="p">]</span>
+                    <span class="n">qp</span>    <span class="o">+=</span> <span class="p">[</span><span class="n">lqp</span><span class="p">]</span>
+                    <span class="n">qs</span>    <span class="o">+=</span> <span class="p">[</span><span class="n">lqs</span><span class="p">]</span>
+                    <span class="n">gmf</span>   <span class="o">+=</span> <span class="p">[</span><span class="n">lgmf</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">vp</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vp</span><span class="p">,</span>    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">vs</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span>    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">rho</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span>   <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">qp</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">qp</span><span class="p">,</span>    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">qs</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">qs</span><span class="p">,</span>    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">header</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">qs</span><span class="p">,</span> <span class="n">gmf</span></div>
+
+
+<div class="viewcode-block" id="V_model"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.V_model">[docs]</a><span class="k">class</span> <span class="nc">V_model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Velocity model object, has depth, vp, vs, rho, qp, qs&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">gmf</span><span class="p">)</span> <span class="o">=</span> <span class="n">read_Vfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_missing_data</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="V_model.calculate_missing_data"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.V_model.calculate_missing_data">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_missing_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Look for ``nans`` in the data and try to calculate</span>
+<span class="sd">        based on Brocher (2008)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_vs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="n">e3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_rho</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="n">e3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_qs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_qp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">[</span><span class="n">indices</span><span class="p">]))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="V_model.get_properties"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.V_model.get_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This function first fits the data in the velocity model</span>
+<span class="sd">        with an interpolation function and then evaluates the properties</span>
+<span class="sd">        at the requested depths. Interpolation can either be based on</span>
+<span class="sd">        piecewise step functions (nearest) or on linear interpolation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        depth : sequence, int or float, of depths at which to evaluate</span>
+<span class="sd">            the properties.</span>
+
+<span class="sd">        k : int, 0 or 1, default: 0</span>
+<span class="sd">            0 - gets the nearest value</span>
+<span class="sd">            1 - linear interpolation between data points</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        ---------</span>
+<span class="sd">        vp, vs, rho, qp, qs&quot;&quot;&quot;</span>
+
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">]</span>
+        <span class="n">new_properties</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">sample_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+                <span class="n">new_properties</span> <span class="o">+=</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="n">depth</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">sample_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[::</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">new_properties</span> <span class="o">+=</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="n">depth</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">new_properties</span></div>
+
+
+<div class="viewcode-block" id="V_model.get_depth"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.V_model.get_depth">[docs]</a>    <span class="k">def</span> <span class="nf">get_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="nb">property</span><span class="o">=</span><span class="s1">&#39;vp&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This function first fits the data in the velocity model</span>
+<span class="sd">        with an interpolation function and then evaluates the depth</span>
+<span class="sd">        corresponding to the value of the requested property.</span>
+
+<span class="sd">        Interpolation is linear.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        values : sequence, int or float, of the property for which to</span>
+<span class="sd">            evaluate the depth.</span>
+
+<span class="sd">        property : string, &#39;vp&#39;, &#39;vs&#39;, &#39;rho&#39;, &#39;qp&#39;, or &#39;qs&#39;.</span>
+<span class="sd">            default: &#39;vp&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        ---------</span>
+<span class="sd">        depth&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">property</span> <span class="ow">is</span> <span class="s1">&#39;vp&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vp</span>
+        <span class="k">elif</span> <span class="nb">property</span> <span class="ow">is</span> <span class="s1">&#39;vs&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vs</span>
+        <span class="k">elif</span> <span class="nb">property</span> <span class="ow">is</span> <span class="s1">&#39;rho&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span>
+        <span class="k">elif</span> <span class="nb">property</span> <span class="ow">is</span> <span class="s1">&#39;qp&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qp</span>
+        <span class="k">elif</span> <span class="nb">property</span> <span class="ow">is</span> <span class="s1">&#39;qs&#39;</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qs</span>
+
+        <span class="n">func</span> <span class="o">=</span> <span class="n">sample_func</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">[::</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">depth</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%7d</span><span class="s1">,</span><span class="si">%7d</span><span class="s1">,</span><span class="si">%7d</span><span class="s1">,</span><span class="si">%7d</span><span class="s1">,</span><span class="si">%7d</span><span class="s1">,</span><span class="si">%7d</span><span class="s1">,</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gmf</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+
+<div class="viewcode-block" id="V_model.write2file"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.V_model.write2file">[docs]</a>    <span class="k">def</span> <span class="nf">write2file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;end</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="grid_spacing"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.grid_spacing">[docs]</a><span class="k">def</span> <span class="nf">grid_spacing</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">ppw</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function calculates the h parameter (grid_spacing)</span>
+<span class="sd">    based on the requirement that the shortest wavelength (vmin/fmax)</span>
+<span class="sd">    be sampled by a minimum points_per_wavelength (ppw) normally set</span>
+<span class="sd">    to 15.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">vmin</span> <span class="o">/</span> <span class="p">(</span><span class="n">fmax</span> <span class="o">*</span> <span class="n">ppw</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="f_max"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.f_max">[docs]</a><span class="k">def</span> <span class="nf">f_max</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">ppw</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>  <span class="c1"># Note: ppw is regarded differently in WPP and SW4</span>
+    <span class="sd">&quot;&quot;&quot;Calculate teh maximum resolved frequency as a function of the</span>
+<span class="sd">    minimum wave velocity, the grid spacing and the number of points</span>
+<span class="sd">    per wavelength.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">vmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">ppw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="f0"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.f0">[docs]</a><span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">fmax</span><span class="p">,</span> <span class="n">source_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the fundamental frequency f_0 based on fmax and the</span>
+<span class="sd">    source type&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Ricker&#39;</span><span class="p">,</span> <span class="s1">&#39;RickerInt&#39;</span><span class="p">,</span> <span class="s1">&#39;Gaussian&#39;</span><span class="p">,</span> <span class="s1">&#39;GaussianInt&#39;</span><span class="p">]:</span>
+        <span class="n">f_0</span> <span class="o">=</span> <span class="n">fmax</span> <span class="o">/</span> <span class="mf">2.5</span>
+    <span class="k">elif</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Brune&#39;</span><span class="p">,</span> <span class="s1">&#39;BruneSmoothed&#39;</span><span class="p">]:</span>
+        <span class="n">f_0</span> <span class="o">=</span> <span class="n">fmax</span> <span class="o">/</span> <span class="mi">4</span>
+    <span class="k">return</span> <span class="n">f_0</span></div>
+
+
+<div class="viewcode-block" id="omega"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.omega">[docs]</a><span class="k">def</span> <span class="nf">omega</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">source_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate omega, that value that goes on the source line in the</span>
+<span class="sd">    WPP input file as ``freq`` based on f_0 and the source type&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Ricker&#39;</span><span class="p">,</span> <span class="s1">&#39;RickerInt&#39;</span><span class="p">]:</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">f0</span>
+    <span class="k">elif</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Brune&#39;</span><span class="p">,</span> <span class="s1">&#39;BruneSmoothed&#39;</span><span class="p">,</span> <span class="s1">&#39;Gaussian&#39;</span><span class="p">,</span> <span class="s1">&#39;GaussianInt&#39;</span><span class="p">]:</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">f0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="k">return</span> <span class="n">freq</span></div>
+
+
+<div class="viewcode-block" id="get_vmin"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_vmin">[docs]</a><span class="k">def</span> <span class="nf">get_vmin</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">ppw</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">h</span> <span class="o">*</span> <span class="n">fmax</span> <span class="o">*</span> <span class="n">ppw</span></div>
+
+
+<div class="viewcode-block" id="get_z"><a class="viewcode-back" href="../../../packages/pySW4.preprocess.html#pySW4.preprocess.material_model.get_z">[docs]</a><span class="k">def</span> <span class="nf">get_z</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">v_grad</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v0</span><span class="p">)</span> <span class="o">/</span> <span class="n">v_grad</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

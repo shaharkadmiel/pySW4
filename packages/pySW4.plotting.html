@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.plotting package &mdash; pySW4 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 0.2.0 documentation" href="../index.html" />
+    <link rel="up" title="pySW4 Library Reference" href="index.html" />
+    <link rel="next" title="pySW4.preprocess package" href="pySW4.preprocess.html" />
+    <link rel="prev" title="pySW4.core.scripts package" href="pySW4.core.scripts.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.preprocess.html" title="pySW4.preprocess package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.core.scripts.html" title="pySW4.core.scripts package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">pySW4 Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pySW4.plotting package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pySW4.plotting.drape">pySW4.plotting.drape module</a></li>
+<li><a class="reference internal" href="#module-pySW4.plotting.image">pySW4.plotting.image module</a></li>
+<li><a class="reference internal" href="#module-pySW4.plotting.util">pySW4.plotting.util module</a></li>
+<li><a class="reference internal" href="#module-pySW4.plotting.waveforms">pySW4.plotting.waveforms module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pySW4.core.scripts.html"
+                        title="previous chapter">pySW4.core.scripts package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pySW4.preprocess.html"
+                        title="next chapter">pySW4.preprocess package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/packages/pySW4.plotting.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pySW4.plotting">
+<span id="pysw4-plotting-package"></span><h1>pySW4.plotting package<a class="headerlink" href="#module-pySW4.plotting" title="Permalink to this headline">¶</a></h1>
+<p>Plotting routines of pySW4</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pySW4.plotting.drape">
+<span id="pysw4-plotting-drape-module"></span><h2>pySW4.plotting.drape module<a class="headerlink" href="#module-pySW4.plotting.drape" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pySW4.plotting.drape.drape_plot">
+<code class="descname">drape_plot</code><span class="sig-paren">(</span><em>relief</em>, <em>data</em>, <em>extent</em>, <em>intensity=None</em>, <em>data_mask=None</em>, <em>data_clipfactor='max'</em>, <em>vmin='min'</em>, <em>bg_brightness=1</em>, <em>fg_brightness=1</em>, <em>rcmap='Greys'</em>, <em>icmap='Greys'</em>, <em>dcmap='hot_r'</em>, <em>origin='upper'</em>, <em>ax=None</em>, <em>colorbar=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/drape.html#drape_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.drape.drape_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drape <cite>data</cite> over <cite>relief</cite> or hill-shaded relief.
+If <cite>intensity</cite> is supplied, <cite>relief</cite> is first draped over <cite>intensity</cite>
+and then <cite>data</cite> is draped over both. Otherwise, <cite>data</cite> is draped
+over <cite>relief</cite> only.</p>
+<p>If supplied, intensity and relief arrays <strong>MUST</strong> be the same shape.</p>
+<p>relief : a 2d array, usually of elevation</p>
+<p>data : a 2d array with the data to be draped</p>
+<dl class="docutils">
+<dt>extent</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">a list or tuple of the extent of the domain plotted.</span><dd>(xmin,xmax,ymin,ymax) or (w,e,s,n)</dd>
+<dt>intensity</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">a hill-shade intensities array, same shape as the relief</span><dd>array. If only a shaded relief is needed, pass the hill-shade
+intensity array as <cite>data</cite> and leave <cite>intensity</cite> as None.
+This will cause <cite>relief</cite> to be draped over <cite>intensity</cite>.</dd>
+<dt>data_mask</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">a 2d boolean array, same shape as data used to mask</span><dd>the <cite>data</cite> before draping is done.</dd>
+<dt>data_clipfactor</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">used to clip the coloring of the data at the set</span><dd>value, similar to vmax. Default is &#8216;max&#8217; which shows all the data.
+If <cite>data_clipfactor</cite> is <cite>int</cite> or <cite>float</cite>, the clipping value is
+set to <cite>data_clipfactor</cite>. Finally, if a string is passed, it
+is casted to float and used an <cite>rms</cite> multiplier. For instance,
+if <cite>data_clipfactor=&#8216;3&#8217;</cite>, clipping is done at 3.0*rms of the data.</dd>
+<dt>vmin</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">used as data minimum clipping. Default is <cite>0</cite>. If set to None or</span><dd>False, vmin is set to -vmax so that the coloring of the data is
+symmetric arround 0.</dd>
+<dt>bg_brightness and fg_brightness</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">control the brightness of the</span><dd>background (relief or shaded relief) and foreground (data).</dd>
+</dl>
+<p>rcmap, icmap and dcmap : relief, intensity and data colormap</p>
+<dl class="docutils">
+<dt>origin</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">places the origin of the bg and fg at the &#8216;upper&#8217; (default)</span><dd>or &#8216;lower&#8217; left corner of the plot.</dd>
+<dt>ax</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">an axes instance to which to plot to. If None, a figure and axes</span><dd>are created and their instances are returned for further manipulation.</dd>
+<dt>colorbar</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">by default, a colorbar is drawn with the plot. If <cite>colorbar</cite></span><dd>is a string, it is used for the label of the colorbar. Otherwise,
+the colorbar can be omitted by setting to False. colorbar instance
+is returned.</dd>
+</dl>
+<p>** Note **
+All grids must have the same extent and origin!</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.plotting.drape.make_mask_image">
+<code class="descname">make_mask_image</code><span class="sig-paren">(</span><em>mask</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/drape.html#make_mask_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.drape.make_mask_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pySW4.plotting.image">
+<span id="pysw4-plotting-image-module"></span><h2>pySW4.plotting.image module<a class="headerlink" href="#module-pySW4.plotting.image" title="Permalink to this headline">¶</a></h2>
+<p>Module to handle SW4 images of Maps or Cross-Sections</p>
+<dl class="docutils">
+<dt>By: Omri Volk, Shahar Shani-Kadmiel and Tobias Megies, 2015-2016,</dt>
+<dd><a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a></dd>
+</dl>
+<dl class="function">
+<dt id="pySW4.plotting.image.create_image_plots">
+<code class="descname">create_image_plots</code><span class="sig-paren">(</span><em>config_file</em>, <em>folder=None</em>, <em>source_time_function_type=None</em>, <em>frames_per_second=5</em>, <em>cmap=None</em>, <em>movies=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/image.html#create_image_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.image.create_image_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all image plots/movies for a SW4 run.</p>
+<p>Currently always only uses first patch in each SW4 image file.
+If the path/filename of the SW4 input file is provided, additional
+information is included in the plots (e.g. receiver/source location,
+automatic determination of source time function type, ..)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config_file</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename (potentially with absolute/relative path) of
+SW4 input/config file used to control the simulation. Use <cite>None</cite> to
+work on folder with SW4 output without using metadata from config.</li>
+<li><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Folder with SW4 output files or <cite>None</cite> if output folder
+location can be used from config file. Only needed when no config file
+is specified or if output folder was moved to a different location
+after the simulation.</li>
+<li><strong>source_time_function_type</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <cite>displacement</cite> or <cite>velocity</cite>.</li>
+<li><strong>frames_per_second</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Image frames to show per second in output videos.</li>
+<li><strong>cmap</strong> (str or <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.1)"><code class="xref py py-class docutils literal"><span class="pre">matplotlib.colors.Colormap</span></code></a>) &#8211; Matplotlib colormap or colormap string understood by
+matplotlib.</li>
+<li><strong>movies</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Whether to produce movies from image files present at
+different cycles of the simulation. Needs <cite>ffmpeg</cite> to be installed and
+callable on command line.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.plotting.image.image_files_to_movie">
+<code class="descname">image_files_to_movie</code><span class="sig-paren">(</span><em>input_files</em>, <em>output_filename</em>, <em>config=None</em>, <em>source_time_function_type=None</em>, <em>patch_number=0</em>, <em>frames_per_second=5</em>, <em>overwrite=False</em>, <em>global_colorlimits=True</em>, <em>debug=False</em>, <em>**plot_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/image.html#image_files_to_movie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.image.image_files_to_movie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert SW4 images to an mp4 movie using command line ffmpeg.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_files</strong> (<em>str or list</em>) &#8211; Wildcarded filename pattern or list of individual
+filenames.</li>
+<li><strong>output_filename</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Output movie filename (&#8216;.mp4&#8217; extension will be
+appended if not already present).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pySW4.plotting.util">
+<span id="pysw4-plotting-util-module"></span><h2>pySW4.plotting.util module<a class="headerlink" href="#module-pySW4.plotting.util" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>utils.py -</li>
+</ul>
+<p>Python module with general utilities for making plotting easier.</p>
+<p>By: Shahar Shani-Kadmiel, August 2012, <a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a></p>
+<dl class="function">
+<dt id="pySW4.plotting.util.pretty_ticks">
+<code class="descname">pretty_ticks</code><span class="sig-paren">(</span><em>min</em>, <em>max</em>, <em>number_of_ticks</em>, <em>show_zero=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/util.html#pretty_ticks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.util.pretty_ticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for controlling tickmarks.</p>
+<p><cite>show_zero</cite> forces the zero tickmark to be plotted</p>
+<p>The rest of the parameters are self explanatory...</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.plotting.util.set_matplotlib_rc_params">
+<code class="descname">set_matplotlib_rc_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/util.html#set_matplotlib_rc_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.util.set_matplotlib_rc_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set matplotlib rcparams for plotting</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pySW4.plotting.waveforms">
+<span id="pysw4-plotting-waveforms-module"></span><h2>pySW4.plotting.waveforms module<a class="headerlink" href="#module-pySW4.plotting.waveforms" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pySW4.plotting.waveforms._plot_seismograms">
+<code class="descname">_plot_seismograms</code><span class="sig-paren">(</span><em>st_synth_</em>, <em>st_real_</em>, <em>channel_map</em>, <em>unit_label</em>, <em>outfile</em>, <em>figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#_plot_seismograms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms._plot_seismograms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function that plots synthetic vs. real data to an image file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>st_synth</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a>) &#8211; Synthetic waveform data.</li>
+<li><strong>st_real</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a>) &#8211; Observed waveform data.</li>
+<li><strong>channel_map</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Mapping dictionary to match synthetic channel to
+component in observed data.</li>
+<li><strong>unit_label</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Label string for y-axis of waveforms.</li>
+<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Output filename (absolute or relative path) for image
+including suffix (e.g. png).</li>
+<li><strong>figsize</strong> (<em>2-tuple of floats</em>) &#8211; Matplotlib figure size (inches x/y).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.plotting.waveforms.create_seismogram_plots">
+<code class="descname">create_seismogram_plots</code><span class="sig-paren">(</span><em>config_file</em>, <em>folder=None</em>, <em>stream_observed=None</em>, <em>inventory=None</em>, <em>water_level=None</em>, <em>pre_filt=None</em>, <em>filter_kwargs=None</em>, <em>channel_map={'Vx': 'N'</em>, <em>'Vy': 'E'</em>, <em>'-Vz': 'Z'}</em>, <em>used_stations=None</em>, <em>synthetic_starttime=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#create_seismogram_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms.create_seismogram_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all waveform plots, comparing synthetic and observed data.</p>
+<p>Ideally works on a SW4 input/config file, or explicitely on an folder with
+SW4 output files. Assumes output in SAC format. Observed/real data and
+station metadata can be specified, along with deconvolution parameters to
+get to physical units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config_file</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename (potentially with absolute/relative path) of
+SW4 input/config file used to control the simulation. Use <cite>None</cite> to
+work on folder with SW4 output without using metadata from config.</li>
+<li><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Folder with SW4 output files or <cite>None</cite> if output folder
+location can be used from config file. Only needed when no config file
+is specified or if output folder was moved to a different location
+after the simulation.</li>
+<li><strong>stream_observed</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a>) &#8211; Observed/real data to compare with synthetics.</li>
+<li><strong>inventory</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.inventory.inventory.Inventory</span></code></a>) &#8211; Station metadata for observed/real data.</li>
+<li><strong>water_level</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Water level for instrument response removal (see
+<code class="xref py py-meth docutils literal"><span class="pre">obspy.core.trace.remove_response()</span></code>).</li>
+<li><strong>pre_filt</strong> (<em>4-tuple of float</em>) &#8211; Frequency domain pre-filtering in response removal (see
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.remove_response.html#obspy.core.trace.Trace.remove_response" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">obspy.core.trace.Trace.remove_response()</span></code></a>).</li>
+<li><strong>filter_kwargs</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Filter parameters for filtering applied to observed
+data after response removal before comparison to synthetic data. Kwargs
+are passed on to <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.filter.html#obspy.core.stream.Stream.filter" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">obspy.core.stream.Stream.filter()</span></code></a>).</li>
+<li><strong>channel_map</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Mapping dictionary to match synthetic channel to
+component in observed data.</li>
+<li><strong>used_stations</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; Station codes to consider in plot output. Use all
+stations if left <cite>None</cite>.</li>
+<li><strong>synthetic_starttime</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.utcdatetime.UTCDateTime.html#obspy.core.utcdatetime.UTCDateTime" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.utcdatetime.UTCDateTime</span></code></a>) &#8211; Start time of synthetic data, only needed if no
+config file is specified or if config file did not set the correct
+origin time of the event.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.preprocess.html" title="pySW4.preprocess package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.core.scripts.html" title="pySW4.core.scripts package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>
