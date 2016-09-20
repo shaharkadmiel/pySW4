@@ -5,8 +5,7 @@ Python module to read and write rfiles.
 .. module:: rfileIO
 
 :author:
-    Shahar Shani-Kadmiel
-    kadmiel@post.bgu.ac.il
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
 
 :copyright:
     Shahar Shani-Kadmiel
@@ -16,7 +15,6 @@ Python module to read and write rfiles.
     GNU Lesser General Public License, Version 3
     (https://www.gnu.org/copyleft/lesser.html)
 """
-
 from __future__ import absolute_import, print_function, division
 
 import os
@@ -205,7 +203,7 @@ def read_hdr(f):
     .. _SW4 User Guide:
        https://geodynamics.org/cig/software/sw4/
 
-    See Also
+    See also
     --------
     :func:`.write_hdr`
     """
@@ -329,7 +327,7 @@ def read(filename, block_number=None, verbose=False):
     return model
 
 
-class Model(object):
+class Model():
     """
     A class to hold rfile header and blocks.
 
@@ -342,9 +340,8 @@ class Model(object):
 
     block_number : int, str, None
         By default (``block_number=None``) only the rfile header and
-        the block headers are read into a
-        :class:`~pySW4.preprocess.rfileIO.Model` object. No block data
-        sections are read.
+        the block headers are read into a :class:`~.Model` object. No
+        block data sections are read.
         If ``block_number='all'``, all block data sections are read
         into memory.
         Therefor, you could read only one block by specifying
@@ -357,7 +354,7 @@ class Model(object):
 
     Returns
     -------
-    :class:`~pySW4.preprocess.rfileIO.Model`
+    :class:`~.Model`
         A Model object holding rfile header and block headers and
         perhaps also block data sections, depending on the
         ``block_number`` value.
@@ -421,7 +418,7 @@ class Model(object):
     def read_block_data_section(self, block_number):
         """
         Read the data section of the specified block into the current
-        :class:`pySW4.preprocess.rfileIO.Model` object to be stored in
+        :class:`pySW4.prep.rfileIO.Model` object to be stored in
         memory.
 
         Parameters
@@ -588,8 +585,7 @@ class Model(object):
         ----
         The origin of the data is the bottom-left corner so if plotted
         with :func:`~matplotlib.pyplot.imshow` set the 'origin' keyword
-        to 'lower' or simply use
-        :meth:`~pySW4.preprocess.rfileIO.Model.plot_topography` for
+        to 'lower' or simply use :meth:`~.Model.plot_topography` for
         plotting.
         """
 
@@ -733,7 +729,7 @@ class Model(object):
             return cb
 
 
-class Block(object):
+class Block():
     """
     A class to hold rfile block header and data section
     """
@@ -785,7 +781,7 @@ class Block(object):
         Private method. Reads the data section of cued file handle.
         Should not be used by the user. See
         :meth:`~.Model.read_block_data_section` method in the
-        :class:`~pySW4.preprocess.rfileIO.Model` class.
+        :class:`~.Model` class.
         """
         data = np.fromfile(f, DATA_PRECISION[precision],
                            self.ni * self.nj * self.nk * self.nc)
@@ -855,15 +851,15 @@ class Block(object):
         return np.arange(self.z_extent[1], self.z_extent[0] + hv, hv)
 
 
-class CrossSection(object):
+class CrossSection():
     """
     Class to generate and hold a cross-section of the material
     properties along a line in an existing model
-    (:class:`~pySW4.preprocess.rfileIO.Model`).
+    (:class:`~.Model`).
 
     Parameters
     ----------
-    model : :class:`pySW4.preprocess.rfileIO.Model`
+    model : :class:`pySW4.prep.rfileIO.Model`
         A populated Model object from which to extract the data
 
     x1 : float
@@ -880,7 +876,7 @@ class CrossSection(object):
 
     returns
     -------
-    :class:`~pySW4.preprocess.rfileIO.CrossSection`
+    :class:`~.CrossSection`
         A ``CrossSection`` object with data and a plotting method.
     """
 

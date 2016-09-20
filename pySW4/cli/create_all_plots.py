@@ -11,7 +11,7 @@ from obspy import read, Stream, read_inventory
 from obspy.core.inventory import Inventory
 
 from pySW4 import __version__
-from pySW4.core.config import _decode_string_value
+from pySW4.postp.input import _decode_string_value
 from pySW4.plotting import create_image_plots, create_seismogram_plots
 
 
@@ -21,14 +21,14 @@ def main(argv=None):
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + __version__)
 
-    parser.add_argument('-c', '--config', dest='config_file', default=None,
+    parser.add_argument('-c', '--input', dest='input_file', default=None,
                         type=str,
-                        help='SW4 input/config file of simulation run.')
+                        help='SW4 input file of simulation run.')
 
     parser.add_argument('-f', '--folder', dest='folder', default=None,
                         type=str,
                         help='Folder with SW4 simulation run output. '
-                             'Can be omitted if a config file is specified '
+                             'Can be omitted if an input file is specified '
                              'and output directory was not moved after the '
                              'simulation.')
 
@@ -101,9 +101,9 @@ def main(argv=None):
             continue
         warnings.warn(msg.format(f))
 
-    create_image_plots(config_file=args.config_file,
+    create_image_plots(input_file=args.input_file,
                        movies=not args.no_movies)
-    create_seismogram_plots(config_file=args.config_file, folder=args.folder,
+    create_seismogram_plots(input_file=args.input_file, folder=args.folder,
                             stream_observed=st, inventory=inv,
                             used_stations=args.used_stations,
                             water_level=args.water_level,

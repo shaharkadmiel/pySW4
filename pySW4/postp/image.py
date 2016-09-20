@@ -43,29 +43,29 @@ except ImportError:
     cmap_sequential = None
     cmap_sequential_r = None
 
-from .config import read_input_file
+from .input import read_input_file
 from .header import (
     IMAGE_HEADER_DTYPE, PATCH_HEADER_DTYPE, IMAGE_PLANE,
     IMAGE_MODE_DISPLACEMENT, IMAGE_MODE_VELOCITY, IMAGE_PRECISION,
-    SOURCE_TIME_FUNCTION_TYPE)
+    STF)
 
 
-class Image(object):
+class Image():
     """
     A class to hold SW4 image files.
 
     Initialize an empty Image object, preferentially specifying the
-    config (file) used to run the simulation.
+    input file used to run the simulation.
 
     Parameters
     ----------
-    config : str or :class:`~obspy.core.util.attribdict.AttribDict`
-        Configuration (already parsed or filename) used to compute the
+    input_file : str or :class:`~obspy.core.util.attribdict.AttribDict`
+        Input file (already parsed or filename) used to compute the
         image output.
 
-    source_time_function_type : str
+    stf : str
         `'displacement'` or `'velocity'`. Only needed if no metadata
-        from original config is used.
+        from original input_file is used.
     """
     CMAP = {"divergent"    : cmap_divergent,
             "divergent_r"  : cmap_divergent_r,
@@ -89,30 +89,30 @@ class Image(object):
         path_effects.Stroke(linewidth=1.5 + 0.7, foreground='w'),
         path_effects.Normal()]
 
-    def __init__(self, config=None, source_time_function_type=None):
+    def __init__(self, input_file=None, stf=None):
 
         self.patches = []
-        if config is not None and not isinstance(config, AttribDict):
-            config = read_input_file(config)
-        self._config = config
-        if config:
-            source_time_function_type_ = self.source_time_function_type
-            if source_time_function_type and source_time_function_type_ and \
-                    source_time_function_type != source_time_function_type_:
+        if input_file is not None and not isinstance(input_file, AttribDict):
+            input_file = read_input_file(input_file)
+        self._input_file = input_file
+        if input_file:
+            stf_ = self.stf
+            if stf and stf_ and \
+                    stf != stf_:
                 msg = ("Overriding user specified source time function "
-                       "type ({}) with the one found in configuration file "
-                       "({}).").format(source_time_function_type,
-                                       source_time_function_type_)
+                       "type ({}) with the one found in input file "
+                       "({}).").format(stf,
+                                       stf_)
                 warnings.warn(msg)
-            source_time_function_type = source_time_function_type_
+            stf = stf_
         # set mode code mapping, depending on the type of source time function
-        if source_time_function_type == "displacement":
+        if stf == "displacement":
             self._mode_dict = IMAGE_MODE_DISPLACEMENT
-        elif source_time_function_type == "velocity":
+        elif stf == "velocity":
             self._mode_dict = IMAGE_MODE_VELOCITY
         else:
-            msg = ("Unrecognized 'source_time_function_type': '{}'")
-            msg = msg.format(source_time_function_type)
+            msg = ("Unrecognized 'stf': '{}'")
+            msg = msg.format(stf)
             raise ValueError(msg)
         self.filename = None
         self._precision = None
@@ -205,20 +205,21 @@ class Image(object):
         """
         if patches is None:
             for patch in self.patches:
-                patch.plot(*args, **kwargs)
+                fig, _, _ = patch.plot(*args, **kwargs)
         else:
             for i in patches:
-                self.patches[i].plot(*args, **kwargs)
+                fig, _, _ = self.patches[i].plot(*args, **kwargs)
+        return fig
 
-    def _get_plot_coordinates_from_config(self, key):
+    def _get_plot_coordinates_from_input(self, key):
         """
-        Gets coordinates for config keys that have 3D x, y, z values
+        Gets coordinates for input keys that have 3D x, y, z values
         (e.g. 'source', 'rec') in 2D plotting coordinates for use in
         :meth:`.plot`.
         """
-        if not self._config:
+        if not self._input_file:
             return None
-        items = self._config.get(key, [])
+        items = self._input_file.get(key, [])
         if not items:
             return None
         x = []
@@ -240,7 +241,7 @@ class Image(object):
         return x, y
 
     def get_source_coordinates(self):
-        return self._get_plot_coordinates_from_config("source")
+        return self._get_plot_coordinates_from_input("source")
 
     @property
     def is_cross_section(self):
@@ -256,11 +257,10 @@ class Image(object):
         return False
 
     @property
-    def source_time_function_type(self):
-        if not self._config:
+    def stf(self):
+        if not self._input_file:
             return None
-        stf_type = SOURCE_TIME_FUNCTION_TYPE[self._config.source[0].type]
-        return {0: "displacement", 1: "velocity"}.get(stf_type, None)
+        return STF[self._input_file.source[0].type].type
 
     @property
     def _cmap_type(self):
@@ -306,7 +306,7 @@ class Image(object):
         return self._mode_dict[self._mode]['unit']
 
 
-class Patch(object):
+class Patch():
     """
     A class to hold SW4 patch data.
 
@@ -413,8 +413,8 @@ class Patch(object):
                 vmax = abs_max
                 vmin = -abs_max
 
-        if (vmin is not None and self.min < vmin) and \
-                (vmax is not None and self.max > vmax):
+        if ((vmin is not None and self.min < vmin) and
+                (vmax is not None and self.max > vmax)):
             extend = 'both'
         elif vmin is not None and self.min < vmin:
             extend = 'min'
@@ -427,10 +427,10 @@ class Patch(object):
                        origin="lower", interpolation="nearest", cmap=cmap,
                        **kwargs)
         # plot receiver, source etc.
-        if self._image._config:
+        if self._image._input_file:
             for key, kwargs in self._image.MPL_SCATTER_PROPERTIES.items():
                 coordinates = \
-                    self._image._get_plot_coordinates_from_config(key)
+                    self._image._get_plot_coordinates_from_input(key)
                 if not coordinates:
                     continue
                 x, y = coordinates
@@ -495,8 +495,8 @@ class Patch(object):
             return cb
 
 
-def read_image(filename='random', config=None,
-               source_time_function_type="displacement", verbose=False):
+def read_image(filename='random', input_file=None,
+               stf="displacement", verbose=False):
     """
     Read image data, cross-section or map into a
     :class:`.Image` object.
@@ -508,13 +508,13 @@ def read_image(filename='random', config=None,
         generated. if filename is ``None``, an empty :class:`.Image`
         object is returned.
 
-    config : str or AttribDict
-        Configuration (already parsed or filename) used to compute the
+    input_file : str or AttribDict
+        Input file (already parsed or filename) used to compute the
         image output.
 
-    source_time_function_type : str
+    stf : str
         `'displacement'` or `'velocity'`. Only needed if no metadata
-        from original config is used.
+        from original input_file is used.
 
     verbose : bool
         If set to ``True``, print some information while reading the
@@ -526,13 +526,13 @@ def read_image(filename='random', config=None,
         An :class:`~.Image` object with a list of :class:`~.Patch`
         objects.
     """
-    image = Image(source_time_function_type=source_time_function_type,
-                  config=config)
+    image = Image(stf=stf,
+                  input_file=input_file)
     image.filename = filename
 
     if filename is 'random':  # generate random data, populate objects
         image = _create_random_image(
-            source_time_function_type=source_time_function_type)
+            stf=stf)
     elif filename is None:
         pass
     else:
@@ -546,8 +546,8 @@ def read_image(filename='random', config=None,
     return image
 
 
-def _create_random_image(source_time_function_type="displacement"):
-    image = Image(source_time_function_type=source_time_function_type)
+def _create_random_image(stf="displacement"):
+    image = Image(stf=stf)
     image.filename = None
     image._number_of_patches = 1
     image._precision = 4

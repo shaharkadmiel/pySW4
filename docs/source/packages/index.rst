@@ -2,7 +2,7 @@
 pySW4 Library Reference
 =======================
 
-The functionality is provided through the following packages:
+The functionality is provided through the following sub-packages:
 
 .. autosummary::
    :toctree: .
@@ -11,3 +11,11 @@ The functionality is provided through the following packages:
    pySW4.plotting
    pySW4.preprocess
    pySW4.utils
+
+Module contents
+---------------
+
+.. automodule:: pySW4
+    :members:
+    :undoc-members:
+    :show-inheritance:

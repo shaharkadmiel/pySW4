@@ -1,11 +1,6 @@
 pySW4 package
 =============
 
-.. automodule:: pySW4
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Subpackages
 -----------
 
@@ -16,3 +11,10 @@ Subpackages
     pySW4.preprocess
     pySW4.utils
 
+Module contents
+---------------
+
+.. automodule:: pySW4
+    :members:
+    :undoc-members:
+    :show-inheritance:

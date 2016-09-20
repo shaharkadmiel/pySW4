@@ -11,43 +11,16 @@ Subpackages
 Submodules
 ----------
 
-pySW4.core.config module
-------------------------
+.. toctree::
 
-.. automodule:: pySW4.core.config
+   pySW4.core.header
+   pySW4.core.image
+   pySW4.core.input
+
+Module contents
+---------------
+
+.. automodule:: pySW4.core
     :members:
-..    :undoc-members:
-..    :show-inheritance:
-
-pySW4.core.header module
-------------------------
-
-.. automodule:: pySW4.core.header
-    :members:
-..    :undoc-members:
-..    :show-inheritance:
-
-pySW4.core.image module
------------------------
-
-.. automodule:: pySW4.core.image
-    :members:
-..    :undoc-members:
-..    :show-inheritance:
-
-.. pySW4.core.volimage module
-.. --------------------------
-..
-.. .. automodule:: pySW4.core.volimage
-..    :members:
-..    :undoc-members:
-..    :show-inheritance:
-
-
-.. Module contents
-.. ---------------
-
-.. .. automodule:: pySW4.core
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
+    :undoc-members:
+    :show-inheritance:

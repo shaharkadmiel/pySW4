@@ -2,7 +2,7 @@
 """
 Some dictionaries and data_types for SW4 output files.
 
-.. module:: header
+.. module:: headers
 
 :author:
     Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
@@ -26,6 +26,7 @@ Some dictionaries and data_types for SW4 output files.
 from __future__ import absolute_import, print_function, division
 
 import numpy as np
+from obspy.core.util import AttribDict
 
 # image header is 61 bytes
 IMAGE_HEADER_DTYPE = np.dtype([
@@ -287,21 +288,82 @@ IMAGE_PLANE = {0: 'x', 1: 'y', 2: 'z'}
 
 IMAGE_PRECISION = {4: np.float32, 8: np.float64}
 
-# 0: displacement, 1: velocity
-SOURCE_TIME_FUNCTION_TYPE = {
-    "Gaussian"       : 1,
-    "GaussianInt"    : 0,
-    "Ricker"         : 1,
-    "RickerInt"      : 1,
-    "Brune"          : 0,
-    "BruneSmoothed"  : 0,
-    "Liu"            : 0,
-    "Triangle"       : 1,
-    "Sawtooth"       : 1,
-    "Ramp"           : 0,
-    "Smoothwave"     : 1,
-    "VerySmoothBump" : 1,
-    "C6SmoothBump"   : 1,
-    "GaussianWindow" : 1,
-    "Dirac"          : 1,
+STF_ = {
+    "Gaussian"       : {'type'    : 'velocity',
+                        'fmax2f0' : 2.5,
+                        'freq2f0' : 2 * np.pi,
+                        },
+    "GaussianInt"    : {'type'    : 'displacement',
+                        'fmax2f0' : 2.5,
+                        'freq2f0' : 2 * np.pi,
+                        },
+    "Ricker"         : {'type'    : 'velocity',
+                        'fmax2f0' : 2.5,
+                        'freq2f0' : 1.0,
+                        },
+    "RickerInt"      : {'type'    : 'velocity',
+                        'fmax2f0' : 2.5,
+                        'freq2f0' : 1.0,
+                        },
+    "Brune"          : {'type'    : 'displacement',
+                        'fmax2f0' : 4.0,
+                        'freq2f0' : 2 * np.pi,
+                        },
+    "BruneSmoothed"  : {'type'    : 'displacement',
+                        'fmax2f0' : 4.0,
+                        'freq2f0' : 2 * np.pi,
+                        },
+    "Liu"            : {'type'    : 'displacement',
+                        'fmax2f0' : 4.0,
+                        'freq2f0' : 2 * np.pi,
+                        },
+    "Triangle"       : {'type'    : 'velocity',
+                        'fmax2f0' : 0.0,
+                        'freq2f0' : 0.0,
+                        },
+    "Sawtooth"       : {'type'    : 'velocity',
+                        'fmax2f0' : 0.0,
+                        'freq2f0' : 0.0,
+                        },
+    "Ramp"           : {'type'    : 'displacement',
+                        'fmax2f0' : 0.0,
+                        'freq2f0' : 0.0,
+                        },
+    "Smoothwave"     : {'type'    : 'velocity',
+                        'fmax2f0' : 3.0,
+                        'freq2f0' : 0.0,
+                        },
+    "VerySmoothBump" : {'type'    : 'velocity',
+                        'fmax2f0' : 3.0,
+                        'freq2f0' : 1.0,
+                        },
+    "C6SmoothBump"   : {'type'    : 'velocity',
+                        'fmax2f0' : 3.0,
+                        'freq2f0' : 1.0,
+                        },
+    "GaussianWindow" : {'type'    : 'velocity',
+                        'fmax2f0' : 2.5,
+                        'freq2f0' : 2 * np.pi,
+                        },
+    "Dirac"          : {'type'    : 'velocity',
+                        'fmax2f0' : 0.0,
+                        'freq2f0' : 0.0,
+                        },
     }
+
+# Store the source time function dictionary as an AttribDict().
+STF = AttribDict()
+
+for key, values in STF_.items():
+    STF_item = AttribDict()
+    STF.setdefault(key, STF_item)
+
+    for key, value in values.items():
+        STF_item[key] = value
+
+
+REC_MODE = {'displacement' : '.[x,y,z,e,n,u]'  ,
+            'velocity'     : '.[x,y,z,e,n,u]v' ,
+            'div'          : '.div'            ,
+            'curl'         : 'curl[x,y,z]'     ,
+            'strains'      : '.[x,y,z][x,y,z]' }

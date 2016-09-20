@@ -1,28 +1,18 @@
 pySW4.core.scripts package
 ==========================
 
-.. automodule:: pySW4.core.scripts
-    :members:
-..    :undoc-members:
-..    :show-inheritance:
-
 Submodules
 ----------
 
-pySW4.core.scripts.plotting module
-----------------------------------
+.. toctree::
 
-.. automodule:: pySW4.core.scripts.plotting
+   pySW4.core.scripts.create_all_plots
+   pySW4.core.scripts.png2mp4
+
+Module contents
+---------------
+
+.. automodule:: pySW4.core.scripts
     :members:
     :undoc-members:
     :show-inheritance:
-
-pySW4.core.scripts.png2mp4 module
----------------------------------
-
-.. automodule:: pySW4.core.scripts.png2mp4
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
