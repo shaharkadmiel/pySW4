@@ -20,7 +20,7 @@ from __future__ import absolute_import, print_function, division
 
 import sys
 import argparse
-from ..plotting.image import png2mp4
+from pySW4.plotting.png2mp4 import png2mp4
 
 
 def main(argv=None):
@@ -31,8 +31,10 @@ def main(argv=None):
             self.print_help()
             sys.exit(2)
 
-    parser = DefaultHelpParser(description='Convert a sequencial set of '
-                                           '.png images to a .mp4 movie.')
+    parser = DefaultHelpParser(
+        prog='png2mp4',
+        description='Convert a sequencial set of '
+                    '.png images to a .mp4 movie.')
 
     parser.add_argument('-crf', action='store', default=23, type=int,
                         help='Constant Rate Factor, ranges from 0 to 51: A '

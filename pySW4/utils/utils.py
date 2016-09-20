@@ -334,33 +334,6 @@ def xy2pixel_coordinates(x, y, extent, shape, origin='nw'):
     return xc, yc
 
 
-def rms(x):
-    """
-    Returns the Root Mean Square of :class:`~numpy.ndarray` ``x``.
-    """
-    return np.sqrt((x**2).mean())
-
-
-def calc_stuff(x):
-    """
-    Calculate ``min``, ``max``, ``rms``, and ``ptp`` on a list of
-    2d :class:`~numpy.ndarray` ``x``.
-    """
-    xmax = []
-    xmin = []
-    xrms = []
-    xptp = []
-    for item in x:
-        xmax += [item.max()]
-        xmin += [item.min()]
-        xrms += [rms(item)]
-    xmax = max(xmax)
-    xmin = min(xmin)
-    xrms = rms(np.array(xrms))
-    xptp = xmax - xmin
-    return xmax, xmin, xrms, xptp
-
-
 def xy2latlon(x, y, origin=(37.0, -118.0), az=0, km2deg=111.3195):
     """
     Project cartesian ``x, y`` coordinates to geographical ``lat, lon``.
@@ -468,3 +441,35 @@ def latlon2xy(lat, lon, origin=(37.0, -118.0), az=0, km2deg=111.3195):
          np.cos(az)) - x * np.tan(az)
 
     return x, y
+
+
+def nearest_values(array, value, threshold, retvalue=False):
+    """
+    Get the indices (or elements) of an array with a threshold range
+    around a central value.
+
+    If ``revalue`` is true, the elements of the array are returned,
+    otherwise a True or False array of the indices of these elements
+    is returned.
+
+    Example
+    -------
+    >>> array = np.random.randint(-10, 10, size=10)
+    >>> print(array)
+    [ 3 -4  9  6  8 -1 -4 -7 -6  7]
+    >>>
+    >>> idx = nearest_values(array, 5, 2)
+    >>> print(idx)
+    >>> print(nearest_values(array, 5, 2, retvalue=True))
+    >>> print array[idx]
+    [ True False False  True False False False False False  True]
+    [3 6 7]
+    [3 6 7]
+    """
+    array = np.array(array)  # make sure aray is a numpy array
+    left = value - threshold
+    right = value + threshold
+    idx = (array >= left) * (array <= right)
+    if retvalue:
+        return array[idx]
+    return idx

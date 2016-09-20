@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Plotting routines of pySW4
+Plotting routines of pySW4.
 """
 from __future__ import absolute_import, print_function, division
 

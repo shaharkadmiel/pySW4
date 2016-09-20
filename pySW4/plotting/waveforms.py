@@ -52,7 +52,7 @@ from matplotlib.dates import date2num
 from matplotlib.gridspec import GridSpec
 import numpy as np
 import obspy
-from ..postp.input import _parse_input_file_and_folder
+from ..sw4_input import _parse_input_file_and_folder
 from ..headers import STF
 from ..utils import fourier_spectrum
 
@@ -227,9 +227,9 @@ def create_seismogram_plots(
         specified or if input file did not set the correct origin time
         of the event.
     """
-    input, folder = _parse_input_file_and_folder(input_file, folder)
+    input_, folder = _parse_input_file_and_folder(input_file, folder)
 
-    stf_type = STF[input.source[0].type].type
+    stf_type = STF[input_.source[0].type].type
     if stf_type == 'displacement':
         evalresp_output = "DISP"
         unit_label = "m"

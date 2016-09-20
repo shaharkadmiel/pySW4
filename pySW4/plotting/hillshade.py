@@ -46,18 +46,19 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
         Extent of the domain plotted.
         (xmin,xmax,ymin,ymax) or (w,e,s,n)
 
-    vmax : str or int or float
+    vmax : str or float
         Used to clip the coloring of the data at the set value.
-        Default is 'max' which shows all the data. If ``int`` or
-        ``float``, the colorscale saturates at the given value. Finally,
-        if a string is passed, it is casted to float and used as an
+        Default is 'max' which shows all the data. If  ``float``, the
+        colorscale saturates at the given value. Finally, if a string is
+        passed (other than 'max'), it is casted to float and used as an
         ``rms`` multiplier. For instance, if ``vmax='3'``, clipping is
         done at 3.0*rms of the data.
 
-    vmin : str or int or float or None
+    vmin : str or float or None
         Used as data minimum clipping. Default is ``'min'``, which shows
-        all data. If set to ``None`` or ``False``, vmin is set to -vmax
-        so that the coloring of the data is symmetric arround 0.
+        all data. If set to ``None`` or ``False``, ``vmin`` is set to
+        ``-vmax`` so that the coloring of the data is symmetric arround
+        0.
 
     az : int or float
         The azimuth (0-360, degrees clockwise from North) of the light

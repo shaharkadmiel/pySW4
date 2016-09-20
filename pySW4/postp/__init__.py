@@ -4,6 +4,5 @@ Postprocessing routines of pySW4
 """
 from __future__ import absolute_import, print_function, division
 
-from .input import read_input_file
 from .image import Image, read_image
 from .waveforms import Stations, read_stations

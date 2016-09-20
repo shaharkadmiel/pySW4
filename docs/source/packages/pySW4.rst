@@ -6,10 +6,18 @@ Subpackages
 
 .. toctree::
 
-    pySW4.core
+    pySW4.cli
     pySW4.plotting
-    pySW4.preprocess
+    pySW4.postp
+    pySW4.prep
     pySW4.utils
+
+Submodules
+----------
+
+.. toctree::
+
+   pySW4.headers
 
 Module contents
 ---------------

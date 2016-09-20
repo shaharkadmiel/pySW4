@@ -25,7 +25,8 @@ Python module to handle SW4 images of Maps or Cross-Sections.
 """
 from __future__ import absolute_import, print_function, division
 
-import warnings
+from warnings import warn
+import inspect
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -43,8 +44,8 @@ except ImportError:
     cmap_sequential = None
     cmap_sequential_r = None
 
-from .input import read_input_file
-from .header import (
+from ..sw4_input import Inputfile
+from ..headers import (
     IMAGE_HEADER_DTYPE, PATCH_HEADER_DTYPE, IMAGE_PLANE,
     IMAGE_MODE_DISPLACEMENT, IMAGE_MODE_VELOCITY, IMAGE_PRECISION,
     STF)
@@ -90,38 +91,48 @@ class Image():
         path_effects.Normal()]
 
     def __init__(self, input_file=None, stf=None):
-
         self.patches = []
-        if input_file is not None and not isinstance(input_file, AttribDict):
-            input_file = read_input_file(input_file)
-        self._input_file = input_file
-        if input_file:
-            stf_ = self.stf
-            if stf and stf_ and \
-                    stf != stf_:
-                msg = ("Overriding user specified source time function "
-                       "type ({}) with the one found in input file "
-                       "({}).").format(stf,
-                                       stf_)
-                warnings.warn(msg)
-            stf = stf_
-        # set mode code mapping, depending on the type of source time function
-        if stf == "displacement":
+        if type(input_file) in (str, Inputfile):
+            self.input_file = Inputfile(input_file)
+            if not self.input_file:
+                warn('File {} was not parsed and might not '
+                     'be an SW4 inputfile'.format(input_file))
+                self.input_file = None
+        else:
+            self.input_file = None
+
+        try:
+            stf_ = STF[self.input_file.source[0].type].type
+        except AttributeError:
+            stf_ = None
+        if (stf and stf_ and
+                stf != stf_):
+            msg = ('Overriding user specified source time function '
+                   'type ({}) with the one found in input file '
+                   '({}).')
+            warn(msg.format(stf, stf_))
+            self.stf = stf_
+        else:
+            self.stf = stf
+
+        # set mode code mapping, depending on the type of
+        # source time function
+        if self.stf == 'displacement':
             self._mode_dict = IMAGE_MODE_DISPLACEMENT
-        elif stf == "velocity":
+        elif self.stf == 'velocity':
             self._mode_dict = IMAGE_MODE_VELOCITY
         else:
             msg = ("Unrecognized 'stf': '{}'")
-            msg = msg.format(stf)
-            raise ValueError(msg)
+            raise ValueError(msg.format(self.stf))
         self.filename = None
         self._precision = None
-        self._number_of_patches = None
+        self.number_of_patches = None
         self.time = None
         self._plane = None
         self.coordinate = None
         self._mode = None
         self.gridinfo = None
+        self.extent = None
         self.creation_time = None
 
     def _read_header(self, f):
@@ -136,7 +147,7 @@ class Image():
         """
         header = np.fromfile(f, IMAGE_HEADER_DTYPE, 1)[0]
         (self._precision,
-         self._number_of_patches,
+         self.number_of_patches,
          self.time,
          self._plane,
          self.coordinate,
@@ -155,7 +166,7 @@ class Image():
             Open file handle of SW4 image file (at correct position).
         """
         patch_info = np.fromfile(
-            f, PATCH_HEADER_DTYPE, self._number_of_patches)
+            f, PATCH_HEADER_DTYPE, self.number_of_patches)
 
         for i, header in enumerate(patch_info):
             patch = Patch(number=i, image=self)
@@ -163,9 +174,85 @@ class Image():
             data = np.fromfile(f, self.precision, patch.ni * patch.nj)
             data = data.reshape(patch.nj, patch.ni)
             patch._set_data(data)
+            if (self.gridinfo and
+                    patch.number == self.number_of_patches - 1):
+                patch.is_curvilinear = True
+            else:
+                patch.is_curvilinear = False
+
             self.patches.append(patch)
 
-    def plot(self, patches=None, *args, **kwargs):
+        if self.gridinfo == 1:
+            self._read_curvilinear_grid(f)
+
+    def _read_curvilinear_grid(self, f):
+        """
+        Read the last bit of the SW4 image file in case a curvilinear
+        grid is found.
+
+        Parameters
+        ----------
+        f : file
+            Open file handle of SW4 image file (at correct position).
+        """
+        grid = Patch(number='curvilinear grid', image=self)
+
+        # get data from the corresponding image patch
+        patch = self.patches[-1]
+
+        grid.h = patch.h
+        grid.ib = patch.ib
+        grid.ni = patch.ni
+        grid.jb = patch.jb
+        grid.nj = patch.nj
+
+        # read data from file
+        data = np.fromfile(f, self.precision, grid.ni * grid.nj)
+        data = data.reshape(grid.nj, grid.ni)
+
+        zmin = data.min()
+        grid.zmin = zmin
+        grid._set_data(data)
+
+        # update curvilinear patch and grid extent
+        extent = list(grid.extent)
+        extent[2] = zmin - (grid.h / 2.0)
+        extent[3] = grid._max + (grid.h / 2.0)
+        extent = tuple(extent)
+        grid.extent = extent
+
+        self.patches[-1].zmin = zmin
+        self.patches[-1].extent = extent
+
+        self.curvilinear_grid_patch = grid
+
+    def _calc_global_min_max(self):
+        """
+        Calculate ``min``, ``max``, ``rms``, and ``ptp``.
+        """
+        _max = []
+        _min = []
+        _rms = []
+        for patch in self.patches:
+            _max += [patch._max]
+            _min += [patch._min]
+            _rms += [patch._rms]
+        self._max = max(_max)
+        self._min = min(_min)
+        self._rms = max(_rms)
+        self._ptp = self._max - self._min
+
+        if self.is_cross_section:
+            x1, x2 = self.patches[-1].extent[:2]
+            y1 = min([patch.extent[2] for patch in self.patches])
+            y2 = max([patch.extent[3] for patch in self.patches])
+            self.extent = (x1, x2, y1, y2)
+        else:
+            self.extent = self.patches[-1].extent
+
+    def plot(self, patches=None, ax=None, vmin='min', vmax='max',
+             colorbar=True, cmap=None, interpolation='nearest',
+             origin='lower', projection_distance=np.inf, **kwargs):
         """
         Plot all (or specific) patches in :class:`~.Image`.
 
@@ -186,62 +273,166 @@ class Image():
         vmin : float
             Manually set minimum of color scale.
 
-        vmax : float
-            Manually set maximum of color scale.
+        vmax : str or float
+            Used to clip the coloring of the data at the set value.
+            Default is 'max' which shows all the data. If  ``float``,
+            the colorscale saturates at the given value. Finally, if a
+            string is passed (other than 'max'), it is casted to float
+            and used as an ``rms`` multiplier. For instance, if
+            ``vmax='3'``, clipping is done at 3.0*rms of the data.
 
-        colorbar : bool
-            Whether to plot colorbar.
-
-        colorbar_label : str
-            Label for colorbar.
+        colorbar : bool or str
+            If ``colorbar`` is a string, that string is used to override
+            the automatic label chosen based on the image header. To
+            Supress plotting of the colorbar set to ``False``.
 
         cmap : :class:`~matplotlib.colors.Colormap`
             Colormap for the plot
+
+        interpolation : str
+            Acceptable values are 'none', 'nearest', 'bilinear',
+            'bicubic', 'spline16', 'spline36', 'hanning', 'hamming',
+            'hermite', 'kaiser', 'quadric', 'catrom', 'gaussian',
+            'bessel', 'mitchell', 'sinc', 'lanczos'.
+
+        origin : str
+            Places the origin at the 'lower' (default)
+            or 'upper' left corner of the plot.
+
+        projection_distance : float
+            Threshold distance from the plane coordinate to include
+            symbols of stations and sources. These are orthogonally
+            *projected* onto the plotted 2D plane. By default everything
+            is included but this can cause too many symbols to be
+            plotted, obscuring the image.
 
         Example
         -------
         >>> my_image.plot()  # plots all patches
         >>> my_image.plot(patches=[0, 2])  # plots first and third patch
         """
+        if ax is None:
+            fig, ax = plt.subplots()
+        else:
+            fig = None
+
+        # set vmin, vmax
+        if vmax is 'max':
+            clip = self._max
+        elif type(vmax) in [float, int]:
+            clip = vmax
+        else:
+            clip = float(vmax) * self._rms
+
+        if vmin is 'min':
+            vmin = self._min
+        elif type(vmin) in [int, float]:
+            pass
+        elif vmin in [None, False]:
+            vmin = -clip
+
+        vmax = clip
+
+        # plot patches
         if patches is None:
             for patch in self.patches:
-                fig, _, _ = patch.plot(*args, **kwargs)
+                im = patch.plot(
+                    ax=ax, vmin=vmin, vmax=vmax, colorbar=False,
+                    cmap=cmap, interpolation=interpolation, origin=origin,
+                    **kwargs)
         else:
             for i in patches:
-                fig, _, _ = self.patches[i].plot(*args, **kwargs)
-        return fig
+                im = self.patches[i].plot(
+                    ax=ax, vmin=vmin, vmax=vmax, colorbar=False,
+                    cmap=cmap, interpolation=interpolation, origin=origin,
+                    **kwargs)
 
-    def _get_plot_coordinates_from_input(self, key):
-        """
-        Gets coordinates for input keys that have 3D x, y, z values
-        (e.g. 'source', 'rec') in 2D plotting coordinates for use in
-        :meth:`.plot`.
-        """
-        if not self._input_file:
-            return None
-        items = self._input_file.get(key, [])
-        if not items:
-            return None
-        x = []
-        y = []
-        for item in items:
-            if self._plane == 0:
-                x_ = item.y
-                y_ = item.z
-            elif self._plane == 1:
-                x_ = item.x
-                y_ = item.z
-            elif self._plane == 2:
-                x_ = item.y
-                y_ = item.x
-            x.append(x_)
-            y.append(y_)
-        if not x:
-            return None
-        return x, y
+        # plot the colorbar
+        if colorbar:
+            # set colorbar extend mode
+            if vmin > self._min and vmax < self._max:
+                extend = 'both'
+            elif vmin > self._min:
+                extend = 'min'
+            elif vmax < self._max:
+                extend = 'max'
+            else:
+                extend = 'neither'
+
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="3%", pad=0.1)
+            if type(colorbar) is str:
+                colorbar_label = colorbar
+            else:
+                colorbar_label = "{name} [{unit}]".format(
+                    name=self.quantity_name,
+                    unit=self.quantity_unit)
+            cb = plt.colorbar(im, cax=cax, extend=extend,
+                              label=colorbar_label)
+            # invert Z axis for cross-section plots and certain
+            # quantities that usually increase with depths
+            if (self.is_cross_section and
+                    self._mode in (4, 7, 8)):
+                cax.invert_yaxis()
+        else:
+            cb = None
+
+        # labels
+        if self._plane == 0:
+            xlabel = "Y"
+            ylabel = "Z"
+        elif self._plane == 1:
+            xlabel = "X"
+            ylabel = "Z"
+        elif self._plane == 2:
+            xlabel = "Y"
+            ylabel = "X"
+        ax.set_xlabel(xlabel + ' [m]')
+        ax.set_ylabel(ylabel + ' [m]')
+
+        title = self.filename.rsplit('.', 1)[0]
+        if len(title) > 40:
+            title = '...' + title[-40:]
+
+        ax.set_title("{}\n{}={}  t={:.2f} seconds".format(
+            title, self.plane, self.coordinate,
+            self.time), y=1.03, fontsize=12)
+
+        # plot receivers, source etc.
+        if self.input_file:
+            try:  # get surface elevation to correct depth coordinate
+                xi = self.curvilinear_grid_patch.x
+                elev = self.curvilinear_grid_patch.data[0]
+            except AttributeError:  # no curvilinear grid... no correction
+                xi = None
+                elev = None
+
+            for key, kwargs in self.MPL_SCATTER_PROPERTIES.items():
+                coordinates = self.input_file.get_coordinates(
+                    key, xi, elev,
+                    self._plane, self.coordinate, projection_distance)
+
+                if not coordinates:
+                    continue
+                x, y = coordinates
+                collection = ax.scatter(
+                    x, y, **kwargs)
+                collection.set_path_effects(
+                    self.MPL_SCATTER_PATH_EFFECTS)
+        # reset axes limits to data, they sometimes get changed by the
+        # scatter plot
+        ax.axis(self.extent)
+
+        # invert Z axis if not a map view
+        if self.is_cross_section:
+            ax.invert_yaxis()
+        return fig, ax, cb
 
     def get_source_coordinates(self):
-        return self._get_plot_coordinates_from_input("source")
+        try:
+            return self._get_plot_coordinates_from_input("source")
+        except KeyError:
+            return None
 
     @property
     def is_cross_section(self):
@@ -257,26 +448,25 @@ class Image():
         return False
 
     @property
-    def stf(self):
-        if not self._input_file:
-            return None
-        return STF[self._input_file.source[0].type].type
-
-    @property
     def _cmap_type(self):
-        return self._mode_dict[self._mode]['cmap_type']
-
-    @property
-    def number_of_patches(self):
-        return len(self.patches)
+        try:
+            return self._mode_dict[self._mode]['cmap_type']
+        except KeyError:
+            return None
 
     @property
     def precision(self):
-        return IMAGE_PRECISION[self._precision]
+        try:
+            return IMAGE_PRECISION[self._precision]
+        except KeyError:
+            return None
 
     @property
     def plane(self):
-        return IMAGE_PLANE[self._plane]
+        try:
+            return IMAGE_PLANE[self._plane]
+        except KeyError:
+            return None
 
     @property
     def type(self):
@@ -287,23 +477,64 @@ class Image():
 
     @property
     def quantity_name(self):
-        return self._mode_dict[self._mode]['name']
+        try:
+            return self._mode_dict[self._mode]['name']
+        except KeyError:
+            return None
 
     @property
     def quantity_altname(self):
-        return self._mode_dict[self._mode]['altname']
+        try:
+            return self._mode_dict[self._mode]['altname']
+        except KeyError:
+            return None
 
     @property
     def quantity_symbol(self):
-        return self._mode_dict[self._mode]['symbol']
+        try:
+            return self._mode_dict[self._mode]['symbol']
+        except KeyError:
+            return None
 
     @property
     def quantity_altsymbol(self):
-        return self._mode_dict[self._mode]['altsymbol']
+        try:
+            return self._mode_dict[self._mode]['altsymbol']
+        except KeyError:
+            return None
 
     @property
     def quantity_unit(self):
-        return self._mode_dict[self._mode]['unit']
+        try:
+            return self._mode_dict[self._mode]['unit']
+        except KeyError:
+            return None
+
+    def __str__(self):
+        string = ('        Image information :\n'
+                  '        ----------------- :\n'
+                  '                 Filename : {}\n'
+                  '                Precision : {}\n'
+                  '        Number of patches : {}\n'
+                  '                  Time, s : {}\n'
+                  '                    Plane : {}\n'
+                  '               Coordinate : {}\n'
+                  '                     Mode : {}, {}\n'
+                  'Curvilinear grid included : {}\n'
+                  '             Image extent : {}\n'
+                  '            Creation time : {}\n'.format(
+        str(self.filename).rsplit('/', 1)[-1], self.precision,
+        self.number_of_patches, self.time,
+        self.plane, self.coordinate, self.quantity_symbol,
+        self.quantity_unit, True if self.gridinfo else False,
+        self.extent, self.creation_time))
+        return string
+
+    def copy(self):
+        """
+        Return a deepcopy of the ``self``.
+        """
+        return copy.deepcopy(self)
 
 
 class Patch():
@@ -360,16 +591,21 @@ class Patch():
                 (self.nj - 1) * self.h + (self.h / 2.0),
                 0 - (self.h / 2.0),
                 (self.ni - 1) * self.h + (self.h / 2.0))
-        self.min = data.min()
-        self.max = data.max()
-        self.std = data.std()
-        self.rms = np.sqrt(np.mean(data**2))
+        self._min = data.min()
+        self._max = data.max()
+        self._std = data.std()
+        self._rms = np.sqrt(np.mean(data**2))
         self.shape = data.shape
 
-    def plot(self, ax=None, vmin=None, vmax=None, colorbar=True,
-             colorbar_label=None, cmap=None, **kwargs):
+    def plot(self, ax=None, vmin=None, vmax=None, colorbar=True, cmap=None,
+             interpolation='nearest', origin='lower', **kwargs):
         """
-        Plot patch and show plot.
+        Plot patch.
+
+        Note
+        ----
+        Should not really be used directly by the user but rather called
+        by the :meth:`~.Image.plot` method.
 
         Parameters
         ----------
@@ -382,117 +618,146 @@ class Patch():
         vmax : float
             Manually set maximum of color scale.
 
-        colorbar : bool
-            Whether to plot colorbar.
-
-        colorbar_label : str
-            Label for colorbar.
+        colorbar : bool or str
+            If ``colorbar`` is a string, that string is used to override
+            the automatic label chosen based on the image header. To
+            Supress plotting of the colorbar set to ``False``.
 
         cmap : :class:`~matplotlib.colors.Colormap`
             Colormap for the plot
 
+        interpolation : str
+            Acceptable values are 'none', 'nearest', 'bilinear',
+            'bicubic', 'spline16', 'spline36', 'hanning', 'hamming',
+            'hermite', 'kaiser', 'quadric', 'catrom', 'gaussian',
+            'bessel', 'mitchell', 'sinc', 'lanczos'.
+
+        origin : str
+            Places the origin at the 'lower' (default)
+            or 'upper' left corner of the plot.
 
         Note
         ----
         For other keywoard arguments (``**kwargs``) see:
         :func:`matplotlib.pyplot.imshow`.
         """
+        caller = inspect.stack()[1][3]  # find out who made the call
 
-        if ax is None:
+        if not ax:
             fig, ax = plt.subplots()
+            return_items = [fig, ax]
+        else:
+            fig = None
 
-        if cmap is None:
+        if not cmap:
             cmap = self._image.CMAP[self._image._cmap_type]
 
         ax.set_aspect(1)
 
-        # center colormap around zero if image's data is divergent
-        if self._image.is_divergent:
-            if vmin is None and vmax is None:
-                abs_max = max(abs(self.min), abs(self.max))
-                vmax = abs_max
-                vmin = -abs_max
+        if self.is_curvilinear:
+            y = self._image.curvilinear_grid_patch.data
+            x = (np.ones_like(y) * self.x)
 
-        if ((vmin is not None and self.min < vmin) and
-                (vmax is not None and self.max > vmax)):
-            extend = 'both'
-        elif vmin is not None and self.min < vmin:
-            extend = 'min'
-        elif vmax is not None and self.max > vmax:
-            extend = 'max'
-        else:
-            extend = 'neither'
-
-        im = ax.imshow(self.data, extent=self.extent, vmin=vmin, vmax=vmax,
-                       origin="lower", interpolation="nearest", cmap=cmap,
-                       **kwargs)
-        # plot receiver, source etc.
-        if self._image._input_file:
-            for key, kwargs in self._image.MPL_SCATTER_PROPERTIES.items():
-                coordinates = \
-                    self._image._get_plot_coordinates_from_input(key)
-                if not coordinates:
-                    continue
-                x, y = coordinates
-                collection = ax.scatter(
-                    x, y, **kwargs)
-                collection.set_path_effects(
-                    self._image.MPL_SCATTER_PATH_EFFECTS)
-            # reset axes limits to data, they sometimes get changed by the
-            # scatter plot
-            ax.set_xlim(*self.extent[:2])
-            ax.set_ylim(*self.extent[2:])
+            im = ax.pcolormesh(x, y, self.data,
+                               shading='flat', edgecolors='None',
+                               vmin=vmin, vmax=vmax, cmap=cmap)
+            ax.axis(self.extent)
+        elif not self.is_curvilinear:
+            im = ax.imshow(self.data, extent=self.extent,
+                           vmin=vmin, vmax=vmax, origin=origin,
+                           interpolation=interpolation, cmap=cmap, **kwargs)
 
         # invert Z axis if not a map view
         if self._image.is_cross_section:
             ax.invert_yaxis()
-        if colorbar:
-            divider = make_axes_locatable(ax)
-            cax = divider.append_axes("right", size="3%", pad=0.1)
-            if not colorbar_label:
-                colorbar_label = "{name} [{unit}]".format(
-                    name=self._image.quantity_name,
-                    unit=self._image.quantity_unit)
-            cb = plt.colorbar(im, cax=cax, extend=extend, label=colorbar_label)
-            # invert Z axis for cross-section plots and certain
-            # quantities that usually increase with depths
-            if self._image.is_cross_section and \
-                    self._image._mode in (4, 7, 8):
-                cax.invert_yaxis()
-        else:
-            cb = None
 
-        if self._image._plane == 0:
-            xlabel = "Y"
-            ylabel = "Z"
-        elif self._image._plane == 1:
-            xlabel = "X"
-            ylabel = "Z"
-        elif self._image._plane == 2:
-            xlabel = "Y"
-            ylabel = "X"
-        ax.set_xlabel(xlabel + ' [m]')
-        ax.set_ylabel(ylabel + ' [m]')
+        if caller is not 'plot':  # do this only if the user calls
+            if colorbar:
+                if vmin > self._min and vmax < self._max:
+                    extend = 'both'
+                elif vmin > self._min:
+                    extend = 'min'
+                elif vmax < self._max:
+                    extend = 'max'
+                else:
+                    extend = 'neither'
 
-        # setup the title so that it is not too long
-        # I guess for some purposes you would want the
-        # entire path to show so we might want to just
-        # brake it into lines?
-        # For now I am truncating it at -40: chars and
-        # getting rid of the .sw4img extention... That's
-        # kind of obvious.
-        title = self._image.filename.rsplit('.', 1)[0]
-        if len(title) > 40:
-            title = '...' + title[-40:]
+                divider = make_axes_locatable(ax)
+                cax = divider.append_axes("right", size="3%", pad=0.1)
+                if type(colorbar) is str:
+                    colorbar_label = colorbar
+                else:
+                    colorbar_label = "{name} [{unit}]".format(
+                        name=self._image.quantity_name,
+                        unit=self._image.quantity_unit)
+                cb = plt.colorbar(im, cax=cax, extend=extend,
+                                  label=colorbar_label)
+                # invert Z axis for cross-section plots and certain
+                # quantities that usually increase with depths
+                if self._image.is_cross_section and \
+                        self._image._mode in (4, 7, 8):
+                    cax.invert_yaxis()
+            else:
+                cb = None
 
-        ax.set_title("{}\n{}={}  t={:.2f} seconds".format(
-            title, self._image.plane, self._image.coordinate,
-            self._image.time), y=1.03, fontsize=12)
+            if self._image._plane == 0:
+                xlabel = "Y"
+                ylabel = "Z"
+            elif self._image._plane == 1:
+                xlabel = "X"
+                ylabel = "Z"
+            elif self._image._plane == 2:
+                xlabel = "Y"
+                ylabel = "X"
+            ax.set_xlabel(xlabel + ' [m]')
+            ax.set_ylabel(ylabel + ' [m]')
 
-        try:
+            # setup the title so that it is not too long
+            # I guess for some purposes you would want the
+            # entire path to show so we might want to just
+            # brake it into lines?
+            # For now I am truncating it at -40: chars and
+            # getting rid of the .sw4img extention... That's
+            # kind of obvious.
+            title = self._image.filename.rsplit('.', 1)[0]
+            if len(title) > 40:
+                title = ('...' + title[-40:]
+                         + ' : patch no. {}'.format(self.number))
+
+            ax.set_title("{}\n{}={}  t={:.2f} seconds".format(
+                title, self._image.plane, self._image.coordinate,
+                self._image.time), y=1.03, fontsize=12)
             return fig, ax, cb
-        except NameError:
-            return cb
+
+        elif caller is 'plot':  # do this only if Image.plot() calls
+            return im
+
+    def __str__(self):
+        string = ('Patch information :\n'
+                  '----------------- :\n'
+                  '           Number : {}\n'
+                  '       Spacing, m : {}\n'
+                  '          Zmin, m : {}\n'
+                  '           Extent : {}\n'
+                  '               ni : {}\n'
+                  '               nj : {}\n'
+                  '              Max : {}\n'
+                  '              Min : {}\n'
+                  '              STD : {}\n'
+                  '              RMS : {}\n'.format(
+        self.number, self.h, self.zmin, self.extent, self.ni, self.nj,
+        self._max, self._min, self._std, self._rms))
+        return string
+
+    @property
+    def x(self):
+        return np.linspace(*self.extent[:2], num=self.ni)
+
+    def copy(self):
+        """
+        Return a deepcopy of the ``self``.
+        """
+        return copy.deepcopy(self)
 
 
 def read_image(filename='random', input_file=None,
@@ -539,24 +804,25 @@ def read_image(filename='random', input_file=None,
         if not filename.endswith('.sw4img'):
             msg = ("Using 'read_image()' on file with uncommon file "
                    "extension: '{}'.").format(filename)
-            warnings.warn(msg)
+            warn(msg)
         with open(image.filename, 'rb') as f:
             image._read_header(f)
             image._read_patches(f)
+        image._calc_global_min_max()
     return image
 
 
 def _create_random_image(stf="displacement"):
     image = Image(stf=stf)
     image.filename = None
-    image._number_of_patches = 1
+    image.number_of_patches = 1
     image._precision = 4
     image.cycle = 0
     image.time = 0
-    image.min = 0
-    image.max = 0
-    image.std = 0
-    image.rms = 0
+    image._min = 0
+    image._max = 0
+    image._rms = 0
+    image._ptp = 0
     image.patches = [_create_random_patch()]
     return image
 
@@ -571,10 +837,9 @@ def _create_random_patch():
     patch.zmin = 0
     patch.extent = (0, patch.nj * patch.h, patch.zmin + patch.ni * patch.h,
                     patch.zmin)
-    patch.min = patch.data.min()
-    patch.max = patch.data.max()
-    patch.std = patch.data.std()
-    patch.rms = np.sqrt(np.mean(patch.data**2))
+    patch._min = patch.data.min()
+    patch._max = patch.data.max()
+    patch._rms = np.sqrt(np.mean(patch.data**2))
     patch.ib = 1
     patch.jb = 1
     return patch

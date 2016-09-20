@@ -1,7 +1,7 @@
-pySW4.core.scripts.png2mp4 module
+pySW4.cli.create_all_plots module
 =================================
 
-.. automodule:: pySW4.core.scripts.png2mp4
+.. automodule:: pySW4.cli.create_all_plots
     :members:
     :undoc-members:
     :show-inheritance:

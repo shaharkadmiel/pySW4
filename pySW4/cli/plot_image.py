@@ -1,6 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-Convert a sequencial set of .png images to a .mp4 movie
+Plot a single SW4 image.
+
+.. rubric:: Instructions:
+
+This module can be called from the command line to plot a single SW4
+image. It can be usefull to run this on the server-end to generate
+quick-and-dirty plots for *pseudo-RunTime* visualization of the results.
+Wrap it in a *cronjob* that plots the image from the last timestep and
+you are set.
+
+Type ``pySW4-plot-image`` to get the help message.
+
+**Example**
+::
+    $ pySW4-plot-image -cmap jet \\
+        -format png 'results/berkeley.cycle=00000.z=0.p.sw4img'
+
+will save the SW4 image from the Berkeley rfile example,
+``berkeley.cycle=00000.z=0.p.sw4img`` to a *.png* image,
+``./berkeley.cycle=00000.z=0.p.png`` with the ``jet`` colormap.
 
 .. module:: plot_image
 
@@ -21,7 +40,8 @@ from __future__ import absolute_import, print_function, division
 import os
 import sys
 import argparse
-from ..postp.image import read_image
+from matplotlib.pyplot import get_backend, switch_backend
+from pySW4.postp.image import read_image
 
 
 def main(argv=None):
@@ -33,10 +53,11 @@ def main(argv=None):
             sys.exit(2)
 
     parser = DefaultHelpParser(
+        prog='pySW4-plot-image',
         description='Plot all (or specific) patches in an .sw4img file.'
     )
 
-    parser.add_argument('-patches', action='store', default='None',
+    parser.add_argument('-patches', action='store', default=None,
                         help='Patches to plot. If None, all patches are '
                              'plotted. Otherwise provide a sequence of '
                              'integers in quotation marks. For example: '
@@ -89,21 +110,35 @@ def main(argv=None):
                         help='Path (relative or absolute) to the SW4 image.')
     args = parser.parse_args(argv)
 
-    image = read_image(args.imagefile, args.stf)
+    image = read_image(args.imagefile, stf=args.stf)
 
-    backend = plt.get_backend()
+    backend = get_backend()
     try:
-        plt.switch_backend('AGG')
+        switch_backend('AGG')
         if args.patches is not None:
-            patches = args.patches.split()
+            patches = [int(item) for item in args.patches.split()]
+        else:
+            patches = args.patches
 
-        fig = image.plot(patches, vmin=args.vmin, vmax=args.vmax,
+        try:
+            vmin = float(args.vmin)
+        except TypeError:
+            vmin = args.vmin
+
+        try:
+            vmax = float(args.vmax)
+        except TypeError:
+            vmax = args.vmax
+
+        fig = image.plot(patches, vmin=vmin, vmax=vmax,
                          colorbar=args.no_cb, cmap=args.cmap)
         name, _ = os.path.splitext(os.path.basename(args.imagefile))
-        fig.savefig(os.path.join((args.save_path, name + '.' + args.format)),
-                    bbox_inches='tight', dpi=args.dpi)
+        name = os.path.join(args.save_path, name + '.' + args.format)
+
+        fig.savefig(name, bbox_inches='tight', dpi=args.dpi)
+        print('Saved {} ===> {}.'.format(args.imagefile, name))
     finally:
-        plt.switch_backend(backend)
+        switch_backend(backend)
 
 if __name__ == "__main__":
     main()

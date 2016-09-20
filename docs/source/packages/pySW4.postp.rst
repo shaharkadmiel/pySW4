@@ -1,7 +1,7 @@
-pySW4.utils package
+pySW4.postp package
 ===================
 
-.. automodule:: pySW4.utils
+.. automodule:: pySW4.postp
     :members:
     :undoc-members:
     :show-inheritance:
@@ -12,6 +12,5 @@ Submodules
 .. autosummary::
    :toctree: .
 
-   ~pySW4.utils.geo
-   ~pySW4.utils.spectral
-   ~pySW4.utils.utils
+   ~pySW4.postp.image
+   ~pySW4.postp.waveforms

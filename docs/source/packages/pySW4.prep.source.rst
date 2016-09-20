@@ -1,7 +1,7 @@
-pySW4.core.header module
+pySW4.prep.source module
 ========================
 
-.. automodule:: pySW4.core.header
+.. automodule:: pySW4.prep.source
     :members:
     :undoc-members:
     :show-inheritance:

@@ -252,11 +252,11 @@ class GeoTIFF():
 
             32636  -> '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
 
-            102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 '
-                      '+lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m '
-                      '+no_defs'
+            102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 \\
+                       +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m \\
+                       +no_defs'
 
-
+        and so on ...
 
         .. _Geodetic Parameter Dataset Registry:
            http://www.epsg-registry.org/
@@ -623,10 +623,11 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
 
         32636  -> '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
 
-        102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 '
-                  '+lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m '
-                  '+no_defs'
+        102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 \\
+                   +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m \\
+                   +no_defs'
 
+    and so on ...
 
 
     .. _Geodetic Parameter Dataset Registry:

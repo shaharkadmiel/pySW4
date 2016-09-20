@@ -148,7 +148,7 @@ def station_array(x1=None, x2=None, y1=None, y2=None,
 
         sac_string = ('rec x={0} y={0} depth={0} '
                       'file=%s_x={0}_y={0}_z={0}_ '
-                      'writeEvery=%d variables=%s\n').format(fmt)
+                      'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
 
     elif lon1 is not None and lon2 is not None:
         try:
@@ -160,17 +160,16 @@ def station_array(x1=None, x2=None, y1=None, y2=None,
 
         sac_string = ('rec lon={0} lat={0} depth={0} '
                       'file=%s_lon={0}_lat={0}_z={0}_ '
-                      'writeEvery=%d variables=%s\n').format(fmt)
+                      'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
 
-    print(x, y)
     points = [(i, j) for j in y for i in x]
 
-    string = ('\n\n# %dx%d array of seismograms added: %s\n\n'
+    string = ('\n\n# %dx%d array of seismograms added: %s\n'
               % (len(x), len(y), name))
 
     for (i, j) in points:
         string += (sac_string % (i, j, depth, name, i, j, depth,
-                                 writeEvery, mode))
+                                 writeEvery, nsew, mode))
 
     if infile is None:
         return string
@@ -179,10 +178,10 @@ def station_array(x1=None, x2=None, y1=None, y2=None,
 
 
 def station_line(x1=None, x2=None, y1=None, y2=None,
-                     lon1=None, lon2=None, lat1=None, lat2=None,
-                     depth1=0, depth2=0, number_of_stations=3,
-                     name='line', mode='displacement', writeEvery=100,
-                     nswe=0, fmt='%.3f', infile=None):
+                 lon1=None, lon2=None, lat1=None, lat2=None,
+                 depth1=0, depth2=0, number_of_stations=3,
+                 name='line', mode='displacement', writeEvery=100,
+                 nsew=0, fmt='%.3f', infile=None):
     """
     Place stations to record synthetics on a line.
 
@@ -243,7 +242,7 @@ def station_line(x1=None, x2=None, y1=None, y2=None,
 
         sac_string = ('rec x={0} y={0} depth={0} '
                       'file=%s_x={0}_y={0}_z={0}_ '
-                      'writeEvery=%d variables=%s\n').format(fmt)
+                      'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
 
     elif lon1 is not None and lon2 is not None:
         x = np.linspace(lon1, lon2, number_of_stations)
@@ -251,14 +250,14 @@ def station_line(x1=None, x2=None, y1=None, y2=None,
 
         sac_string = ('rec lon={0} lat={0} depth={0} '
                       'file=%s_lon={0}_lat={0}_z={0}_ '
-                      'writeEvery=%d variables=%s\n').format(fmt)
+                      'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
 
     z = np.linspace(depth1, depth2, number_of_stations)
 
     string = '\n\n# stations on a line: %s\n' % name
     for i in range(len(x)):
         string += (sac_string % (x[i], y[i], z[i], name,
-                                 x[i], y[i], z[i], writeEvery, mode))
+                                 x[i], y[i], z[i], writeEvery, nsew, mode))
 
     if infile is None:
         return string
@@ -268,7 +267,7 @@ def station_line(x1=None, x2=None, y1=None, y2=None,
 
 def station_location(x=None, y=None, lat=None, lon=None, depth=0,
                      name='st', mode='displacement', writeEvery=100,
-                     nswe=0, fmt='%.3f', infile=None):
+                     nsew=0, fmt='%.3f', infile=None):
     """
     Place stations to record synthetics at specific locations.
 
@@ -321,20 +320,20 @@ def station_location(x=None, y=None, lat=None, lon=None, depth=0,
 
     if x is not None and y is not None:
         sac_string = ('rec x={0} y={0} depth={0} file=%s '
-                      'writeEvery=%d variables=%s\n').format(fmt)
+                      'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
     elif lon is not None and lat is not None:
         x, y = lon, lat
         sac_string = ('rec lon={0} lat={0} depth={0} file=%s '
-                      'writeEvery=%d variables=%s\n').format(fmt)
+                      'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
 
     string = '\n\n# stations at locations:\n'
     try:
         for i in range(len(x)):
             string += (sac_string % (float(x[i]), float(y[i]), depth,
-                                     name[i], writeEvery, mode))
+                                     name[i], writeEvery, nsew, mode))
     except TypeError:
         string += (sac_string % (float(x), float(y), depth, name,
-                                 writeEvery, mode))
+                                 writeEvery, nsew, mode))
     if infile is None:
         return string
     else:

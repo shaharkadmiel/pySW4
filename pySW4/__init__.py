@@ -29,12 +29,13 @@ post-processing and runtime visualization).
 """
 from __future__ import absolute_import, print_function, division
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 from .postp import read_image, read_stations
 from . import plotting
 from . import prep
 from . import utils
+from .sw4_input import Inputfile
 
-from .plotting.util import set_matplotlib_rc_params
+from .plotting.utils import set_matplotlib_rc_params
 set_matplotlib_rc_params()

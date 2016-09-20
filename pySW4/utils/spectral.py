@@ -158,8 +158,7 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
 
     Parameters
     ----------
-    data : :class:`~numpy.ndarray` or
-    :class:`~obspy.core.trace.Trace` instance
+    data : :class:`~numpy.ndarray` or :class:`~obspy.core.trace.Trace` instance
         If a sequence (:class:`~numpy.ndarray`) of time-history values
         is passed ``delta`` must be supplied as well. Otherwise pass an
         :class:`~obspy.core.trace.Trace` instance.
@@ -191,7 +190,7 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
         If set to ``True`` some information about the process is
         printed.
 
-     Returns
+    Returns
     -------
     2 :class:`~numpy.ndarray`
 

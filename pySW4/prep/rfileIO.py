@@ -400,14 +400,14 @@ class Model():
                 self.read_block_data_section(block_number)
 
     def __str__(self):
-        string = ('Model information:\n'
-                  '-----------------\n'
-                  '        Filename : {}\n'
-                  '           lon 0 : {}\n'
-                  '           lat 0 : {}\n'
-                  '         Azimuth : {}\n'
-                  '    Proj4 string : {}\n'
-                  'Number of blocks : {}\n'.format(self.filename,
+        string = ('Model information :\n'
+                  '----------------- :\n'
+                  '         Filename : {}\n'
+                  '            lon 0 : {}\n'
+                  '            lat 0 : {}\n'
+                  '          Azimuth : {}\n'
+                  '     Proj4 string : {}\n'
+                  ' Number of blocks : {}\n'.format(self.filename,
                                                    self.lon0,
                                                    self.lat0,
                                                    self.az,
@@ -757,16 +757,16 @@ class Block():
         self.yzextent = self.y_extent + self.z_extent
 
     def __str__(self):
-        string = ('Block information:\n'
-                  '-----------------\n'
-                  '          Number : {}\n'
-                  ' Horizontal h, m : {}\n'
-                  '   Vertical h, m : {}\n'
-                  '          z 0, m : {}\n'
-                  '              ni : {}\n'
-                  '              nj : {}\n'
-                  '              nk : {}\n'
-                  '              nc : {}\n'.format(self.number,
+        string = ('Block information :\n'
+                  '----------------- :\n'
+                  '           Number : {}\n'
+                  '  Horizontal h, m : {}\n'
+                  '    Vertical h, m : {}\n'
+                  '           z 0, m : {}\n'
+                  '               ni : {}\n'
+                  '               nj : {}\n'
+                  '               nk : {}\n'
+                  '               nc : {}\n'.format(self.number,
                                                    self.hh,
                                                    self.hv,
                                                    self.z0,
