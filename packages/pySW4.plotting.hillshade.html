@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.plotting.hillshade module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
+    <link rel="up" title="pySW4.plotting package" href="pySW4.plotting.html" />
+    <link rel="next" title="pySW4.plotting.image module" href="pySW4.plotting.image.html" />
+    <link rel="prev" title="pySW4.plotting package" href="pySW4.plotting.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.image.html" title="pySW4.plotting.image module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.html" title="pySW4.plotting package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pySW4.plotting.html"
+                        title="previous chapter">pySW4.plotting package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pySW4.plotting.image.html"
+                        title="next chapter">pySW4.plotting.image module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/packages/pySW4.plotting.hillshade.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pySW4.plotting.hillshade">
+<span id="pysw4-plotting-hillshade-module"></span><h1>pySW4.plotting.hillshade module<a class="headerlink" href="#module-pySW4.plotting.hillshade" title="Permalink to this headline">¶</a></h1>
+<p>Plotting routines for shaded-relief and draping data over shaded relief.</p>
+<span class="target" id="module-hillshade"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pySW4.plotting.hillshade.drape_plot">
+<code class="descname">drape_plot</code><span class="sig-paren">(</span><em>data</em>, <em>relief</em>, <em>extent</em>, <em>vmax='max'</em>, <em>vmin='min'</em>, <em>az=315</em>, <em>alt=45</em>, <em>cmap='hot_r'</em>, <em>blend_mode='hsv'</em>, <em>contrast=1</em>, <em>definition=1</em>, <em>origin='upper'</em>, <em>ax=None</em>, <em>colorbar=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/hillshade.html#drape_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.hillshade.drape_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drape <code class="docutils literal"><span class="pre">data</span></code> over <code class="docutils literal"><span class="pre">relief</span></code>.</p>
+<p>This is done using the
+<a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.LightSource.shade_rgb" title="(in Matplotlib v1.5.3)"><code class="xref py py-meth docutils literal"><span class="pre">shade_rgb()</span></code></a> method of the
+<a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.LightSource" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">LightSource</span></code></a> class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) &#8211; Contains data to be draped over relief.</li>
+<li><strong>relief</strong> (a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) &#8211; Contains elevation (usually).</li>
+<li><strong>extent</strong> (<em>list or tuple</em>) &#8211; Extent of the domain plotted.
+(xmin,xmax,ymin,ymax) or (w,e,s,n)</li>
+<li><strong>vmax</strong> (<em>str or float</em>) &#8211; Used to clip the coloring of the data at the set value.
+Default is &#8216;max&#8217; which shows all the data. If  <code class="docutils literal"><span class="pre">float</span></code>, the
+colorscale saturates at the given value. Finally, if a string is
+passed (other than &#8216;max&#8217;), it is casted to float and used as an
+<code class="docutils literal"><span class="pre">rms</span></code> multiplier. For instance, if <code class="docutils literal"><span class="pre">vmax='3'</span></code>, clipping is
+done at 3.0*rms of the data.</li>
+<li><strong>vmin</strong> (<em>str or float or None</em>) &#8211; Used as data minimum clipping. Default is <code class="docutils literal"><span class="pre">'min'</span></code>, which shows
+all data. If set to <code class="docutils literal"><span class="pre">None</span></code> or <code class="docutils literal"><span class="pre">False</span></code>, <code class="docutils literal"><span class="pre">vmin</span></code> is set to
+<code class="docutils literal"><span class="pre">-vmax</span></code> so that the coloring of the data is symmetric arround
+0.</li>
+<li><strong>az</strong> (<em>int or float</em>) &#8211; The azimuth (0-360, degrees clockwise from North) of the light
+source. Defaults to 315 degrees (from the northwest).</li>
+<li><strong>alt</strong> (<em>int or float</em>) &#8211; The altitude (0-90, degrees up from horizontal) of the light
+source. Defaults to 45 degrees from horizontal.</li>
+<li><strong>cmap</strong> (str or <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a> instance) &#8211; String of the name of the colormap, i.e. <code class="docutils literal"><span class="pre">'Greys'</span></code>, or a
+<a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a> instance used for the
+data.</li>
+<li><strong>blend_mode</strong> (<em>str or callable</em>) &#8211; <p>The type of blending used to combine the colormapped data values
+with the illumination intensity. For backwards compatibility,
+this defaults to <code class="docutils literal"><span class="pre">'hsv'</span></code>. Note that for most topographic
+surfaces, <code class="docutils literal"><span class="pre">'overlay'</span></code> or <code class="docutils literal"><span class="pre">'soft'</span></code> appear more visually
+realistic. If a user-defined function is supplied, it is
+expected to combine an MxNx3 RGB array of floats (ranging 0 to
+1) with an MxNx1 hillshade array (also 0 to 1). (Call signature
+func(rgb, illum, <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs))</p>
+<p>Can be <code class="docutils literal"><span class="pre">'hsv'</span></code> or <code class="docutils literal"><span class="pre">'overlay'</span></code> or <code class="docutils literal"><span class="pre">'soft'</span></code> or a callable
+user-defined function.</p>
+</li>
+<li><strong>contrast</strong> (<em>int or float</em>) &#8211; Increases or decreases the contrast of the hillshade.
+If &gt; 1 intermediate values move closer to full illumination or
+shadow (and clipping any values that move beyond 0 or 1).
+Note that this is not visually or mathematically the same as
+definition.</li>
+<li><strong>definition</strong> (<em>int or float</em>) &#8211; Higher definition is achieved by scaling the elevation prior to
+the illumination calculation. This can be used either to correct
+for differences in units between the x,y coordinate system and
+the elevation coordinate system (e.g. decimal degrees vs meters)
+or to exaggerate or de-emphasize topography.</li>
+<li><strong>origin</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Places the origin at the &#8216;upper&#8217; (default)
+or &#8216;lower&#8217; left corner of the plot.</li>
+<li><strong>ax</strong> (<a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> instance) &#8211; Plot to an existing axes. If None, a
+<a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> and
+<a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> are created and their instances
+are returned for further manipulation.</li>
+<li><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; By default, a colorbar is drawn with the plot. If <code class="docutils literal"><span class="pre">colorbar</span></code>
+is a string, it is used for the label of the colorbar.
+Otherwise, the colorbar can be omitted by setting to False.
+<a class="reference external" href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a> instance is returned.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><em>All</em> grids must have the same extent and origin!</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.plotting.hillshade.hillshade_plot">
+<code class="descname">hillshade_plot</code><span class="sig-paren">(</span><em>relief</em>, <em>extent</em>, <em>vmax='max'</em>, <em>vmin='min'</em>, <em>az=315</em>, <em>alt=45</em>, <em>cmap='gist_earth'</em>, <em>blend_mode='hsv'</em>, <em>contrast=1</em>, <em>definition=1</em>, <em>origin='upper'</em>, <em>ax=None</em>, <em>colorbar=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/hillshade.html#hillshade_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.hillshade.hillshade_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot hillshade of <code class="docutils literal"><span class="pre">relief</span></code>.</p>
+<p>This is done using the <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.LightSource.shade" title="(in Matplotlib v1.5.3)"><code class="xref py py-meth docutils literal"><span class="pre">shade()</span></code></a>
+method of the <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.LightSource" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">LightSource</span></code></a> class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>relief</strong> (a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) &#8211; Contains elevation (usually).</li>
+<li><strong>extent</strong> (<em>list or tuple</em>) &#8211; Extent of the domain plotted.
+(xmin,xmax,ymin,ymax) or (w,e,s,n)</li>
+<li><strong>vmax</strong> (<em>str or int or float</em>) &#8211; Used to clip the coloring of the data at the set value.
+Default is &#8216;max&#8217; which shows all the data. If <code class="docutils literal"><span class="pre">int</span></code> or
+<code class="docutils literal"><span class="pre">float</span></code>, the colorscale saturates at the given value. Finally,
+if a string is passed, it is casted to float and used as an
+<code class="docutils literal"><span class="pre">rms</span></code> multiplier. For instance, if <code class="docutils literal"><span class="pre">vmax='3'</span></code>, clipping is
+done at 3.0*rms of the data.</li>
+<li><strong>vmin</strong> (<em>str or int or float or None</em>) &#8211; Used as data minimum clipping. Default is <code class="docutils literal"><span class="pre">'min'</span></code>, which shows
+all data. If set to <code class="docutils literal"><span class="pre">None</span></code> or <code class="docutils literal"><span class="pre">False</span></code>, vmin is set to -vmax
+so that the coloring of the data is symmetric arround 0.</li>
+<li><strong>az</strong> (<em>int or float</em>) &#8211; The azimuth (0-360, degrees clockwise from North) of the light
+source. Defaults to 315 degrees (from the northwest).</li>
+<li><strong>alt</strong> (<em>int or float</em>) &#8211; The altitude (0-90, degrees up from horizontal) of the light
+source. Defaults to 45 degrees from horizontal.</li>
+<li><strong>cmap</strong> (str or <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a> instance) &#8211; String of the name of the colormap, i.e. <code class="docutils literal"><span class="pre">'Greys'</span></code>, or a
+<a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a> instance.</li>
+<li><strong>blend_mode</strong> (<em>str or callable</em>) &#8211; <p>The type of blending used to combine the colormapped data values
+with the illumination intensity. For backwards compatibility,
+this defaults to <code class="docutils literal"><span class="pre">'hsv'</span></code>. Note that for most topographic
+surfaces, <code class="docutils literal"><span class="pre">'overlay'</span></code> or <code class="docutils literal"><span class="pre">'soft'</span></code> appear more visually
+realistic. If a user-defined function is supplied, it is
+expected to combine an MxNx3 RGB array of floats (ranging 0 to
+1) with an MxNx1 hillshade array (also 0 to 1). (Call signature
+func(rgb, illum, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs))</p>
+<p>Can be <code class="docutils literal"><span class="pre">'hsv'</span></code> or <code class="docutils literal"><span class="pre">'overlay'</span></code> or <code class="docutils literal"><span class="pre">'soft'</span></code> or a callable
+user-defined function.</p>
+</li>
+<li><strong>contrast</strong> (<em>int or float</em>) &#8211; Increases or decreases the contrast of the hillshade.
+If &gt; 1 intermediate values move closer to full illumination or
+shadow (and clipping any values that move beyond 0 or 1).
+Note that this is not visually or mathematically the same as
+definition.</li>
+<li><strong>definition</strong> (<em>int or float</em>) &#8211; Higher definition is achieved by scaling the elevation prior to
+the illumination calculation. This can be used either to correct
+for differences in units between the x,y coordinate system and
+the elevation coordinate system (e.g. decimal degrees vs meters)
+or to exaggerate or de-emphasize topography.</li>
+<li><strong>origin</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Places the origin at the &#8216;upper&#8217; (default)
+or &#8216;lower&#8217; left corner of the plot.</li>
+<li><strong>ax</strong> (<a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> instance) &#8211; Plot to an existing axes. If None, a
+<a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> and
+<a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> are created and their instances
+are returned for further manipulation.</li>
+<li><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; By default, a colorbar is drawn with the plot. If <code class="docutils literal"><span class="pre">colorbar</span></code>
+is a string, it is used for the label of the colorbar.
+Otherwise, the colorbar can be omitted by setting to False.
+<a class="reference external" href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a> instance is returned.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><em>All</em> grids must have the same extent and origin!</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.image.html" title="pySW4.plotting.image module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.html" title="pySW4.plotting package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

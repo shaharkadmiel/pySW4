@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4 package &mdash; pySW4 0.2.0 documentation</title>
+    <title>pySW4 package &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
     
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.0',
+        VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 0.2.0 documentation" href="../index.html" /> 
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -44,8 +44,12 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">pySW4 package</a><ul>
-<li><a class="reference internal" href="#pysw4-python-routines-for-interaction-with-sw4">pySW4: Python routines for interaction with SW4</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pySW4">Module contents</a><ul>
+<li><a class="reference internal" href="#pysw4-python-routines-for-interaction-with-sw4">pySW4: Python routines for interaction with SW4</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -75,91 +79,99 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pySW4">
-<span id="pysw4-package"></span><h1>pySW4 package<a class="headerlink" href="#module-pySW4" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pysw4-python-routines-for-interaction-with-sw4">
-<h2>pySW4: Python routines for interaction with SW4<a class="headerlink" href="#pysw4-python-routines-for-interaction-with-sw4" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><blockquote>
-<div><blockquote>
-<div><blockquote>
-<div><blockquote>
-<div>______       ____ __</div></blockquote>
-<p>____  __  __/ ___/ |     / / // /</p>
-</div></blockquote>
-<p>/ __ / / / /__ | | /| / / // /_</p>
-</div></blockquote>
-<p>/ /_/ / /_/ /___/ /| <a href="#id1"><span class="problematic" id="id2">|</span></a>/ <a href="#id3"><span class="problematic" id="id4">|</span></a>/ /__  __/</p>
-</div></blockquote>
-<p>/ .___/__, //____/ <a href="#id7"><span class="problematic" id="id8">|__/|__</span></a>/  /_/</p>
-</div></blockquote>
-<p>/_/    /____/</p>
-<p>pySW4 is an open-source project dedicated to provide a Python framework
-for working with numerical simulations of seismic-wave propagation with
-SW4 in all phases of the task (preprocessing, post-processing and
-runtime visualization).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)
-Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)
-Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">license:</th><td class="field-body">GNU GENERAL PUBLIC LICENSE Version 3
-(<a class="reference external" href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/gpl.html</a>)
-See ./LICENSE.txt</td>
-</tr>
-</tbody>
-</table>
-</div>
+  <div class="section" id="pysw4-package">
+<h1>pySW4 package<a class="headerlink" href="#pysw4-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pySW4.core.html">pySW4.core package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.core.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pySW4.core.scripts.html">pySW4.core.scripts package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pySW4.core.scripts.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pySW4.core.scripts.html#pysw4-core-scripts-plotting-module">pySW4.core.scripts.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pySW4.core.scripts.html#module-pySW4.core.scripts.png2mp4">pySW4.core.scripts.png2mp4 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pySW4.cli.html">pySW4.cli package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pySW4.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.cli.create_all_plots.html">pySW4.cli.create_all_plots module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.cli.plot_image.html">pySW4.cli.plot_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.cli.png2mp4.html">pySW4.cli.png2mp4 module</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.core.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.core.html#module-pySW4.core.config">pySW4.core.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.core.html#module-pySW4.core.header">pySW4.core.header module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.core.html#module-pySW4.core.image">pySW4.core.image module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pySW4.plotting.html">pySW4.plotting package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.plotting.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.plotting.html#module-pySW4.plotting.drape">pySW4.plotting.drape module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.plotting.html#module-pySW4.plotting.image">pySW4.plotting.image module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.plotting.html#module-pySW4.plotting.util">pySW4.plotting.util module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.plotting.html#module-pySW4.plotting.waveforms">pySW4.plotting.waveforms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pySW4.plotting.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.plotting.hillshade.html">pySW4.plotting.hillshade module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.plotting.image.html">pySW4.plotting.image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.plotting.png2mp4.html">pySW4.plotting.png2mp4 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.plotting.utils.html">pySW4.plotting.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.plotting.waveforms.html">pySW4.plotting.waveforms module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pySW4.preprocess.html">pySW4.preprocess package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#module-pySW4.preprocess.grid_seismograms">pySW4.preprocess.grid_seismograms module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#module-pySW4.preprocess.material_model">pySW4.preprocess.material_model module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#module-pySW4.preprocess.rfileIO">pySW4.preprocess.rfileIO module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#module-pySW4.preprocess.source">pySW4.preprocess.source module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#pysw4-preprocess-station-array-module">pySW4.preprocess.station_array module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.preprocess.html#module-pySW4.preprocess.stations">pySW4.preprocess.stations module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pySW4.postp.html">pySW4.postp package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pySW4.postp.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.postp.image.html">pySW4.postp.image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.postp.waveforms.html">pySW4.postp.waveforms module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pySW4.prep.html">pySW4.prep package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pySW4.prep.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.prep.material_model.html">pySW4.prep.material_model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.prep.rfileIO.html">pySW4.prep.rfileIO module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.prep.source.html">pySW4.prep.source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.prep.stations.html">pySW4.prep.stations module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pySW4.utils.html">pySW4.utils package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.utils.html#module-pySW4.utils.fourier_spectrum">pySW4.utils.fourier_spectrum module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.utils.html#module-pySW4.utils.geo">pySW4.utils.geo module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.utils.html#module-pySW4.utils.psde">pySW4.utils.psde module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pySW4.utils.html#module-pySW4.utils.utils">pySW4.utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pySW4.utils.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.utils.geo.html">pySW4.utils.geo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.utils.spectral.html">pySW4.utils.spectral module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pySW4.utils.utils.html">pySW4.utils.utils module</a></li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pySW4.headers.html">pySW4.headers module</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-pySW4">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pySW4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pysw4-python-routines-for-interaction-with-sw4">
+<h3>pySW4: Python routines for interaction with SW4<a class="headerlink" href="#pysw4-python-routines-for-interaction-with-sw4" title="Permalink to this headline">¶</a></h3>
+<p><strong>pySW4</strong> is an open-source project dedicated to provide a Python
+framework for working with numerical simulations of seismic-wave
+propagation with SW4 in all phases of the task (preprocessing,
+post-processing and runtime visualization).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body"><p class="first last">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -179,7 +191,7 @@ See ./LICENSE.txt</td>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

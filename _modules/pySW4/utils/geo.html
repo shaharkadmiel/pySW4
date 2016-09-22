@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.utils.geo &mdash; pySW4 0.2.0 documentation</title>
+    <title>pySW4.utils.geo &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2.0',
+        VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 0.2.0 documentation" href="../../../index.html" />
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -63,30 +63,50 @@
             
   <h1>Source code for pySW4.utils.geo</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">- geo.py -</span>
+<span class="sd">Python module for handling DEM/GDEM/DTM and other raster data readable</span>
+<span class="sd">with gdal.</span>
 
-<span class="sd">Python module for handling DEM/GDEM/DTM and other raster data readable with</span>
-<span class="sd">gdal.</span>
+<span class="sd">.. module:: geo</span>
 
-<span class="sd">By: Shahar Shani-Kadmiel, May 2014, kadmiel@post.bgu.ac.il</span>
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel</span>
+<span class="sd">    kadmiel@post.bgu.ac.il</span>
 
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">ndimage</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">zipfile</span><span class="o">,</span> <span class="nn">shutil</span><span class="o">,</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">osr</span><span class="p">,</span> <span class="n">gdal_array</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;gdal not found, you will not be able to use the geo tools&#39;</span>\
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;gdal not found, you will not be able to use the geo tools &#39;</span>
                   <span class="s1">&#39; in `pySW4.utils.geo` unless you install gdal.&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF">[docs]</a><span class="k">class</span> <span class="nc">GeoTIFF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;class for GeoTIFF files&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF">[docs]</a><span class="k">class</span> <span class="nc">GeoTIFF</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Class for handling GeoTIFF files.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    This class should be populated by</span>
+<span class="sd">    :func:`~pySW4.utils.geo.read_GeoTIFF` or</span>
+<span class="sd">    :func:`~pySW4.utils.geo.get_dem`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
@@ -97,7 +117,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="mf">0.</span>
@@ -106,12 +126,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
-
-    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="GeoTIFF._read"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF._read">[docs]</a>    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Private method for reading a GeoTIFF file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading GeoTIFF file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span><span class="n">filename</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading GeoTIFF file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
         <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -128,71 +150,102 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">XSize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">YSize</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">())</span>\
-                     <span class="o">.</span><span class="n">ExportToProj4</span><span class="p">()</span>
+                        <span class="o">.</span><span class="n">ExportToProj4</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">()</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">GeoTIFF info:</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;name: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;west: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;east: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;south: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;north: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;x pixel size: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;y pixel size: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;# of x pixels: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;# of y pixels: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;no data value: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">nodata</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;data type: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;proj4: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">proj4</span>
-
+            <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;name: {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;west: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;east: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;south: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;north: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;x pixel size: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;y pixel size: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;# of x pixels: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;# of y pixels: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;no data value: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;data type: {}</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;proj4: {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">string</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns ``x`` coordinates vector of the data. This usually</span>
+<span class="sd">        corresponds to Longitude.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns ``y`` coordinates vector of the data. This usually</span>
+<span class="sd">        corresponds to Latitude.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">xy2d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns 2 2d :class:`numpy.ndarray` s with ``x`` and ``y``</span>
+<span class="sd">        coordinates of the data. This is the result of</span>
+<span class="sd">        :func:`numpy.meshgrid` of the ``x`` and ``y`` vectors of the</span>
+<span class="sd">        data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
 
+<div class="viewcode-block" id="GeoTIFF.resample"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.resample">[docs]</a>    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to resample the data either ``by`` a factor or ``to``</span>
+<span class="sd">        the specified spacing.</span>
 
-<div class="viewcode-block" id="GeoTIFF.resample"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.resample">[docs]</a>    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Method to resample the data either *by* a factor or</span>
-<span class="sd">        *to* the specified spacing. Uses `scipy.ndimage.zoom`.</span>
-<span class="sd">        ** Watch Out **</span>
-<span class="sd">        This operation is performed in place on the actual data. The</span>
-<span class="sd">        raw data will no longer be accessible afterwards. To keep the</span>
-<span class="sd">        original data, use the copy method `GeoTIFF.copy()` to create</span>
-<span class="sd">        a copy of the current object.</span>
-<span class="sd">        Params:</span>
-<span class="sd">        -------</span>
-<span class="sd">        by: if 1, nothing happens</span>
-<span class="sd">            if &lt; 1, the grid is sub-sampled by the factor</span>
-<span class="sd">            if &gt; 1, the grid is super-sampled byt the factor</span>
-<span class="sd">        to: the specified spacing to which the grid is resampled to.</span>
-<span class="sd">        order: int,</span>
-<span class="sd">                The order of the spline interpolation, default is 3.</span>
-<span class="sd">                The order has to be in the range 0-5</span>
-<span class="sd">                0 - nearest</span>
-<span class="sd">                1 - bi-linear</span>
-<span class="sd">                3 - cubic</span>
-<span class="sd">                ...</span>
+<span class="sd">        This method makes use of</span>
+<span class="sd">        :func:`scipy.ndimage.zoom`.</span>
+
+<span class="sd">        .. warning:: **Watch Out!** This operation is performed in place</span>
+<span class="sd">            on the actual data. The raw data will no longer be</span>
+<span class="sd">            accessible afterwards. To keep the original data, use the</span>
+<span class="sd">            :meth:`~pySW4.utils.geo.GeoTIFF.copy` method to create a</span>
+<span class="sd">            copy of the current object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        by : float</span>
+
+<span class="sd">            - If ``by=1``, nothing happens.</span>
+<span class="sd">            - If ``by&lt;1``, the grid is sub-sampled by the factor.</span>
+<span class="sd">            - if ``by&gt;1``, the grid is super-sampled byt the factor.</span>
+
+<span class="sd">        to : float</span>
+<span class="sd">            The specified spacing to which the grid is resampled to.</span>
+
+<span class="sd">        order : int</span>
+<span class="sd">            The order of the spline interpolation, default is 3.</span>
+<span class="sd">            The order has to be in the range 0-5.</span>
+
+<span class="sd">            - 0 - nearest (fastest)</span>
+<span class="sd">            - 1 - bi-linear</span>
+<span class="sd">            - 3 - cubic (slower)</span>
+<span class="sd">            - ...</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">by</span> <span class="ow">and</span> <span class="n">to</span><span class="p">:</span>
@@ -200,52 +253,80 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">to</span><span class="p">:</span>
-            <span class="n">by</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="o">/</span><span class="n">to</span><span class="p">)</span>
+            <span class="n">by</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">/</span> <span class="n">to</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">,</span><span class="n">by</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>\
-                               <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
 
-
-<div class="viewcode-block" id="GeoTIFF.reproject"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.reproject">[docs]</a>    <span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj4</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="GeoTIFF.reproject"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.reproject">[docs]</a>    <span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj4</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                   <span class="n">error_threshold</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span> <span class="n">target_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reproject the data from the current projection to the specified</span>
-<span class="sd">        target projection `epsg` or `proj4` or to match an existing GeoTIFF</span>
-<span class="sd">        file `match`.</span>
-<span class="sd">        ** Watch Out **</span>
-<span class="sd">        This operation is performed in place on the actual data. The</span>
-<span class="sd">        raw data will no longer be accessible afterwards. To keep the</span>
-<span class="sd">        original data, use the copy method `GeoTIFF.copy()` to create</span>
-<span class="sd">        a copy of the current object.</span>
-<span class="sd">        Params:</span>
-<span class="sd">        -------</span>
-<span class="sd">        epsg : target EPSG code.</span>
-<span class="sd">            a reference number to the EPSG Geodetic Parameter Dataset registry.</span>
-<span class="sd">            examples of some EPSG codes and their equivalent Proj4 strings are:</span>
-<span class="sd">            4326   -&gt; +proj=longlat +datum=WGS84 +no_defs</span>
-<span class="sd">            32636  -&gt; +proj=utm +zone=36 +datum=WGS84 +units=m +no_defs</span>
-<span class="sd">            102009 -&gt; +proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96</span>
-<span class="sd">                      +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs</span>
-<span class="sd">            ...</span>
-<span class="sd">        proj4 : target Proj4 string</span>
-<span class="sd">            if the EPSG code is unknown or a custom projection is required,</span>
-<span class="sd">            a Proj4 string can be passed.</span>
-<span class="sd">            See https://trac.osgeo.org/proj/wiki/GenParms for a list of</span>
-<span class="sd">            general Proj4 parameters.</span>
-<span class="sd">        match : filename of an existing GeoTIFF file or object (already in</span>
-<span class="sd">            memory) to match size and projection. current data is resampled</span>
-<span class="sd">            to match the shape and number of pixels of the existing GeoTIFF</span>
-<span class="sd">            file or object.</span>
-<span class="sd">            It is assumed that both data cover the same extent.</span>
-<span class="sd">        error_threshold : error threshold for transformation approximation</span>
-<span class="sd">            in pixel units. (default is 0.125 as in gdalwarp)</span>
-<span class="sd">        target_filename : if a target filename is given then the reprojected</span>
-<span class="sd">            data is saved as target_filename and read into memory replacing</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reproject the data from the current projection to the specified</span>
+<span class="sd">        target projection ``epsg`` or ``proj4`` or to ``match`` an</span>
+<span class="sd">        existing GeoTIFF file.</span>
+
+<span class="sd">        .. warning:: **Watch Out!** This operation is performed in place</span>
+<span class="sd">            on the actual data. The raw data will no longer be</span>
+<span class="sd">            accessible afterwards. To keep the original data, use the</span>
+<span class="sd">            :meth:`~pySW4.utils.geo.GeoTIFF.copy` method to create a</span>
+<span class="sd">            copy of the current object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epsg : int</span>
+<span class="sd">            The target projection EPSG code. See the</span>
+<span class="sd">            `Geodetic Parameter Dataset Registry`_ for more information.</span>
+
+<span class="sd">        proj4 : str</span>
+<span class="sd">            The target Proj4 string. If the EPSG code is unknown or a</span>
+<span class="sd">            custom projection is required, a Proj4 string can be passed.</span>
+<span class="sd">            See the `Proj4`_ documentation for a list of general Proj4</span>
+<span class="sd">            parameters.</span>
+
+<span class="sd">        match : str or :class:`~pySW4.utils.geo.GeoTIFF` instance</span>
+<span class="sd">            Path (relative or absolute) to an existing GeoTIFF file or</span>
+<span class="sd">            :class:`~pySW4.utils.geo.GeoTIFF` instance (already in</span>
+<span class="sd">            memory) to match size and projection of. Current data is</span>
+<span class="sd">            resampled to match the shape and number of pixels of the</span>
+<span class="sd">            existing GeoTIFF file or object.</span>
+<span class="sd">            It is assumed that both GeoTIFF objects cover the same</span>
+<span class="sd">            extent.</span>
+
+<span class="sd">        error_threshold : float</span>
+<span class="sd">            Error threshold for transformation approximation in pixel</span>
+<span class="sd">            units. (default is 0.125 for compatibility with  gdalwarp)</span>
+
+<span class="sd">        target_filename : str</span>
+<span class="sd">            If a target filename is given then the reprojected data is</span>
+<span class="sd">            saved as target_filename and read into memory replacing</span>
 <span class="sd">            the current data. This is faster than reprojecting and then</span>
-<span class="sd">            saving. Otherwise the `GeoTIFF.write_GeoTIFF` method can be used</span>
-<span class="sd">            to save the data at a later point if further manipulations are</span>
-<span class="sd">            needed.</span>
+<span class="sd">            saving. Otherwise the</span>
+<span class="sd">            :meth:`~pySW4.utils.geo.GeoTIFF.write_GeoTIFF` method can be</span>
+<span class="sd">            used to save the data at a later point if further</span>
+<span class="sd">            manipulations are needed.</span>
+
+
+<span class="sd">        .. rubric:: Examples of some EPSG codes and their equivalent Proj4</span>
+<span class="sd">            strings are:</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            4326   -&gt; &#39;+proj=longlat +datum=WGS84 +no_defs&#39;</span>
+
+<span class="sd">            32636  -&gt; &#39;+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs&#39;</span>
+
+<span class="sd">            102009 -&gt; &#39;+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 \\</span>
+<span class="sd">                       +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m \\</span>
+<span class="sd">                       +no_defs&#39;</span>
+
+<span class="sd">        and so on ...</span>
+
+<span class="sd">        .. _Geodetic Parameter Dataset Registry:</span>
+<span class="sd">           http://www.epsg-registry.org/</span>
+
+<span class="sd">        .. _Proj4:</span>
+<span class="sd">           https://trac.osgeo.org/proj/wiki/GenParms</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">epsg</span> <span class="ow">and</span> <span class="n">proj4</span> <span class="ow">and</span> <span class="n">match</span><span class="p">:</span>
@@ -274,7 +355,7 @@
             <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s1">&#39;GTiff&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">CreateCopy</span><span class="p">(</span><span class="n">target_filename</span><span class="p">,</span>
                                                               <span class="n">temp_ds</span><span class="p">)</span>
 
-        <span class="c1">#isinstance(match, GeoTIFF)</span>
+        <span class="c1"># isinstance(match, GeoTIFF)</span>
         <span class="k">elif</span> <span class="n">match</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">write_GeoTIFF</span><span class="p">(</span><span class="s1">&#39;src_temp.tif&#39;</span><span class="p">)</span>
             <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s1">&#39;src_temp.tif&#39;</span><span class="p">)</span>
@@ -307,30 +388,48 @@
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
-
-<div class="viewcode-block" id="GeoTIFF.keep"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="GeoTIFF.keep"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Keep a subset array from a GeoTIFF file.</span>
-<span class="sd">        ** Watch Out **</span>
-<span class="sd">        This operation is performed in place on the actual data. The</span>
-<span class="sd">        raw data will no longer be accessible afterwards. To keep the</span>
-<span class="sd">        original data, use the copy method `GeoTIFF.copy()` to create</span>
-<span class="sd">        a copy of the current object.</span>
+
+<span class="sd">        .. warning:: **Watch Out!** This operation is performed in place</span>
+<span class="sd">            on the actual data. The raw data will no longer be</span>
+<span class="sd">            accessible afterwards. To keep the original data, use the</span>
+<span class="sd">            :meth:`~pySW4.utils.geo.GeoTIFF.copy` method to create a</span>
+<span class="sd">            copy of the current object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        w : float</span>
+<span class="sd">            The west-most coordinate to keep</span>
+<span class="sd">            (may also be the xmin coordinate).</span>
+
+<span class="sd">        e : float</span>
+<span class="sd">            The east-most coordinate to keep</span>
+<span class="sd">            (may also be the xmax coordinate).</span>
+
+<span class="sd">        s : float</span>
+<span class="sd">            The south-most coordinate to keep</span>
+<span class="sd">            (may also be the ymin coordinate).</span>
+
+<span class="sd">        n : float</span>
+<span class="sd">            The north-most coordinate to keep</span>
+<span class="sd">            (may also be the ymax coordinate).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">&lt;</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="ow">or</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="ow">or</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">&lt;</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="ow">or</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;One or more of the coordinates given is out of bounds:</span><span class="se">\n</span><span class="s1">&#39;</span>\
-                  <span class="s1">&#39;{} &lt; `w` and `e` &lt; {} and {} &lt; `s` and `n` &lt; {}&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;One or more of the coordinates given is out of bounds:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;{} &lt; `w` and `e` &lt; {} and {} &lt; `s` and `n` &lt; {}&#39;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
 
-        <span class="n">x_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">w</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
-        <span class="n">x_stop</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">x_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">w</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+        <span class="n">x_stop</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
-        <span class="n">y_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
-        <span class="n">y_stop</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">y_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+        <span class="n">y_stop</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="c1"># update class data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_stop</span>  <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
@@ -344,13 +443,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-
-<div class="viewcode-block" id="GeoTIFF.elevation_profile"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.elevation_profile">[docs]</a>    <span class="k">def</span> <span class="nf">elevation_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
-
-        <span class="n">rows</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="viewcode-block" id="GeoTIFF.elevation_profile"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.elevation_profile">[docs]</a>    <span class="k">def</span> <span class="nf">elevation_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the elevation values ar points in ``xs`` and ``ys``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-            <span class="n">column</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
 
             <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">column</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">continue</span>
@@ -359,34 +460,64 @@
             <span class="n">columns</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">column</span><span class="p">)]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">[</span><span class="n">columns</span><span class="p">,</span> <span class="n">rows</span><span class="p">]</span></div>
 
-
-<div class="viewcode-block" id="GeoTIFF.get_intensity"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.get_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">get_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">315.</span><span class="p">,</span> <span class="n">altitude</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
+<div class="viewcode-block" id="GeoTIFF.get_intensity"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.get_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">get_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">315.</span><span class="p">,</span> <span class="n">altitude</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
                       <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This is a method to create an intensity array that can be used to</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a method to create an intensity array that can be used to</span>
 <span class="sd">        create a shaded relief map.</span>
-<span class="sd">        Params:</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        Since version 0.2.0 this method is not needed anymore as new</span>
+<span class="sd">        hillshade code has been implemented in the</span>
+<span class="sd">        :mod:`~pySW4.plotting.hillshade` module.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        azimuth : float</span>
+<span class="sd">            Direction of light source, degrees from north.</span>
+
+<span class="sd">        altitude : float</span>
+<span class="sd">            Height of light source, degrees above the horizon.</span>
+
+<span class="sd">        scale : float</span>
+<span class="sd">            Scaling value of the data.</span>
+
+<span class="sd">        smooth : float</span>
+<span class="sd">            Number of cells to average before intensity calculation.</span>
+
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        azimuth: direction of light source, degrees from north</span>
-<span class="sd">        altitude: height of light source, degrees above the horizon</span>
-<span class="sd">        scale: scaling value of the data</span>
-<span class="sd">        smooth: number of cells to average before intensity calculation</span>
+<span class="sd">        a 2d :class:`~numpy.ndarray`</span>
+<span class="sd">            Normalized 2d array with illumination data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">calc_intensity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">smooth</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="GeoTIFF.write_topo_file"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.write_topo_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_topo_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write an ASCII Lon, Lat, z file for SW4 topography.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="GeoTIFF.write_topo_file"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.write_topo_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_topo_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Write an ASCII Lon, Lat, z file for SW4 topography&quot;&quot;&quot;</span>
-
-        <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span>
-        <span class="n">lon</span><span class="p">,</span><span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xy2d</span><span class="p">()</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span>
+        <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xy2d</span><span class="p">()</span>
         <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">lon</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
                                               <span class="n">lat</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
                                               <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span>
                    <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="GeoTIFF.write_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.write_GeoTIFF">[docs]</a>    <span class="k">def</span> <span class="nf">write_GeoTIFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a GeoTIFF file.</span>
 
-<div class="viewcode-block" id="GeoTIFF.write_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.write_GeoTIFF">[docs]</a>    <span class="k">def</span> <span class="nf">write_GeoTIFF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Write a GeoTIFF file.&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Path (relative or absolute) to the saves file.</span>
+
+<span class="sd">        nodata : int or float or NaN</span>
+<span class="sd">            Value to register as the no-data value in the GeoTIFF file</span>
+<span class="sd">            header.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">nodata</span><span class="p">:</span>
             <span class="n">nodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span>
@@ -398,27 +529,47 @@
                      <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span>
                      <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GeoTIFF.copy"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.GeoTIFF.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GeoTIFF.copy"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a deepcopy of the GeoTIFF object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="calc_intensity"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.calc_intensity">[docs]</a><span class="k">def</span> <span class="nf">calc_intensity</span><span class="p">(</span><span class="n">relief</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">315.</span><span class="p">,</span> <span class="n">altitude</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
+<div class="viewcode-block" id="calc_intensity"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.calc_intensity">[docs]</a><span class="k">def</span> <span class="nf">calc_intensity</span><span class="p">(</span><span class="n">relief</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">315.</span><span class="p">,</span> <span class="n">altitude</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
                    <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This is a method to create an intensity array that can be used to</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a method to create an intensity array that can be used to</span>
 <span class="sd">    create a shaded relief map.</span>
-<span class="sd">    Params:</span>
-<span class="sd">    --------</span>
-<span class="sd">    relief : 2d array of topography or other data to calculate intensity from</span>
-<span class="sd">    azimuth : direction of light source, degrees from north</span>
-<span class="sd">    altitude : height of light source, degrees above the horizon</span>
-<span class="sd">    scale : scaling value of the data, higher number higher gradient</span>
-<span class="sd">    smooth : number of cells to average before intensity calculation</span>
-<span class="sd">    Returns:</span>
-<span class="sd">    ---------</span>
-<span class="sd">    2d array, same size as `relief`</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Since version 0.2.0 this function is not needed anymore as new</span>
+<span class="sd">    hillshade code has been implemented in the</span>
+<span class="sd">    :mod:`~pySW4.plotting.hillshade` module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    relief : a 2d :class:`~numpy.ndarray`</span>
+<span class="sd">        Topography or other data to calculate intensity from.</span>
+
+<span class="sd">    azimuth : float</span>
+<span class="sd">        Direction of light source, degrees from north.</span>
+
+<span class="sd">    altitude : float</span>
+<span class="sd">        Height of light source, degrees above the horizon.</span>
+
+<span class="sd">    scale : float</span>
+<span class="sd">        Scaling value of the data.</span>
+
+<span class="sd">    smooth : float</span>
+<span class="sd">        Number of cells to average before intensity calculation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a 2d :class:`~numpy.ndarray`</span>
+<span class="sd">        Normalized 2d array with illumination data.</span>
+<span class="sd">        Same size as ``relief``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">relief</span> <span class="o">=</span> <span class="n">relief</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -430,27 +581,37 @@
 
     <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">relief</span><span class="p">)</span>
 
-    <span class="n">slope</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">))</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">))</span>
 
     <span class="n">aspect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
 
     <span class="n">altitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span>
     <span class="n">azimuth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">180.</span> <span class="o">-</span> <span class="n">azimuth</span><span class="p">)</span>
 
-    <span class="n">intensity</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span> <span class="o">+</span>
-                 <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span> <span class="o">*</span>
-                 <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">azimuth</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">aspect</span><span class="p">))</span>
+    <span class="n">intensity</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
+                 <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">azimuth</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">aspect</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">intensity</span> <span class="o">-</span> <span class="n">intensity</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="n">intensity</span><span class="o">.</span><span class="n">ptp</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">intensity</span> <span class="o">-</span> <span class="n">intensity</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">intensity</span><span class="o">.</span><span class="n">ptp</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="read_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.read_GeoTIFF">[docs]</a><span class="k">def</span> <span class="nf">read_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reads GeoTIFF_file and return a GeoTIFF class instance.</span>
-<span class="sd">    If `filename` is None, an empty GeoTIFF object is returnd.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="read_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.read_GeoTIFF">[docs]</a><span class="k">def</span> <span class="nf">read_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a single GeoTIFF file and returns a</span>
+<span class="sd">    :class:`~pySW4.utils.geo.GeoTIFF` class instance. If ``filename``</span>
+<span class="sd">    is None, an empty :class:`~pySW4.utils.geo.GeoTIFF` object is</span>
+<span class="sd">    returnd.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`~pySW4.utils.geo.GeoTIFF`</span>
+<span class="sd">        A populated (or empty) :class:`~pySW4.utils.geo.GeoTIFF`</span>
+<span class="sd">        instance with the elevation data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">tif</span> <span class="o">=</span> <span class="n">GeoTIFF</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span> <span class="c1"># return an empty GeoTIFF object</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>  <span class="c1"># return an empty GeoTIFF object</span>
         <span class="k">return</span> <span class="n">tif</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">tif</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
@@ -458,36 +619,86 @@
     <span class="k">return</span> <span class="n">tif</span></div>
 
 
-<div class="viewcode-block" id="save_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.save_GeoTIFF">[docs]</a><span class="k">def</span> <span class="nf">save_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tlx</span><span class="p">,</span> <span class="n">tly</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span>
+<div class="viewcode-block" id="save_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.save_GeoTIFF">[docs]</a><span class="k">def</span> <span class="nf">save_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tlx</span><span class="p">,</span> <span class="n">tly</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span>
                  <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj4</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Save data at a known projection as a GeoTIFF file.</span>
-<span class="sd">    Params:</span>
-<span class="sd">    -------</span>
-<span class="sd">    filename : name of the output GeoTIFF file</span>
-<span class="sd">    data : a 2d array of data to write to file</span>
-<span class="sd">    tlx : top-left x (usually West-) coordinate of data</span>
-<span class="sd">    tly : top-left y (usually North-) coordinate of data</span>
-<span class="sd">    dx : pixel size of data in the x direction, positive in the East direction</span>
-<span class="sd">    dy : pixel size of data in the y direction, positive in the North direction</span>
-<span class="sd">    epsg : a reference number to the EPSG Geodetic Parameter Dataset registry.</span>
-<span class="sd">        examples of some EPSG codes and their equivalent Proj4 strings are:</span>
-<span class="sd">        4326   -&gt; +proj=longlat +datum=WGS84 +no_defs</span>
-<span class="sd">        32636  -&gt; +proj=utm +zone=36 +datum=WGS84 +units=m +no_defs</span>
-<span class="sd">        102009 -&gt; +proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96</span>
-<span class="sd">                  +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs</span>
-<span class="sd">        ...</span>
-<span class="sd">    proj4 : if the EPSG code is unknown or a custom projection is required,</span>
-<span class="sd">        a Proj4 string can be passed.</span>
-<span class="sd">        See https://trac.osgeo.org/proj/wiki/GenParms for a list of general</span>
-<span class="sd">        Proj4 parameters.</span>
-<span class="sd">    dtype : one of following dtypes should be used `numpy.int16` (default),</span>
-<span class="sd">        `numpy.int32`,`numpy.float32`, or `numpy.float64`.</span>
-<span class="sd">        * Note that `float` is not the same as `numpy.float32` *</span>
-<span class="sd">    nodata : set the no data value in the GeoTIFF file (default is</span>
-<span class="sd">        `numpy.nan`). Other options are -9999, -12345 or any other</span>
-<span class="sd">        value that suits your purpose.</span>
-<span class="sd">    rasterband : the band number to write. (default is 1)</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save data at a known projection as a GeoTIFF file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Path (relative or absolute) of the output GeoTIFF file.</span>
+
+<span class="sd">    data : :class:`~numpy.ndarray`</span>
+<span class="sd">        A 2d array of data to write to file.</span>
+
+<span class="sd">    tlx : float</span>
+<span class="sd">        Top-left-x (usually West-) coordinate of data.</span>
+
+<span class="sd">    tly : flaot</span>
+<span class="sd">        Top-left-y (usually North-) coordinate of data.</span>
+
+<span class="sd">    dx : float</span>
+<span class="sd">        Pixel size of data in the x direction, positive in the East</span>
+<span class="sd">        direction.</span>
+
+<span class="sd">    dy : float</span>
+<span class="sd">        Pixel size of data in the y direction, positive in the North</span>
+<span class="sd">        direction.</span>
+
+<span class="sd">    epsg : int</span>
+<span class="sd">        The target projection EPSG code. See the</span>
+<span class="sd">        `Geodetic Parameter Dataset Registry`_ for more information.</span>
+
+<span class="sd">    proj4 : str</span>
+<span class="sd">        The target Proj4 string. If the EPSG code is unknown or a</span>
+<span class="sd">        custom projection is required, a Proj4 string can be passed.</span>
+<span class="sd">        See the `Proj4`_ documentation for a list of general Proj4</span>
+<span class="sd">        parameters.</span>
+
+<span class="sd">    dtype : :class:`~numpy.dtype`</span>
+<span class="sd">        One of following dtypes should be used:</span>
+<span class="sd">        - ``numpy.int16`` (default)</span>
+<span class="sd">        - ``numpy.int32``</span>
+<span class="sd">        - ``numpy.float32``</span>
+<span class="sd">        - ``numpy.float64``</span>
+
+<span class="sd">    nodata : int or float or NaN</span>
+<span class="sd">        Value to register as the no-data value in the GeoTIFF file</span>
+<span class="sd">        header. By default this is set to ``numpy.nan``. Other common</span>
+<span class="sd">        options are -9999, -12345 or any other value that suits your</span>
+<span class="sd">        purpose.</span>
+
+<span class="sd">    rasterband : int</span>
+<span class="sd">        The band number to write. (default is 1)</span>
+
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Note that ``float`` is not the same as ``numpy.float32``</span>
+
+
+<span class="sd">    .. rubric:: Examples of some EPSG codes and their equivalent Proj4</span>
+<span class="sd">        strings are:</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        4326   -&gt; &#39;+proj=longlat +datum=WGS84 +no_defs&#39;</span>
+
+<span class="sd">        32636  -&gt; &#39;+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs&#39;</span>
+
+<span class="sd">        102009 -&gt; &#39;+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 \\</span>
+<span class="sd">                   +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m \\</span>
+<span class="sd">                   +no_defs&#39;</span>
+
+<span class="sd">    and so on ...</span>
+
+
+<span class="sd">    .. _Geodetic Parameter Dataset Registry:</span>
+<span class="sd">       http://www.epsg-registry.org/</span>
+
+<span class="sd">    .. _Proj4:</span>
+<span class="sd">       https://trac.osgeo.org/proj/wiki/GenParms</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">epsg</span> <span class="ow">and</span> <span class="n">proj4</span><span class="p">:</span>
@@ -499,8 +710,9 @@
 
     <span class="n">gdal_dtype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">NumericTypeCodeToGDALTypeCode</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">gdal_dtype</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Illegal DataType {}. `dtype` can be one of `numpy.int16`, &#39;</span>\
-              <span class="s1">&#39;`numpy.int32`, `numpy.float32`, or `numpy.float64`.&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Illegal DataType {}. ``dtype`` can be one of &#39;</span>
+               <span class="s1">&#39;``numpy.int16``, `numpy.int32`, `numpy.float32`, or &#39;</span>
+               <span class="s1">&#39;`numpy.float64`.&#39;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="p">))</span>
 
     <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s1">&#39;GTiff&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span>
@@ -508,7 +720,7 @@
                                                   <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                                   <span class="mi">1</span><span class="p">,</span>
                                                   <span class="n">gdal_dtype</span><span class="p">)</span>
-    <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">((</span><span class="n">tlx</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="n">tly</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">dy</span><span class="p">))</span>
+    <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">((</span><span class="n">tlx</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tly</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="p">))</span>
 
     <span class="n">dstSRS</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
 
@@ -526,25 +738,34 @@
     <span class="n">dst_ds</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="_get_tiles"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo._get_tiles">[docs]</a><span class="k">def</span> <span class="nf">_get_tiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span>
+<div class="viewcode-block" id="_get_tiles"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo._get_tiles">[docs]</a><span class="k">def</span> <span class="nf">_get_tiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span>
                <span class="n">tilename</span><span class="o">=</span><span class="s1">&#39;ASTGTM2_N</span><span class="si">%02d</span><span class="s1">E</span><span class="si">%03d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This is a helper function for `get_dem`.</span>
-<span class="sd">    It extracts the GeoTIFF tiles needed to stitch an elevation model</span>
-<span class="sd">    with the extent given by lonmin, lonmax, latmin, latmax</span>
-<span class="sd">    in decimal degrees and</span>
-<span class="sd">    returns a list pointing to these tiles.</span>
+    <span class="sd">&quot;&quot;&quot;This is a helper function for :func:`~pySW4.utils.geo.get_dem`</span>
+<span class="sd">    function.</span>
+
+<span class="sd">    It extracts the GeoTIFF tiles from the zipfile downloaded from the</span>
+<span class="sd">    ASTER-GDEM dowonload site needed to stitch an elevation model</span>
+<span class="sd">    with the extent given by ``lonmin``, ``lonmax``, ``latmin``,</span>
+<span class="sd">    ``latmax`` in decimal degrees and returns a list of paths pointing</span>
+<span class="sd">    to these tiles.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    This function sould not be used directly by the user. See</span>
+<span class="sd">    :func:`~pySW4.utils.geo.get_dem`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">tiles</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">tile_index</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">latrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">latmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">latmax</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">lonrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lonmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">lonmax</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">tiles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tile_index</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">latrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">latmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">latmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">lonrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lonmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">lonmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">latrange</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lonrange</span><span class="p">:</span>
-            <span class="n">basename</span> <span class="o">=</span> <span class="n">tilename</span> <span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
-            <span class="n">fullname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">basename</span><span class="p">)</span>
+            <span class="n">basename</span> <span class="o">=</span> <span class="n">tilename</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">fullname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
             <span class="n">pwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>
 
-            <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pwd</span><span class="p">,</span><span class="n">basename</span><span class="p">,</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;_dem.tif&#39;</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pwd</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;_dem.tif&#39;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -554,38 +775,87 @@
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullname</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Warning! missing file {}. &#39;</span>\
-                          <span class="s1">&#39;Replacing tile with zeros.&#39;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Warning! missing file {}. &#39;</span>
+                           <span class="s1">&#39;Replacing tile with zeros.&#39;</span><span class="p">)</span>
                     <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fullname</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">))</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
                     <span class="n">tiles</span> <span class="o">+=</span> <span class="p">[</span><span class="n">basename</span><span class="p">]</span>
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting tiles to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span><span class="n">pwd</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting tiles to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">pwd</span><span class="p">)</span>
 
                 <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">fullname</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
-                    <span class="n">zf</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span><span class="n">basename</span><span class="o">+</span><span class="s1">&#39;_dem.tif&#39;</span><span class="p">))</span>
+                    <span class="n">zf</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;_dem.tif&#39;</span><span class="p">))</span>
                 <span class="n">tiles</span> <span class="o">+=</span> <span class="p">[</span><span class="n">f</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">tiles</span></div>
 
 
-<div class="viewcode-block" id="get_dem"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.get_dem">[docs]</a><span class="k">def</span> <span class="nf">get_dem</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span>
+<div class="viewcode-block" id="get_dem"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.get_dem">[docs]</a><span class="k">def</span> <span class="nf">get_dem</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span>
             <span class="n">tilename</span><span class="o">=</span><span class="s1">&#39;ASTGTM2_N</span><span class="si">%02d</span><span class="s1">E</span><span class="si">%03d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">dx</span><span class="o">=</span><span class="mf">0.000277777777778</span><span class="p">,</span> <span class="n">dy</span><span class="o">=-</span><span class="mf">0.000277777777778</span><span class="p">,</span>
             <span class="n">keep_tiles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This function reads all relevant AsterGDEM GeoTIFF</span>
-<span class="sd">    tiles into memory, stitching them together if needed,</span>
-<span class="sd">    and cutting to the extent given by lonmin, lonmax,</span>
-<span class="sd">    latmin, latmax in decimal degrees.</span>
-<span class="sd">    Returns a GeoTIFF class instance&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function reads relevant ASTER-GDEM GeoTIFF tiles into memory,</span>
+<span class="sd">    stitchs them together if more than one file is read, and cuts to the</span>
+<span class="sd">    desired extent given by ``lonmin``, ``lonmax``, ``latmin``,</span>
+<span class="sd">    ``latmax`` in decimal degrees.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path (relative or absolute) to where the ASTER-GDEM zipped tiles</span>
+<span class="sd">        are stored.</span>
+
+<span class="sd">    lonmin : float</span>
+<span class="sd">        The west-most coordinate of the desired extent</span>
+<span class="sd">        (may also be the xmin coordinate).</span>
+
+<span class="sd">    lonmax : float</span>
+<span class="sd">        The east-most coordinate of the desired extent</span>
+<span class="sd">        (may also be the xmax coordinate).</span>
+
+<span class="sd">    latmin : float</span>
+<span class="sd">        The south-most coordinate of the desired extent</span>
+<span class="sd">        (may also be the ymin coordinate).</span>
+
+<span class="sd">    latmax : float</span>
+<span class="sd">        The north-most coordinate of the desired extent</span>
+<span class="sd">        (may also be the ymax coordinate).</span>
+
+<span class="sd">    tilename : str</span>
+<span class="sd">        Wildcard string of the tile names.</span>
+
+<span class="sd">    rasterBand : int</span>
+<span class="sd">        The band number to read from each tile (defaults to 1).</span>
+
+<span class="sd">    dx : float</span>
+<span class="sd">        Pixel size of data in the x direction, positive in the East</span>
+<span class="sd">        direction.</span>
+
+<span class="sd">    dy : float</span>
+<span class="sd">        Pixel size of data in the y direction, positive in the North</span>
+<span class="sd">        direction.</span>
+
+<span class="sd">    keep_tiles : bool</span>
+<span class="sd">        Zipped tiles get extracted to the current working directory and</span>
+<span class="sd">        are removed once the stitching is complete. If you are</span>
+<span class="sd">        interested in keeping the tiles in the current working directory</span>
+<span class="sd">        set to ``True``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`~pySW4.utils.geo.GeoTIFF`</span>
+<span class="sd">        A populated :class:`~pySW4.utils.geo.GeoTIFF` instance with the</span>
+<span class="sd">        stitched elevation data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># get a list of tiles for reading</span>
     <span class="n">tiles</span> <span class="o">=</span> <span class="n">_get_tiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span> <span class="n">tilename</span><span class="p">)</span>
 
-    <span class="n">gdems</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">emptys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">gdems</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">emptys</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># read all GDEMs into memory to stitch together and sample</span>
     <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -602,20 +872,20 @@
             <span class="n">empty</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
             <span class="n">coordinates</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">n</span><span class="p">,</span><span class="n">w</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">)</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">dx</span>
+            <span class="n">n</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">)</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dx</span>
             <span class="n">empty</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dx</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">dy</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dy</span>
             <span class="n">empty</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dy</span>
 
-            <span class="n">empty</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">empty</span><span class="o">.</span><span class="n">w</span><span class="p">,</span><span class="n">empty</span><span class="o">.</span><span class="n">e</span><span class="p">,</span><span class="n">empty</span><span class="o">.</span><span class="n">s</span><span class="p">,</span><span class="n">empty</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">empty</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
 
             <span class="n">empty</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
             <span class="n">empty</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">dy</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">dx</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">dy</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">dx</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">dy</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
 
-            <span class="n">empty</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">empty</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span><span class="n">empty</span><span class="o">.</span><span class="n">nx</span><span class="p">))</span>
+            <span class="n">empty</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">empty</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">nx</span><span class="p">))</span>
             <span class="n">emptys</span> <span class="o">+=</span> <span class="p">[</span><span class="n">empty</span><span class="p">]</span>
 
     <span class="n">gdems</span> <span class="o">+=</span> <span class="n">emptys</span>
@@ -629,8 +899,8 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mosaicGDEM</span> <span class="o">=</span> <span class="n">GeoTIFF</span><span class="p">()</span>
 
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>   <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>   <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dy</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>     <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>     <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dy</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">proj4</span>  <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">proj4</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dtype</span>  <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nodata</span>
@@ -639,10 +909,10 @@
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">e</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">s</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">n</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span>
-                                  <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span><span class="p">)</span> <span class="o">/</span>
-                                  <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
+                                <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+                                <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="c1"># initialize the elev array into which data from each</span>
         <span class="c1"># individual tile will be added</span>
@@ -650,30 +920,28 @@
 
         <span class="c1"># stitching all gdems into one big mosaic</span>
         <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">:</span>
-            <span class="n">x_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+            <span class="n">x_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
             <span class="n">x_stop</span> <span class="o">=</span> <span class="n">x_start</span> <span class="o">+</span> <span class="n">gdem</span><span class="o">.</span><span class="n">nx</span>
 
-            <span class="n">y_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+            <span class="n">y_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
             <span class="n">y_stop</span> <span class="o">=</span> <span class="n">y_start</span> <span class="o">+</span> <span class="n">gdem</span><span class="o">.</span><span class="n">ny</span>
 
-
             <span class="n">elev</span><span class="p">[</span><span class="n">y_start</span><span class="p">:</span><span class="n">y_stop</span><span class="p">,</span> <span class="n">x_start</span><span class="p">:</span><span class="n">x_stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdem</span><span class="o">.</span><span class="n">elev</span>
-
 
     <span class="c1"># subsample the big mosaic to the specified extent in</span>
     <span class="c1"># lonmin, lonmax, latmin, latmax</span>
     <span class="c1"># and update the class data</span>
-    <span class="n">x_start</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">lonmin</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
-    <span class="n">x_stop</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">lonmax</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">x_start</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">lonmin</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+    <span class="n">x_stop</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">lonmax</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="n">y_start</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">latmax</span><span class="p">)</span><span class="o">/</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span>
-    <span class="n">y_stop</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">latmin</span><span class="p">)</span><span class="o">/</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">y_start</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">latmax</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span>
+    <span class="n">y_stop</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">latmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="c1"># update class data</span>
-    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_stop</span><span class="o">*</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>
-    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_start</span><span class="o">*</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>
-    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">y_stop</span><span class="o">*</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>
-    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">y_start</span><span class="o">*</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>
+    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_stop</span> <span class="o">*</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>
+    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_start</span> <span class="o">*</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>
+    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">y_stop</span> <span class="o">*</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>
+    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">y_start</span> <span class="o">*</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>
 
     <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
                          <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
@@ -685,16 +953,17 @@
     <span class="k">return</span> <span class="n">mosaicGDEM</span></div>
 
 
-<div class="viewcode-block" id="xy2gridpoints"><a class="viewcode-back" href="../../../packages/pySW4.utils.html#pySW4.utils.geo.xy2gridpoints">[docs]</a><span class="k">def</span> <span class="nf">xy2gridpoints</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">grid_shape</span><span class="p">,</span><span class="n">grid_extent</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;get the grid coordinates of the data coordinates in `x`, `y`&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="xy2gridpoints"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.xy2gridpoints">[docs]</a><span class="k">def</span> <span class="nf">xy2gridpoints</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">grid_shape</span><span class="p">,</span> <span class="n">grid_extent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the grid coordinates of the data coordinates in ``x``, ``y``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grid_extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">grid_extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">grid_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grid_extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">grid_extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">grid_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grid_extent</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">grid_extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">grid_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grid_extent</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">grid_extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">grid_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">xgp</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">grid_extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dx</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">ygp</span> <span class="o">=</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">grid_extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">dy</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">xgp</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">grid_extent</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">dx</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ygp</span> <span class="o">=</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">grid_extent</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">dy</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">xgp</span><span class="p">,</span> <span class="n">ygp</span></div>
-
 </pre></div>
 
           </div>
@@ -711,7 +980,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 0.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

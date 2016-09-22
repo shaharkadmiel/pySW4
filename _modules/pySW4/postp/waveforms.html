@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.postp.waveforms &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pySW4.postp.waveforms</h1><div class="highlight"><pre>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Routines for reading a line or an array of synthetic waveforms.</span>
+
+<span class="sd">.. module:: waveforms</span>
+
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)</span>
+
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
+
+
+<span class="sd">.. rubric:: SW4 uses a right handed coordinate system</span>
+
+
+<span class="sd">::</span>
+
+<span class="sd">         X</span>
+<span class="sd">       ⋰</span>
+<span class="sd">     ⋰</span>
+<span class="sd">    o-------&gt;Y</span>
+<span class="sd">    |</span>
+<span class="sd">    |</span>
+<span class="sd">    V</span>
+<span class="sd">    Z</span>
+
+<span class="sd">If the azimuth of the SW4 grid is ``0`` this translates to:</span>
+
+<span class="sd">- X == Northing</span>
+<span class="sd">- Y == Easting</span>
+<span class="sd">- Z == Vertical (inverted!)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">obspy</span>
+<span class="kn">from</span> <span class="nn">..headers</span> <span class="k">import</span> <span class="n">STF</span><span class="p">,</span> <span class="n">REC_MODE</span>
+
+<span class="n">COORDINATE_SYSTEM</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cartesian&#39;</span>    <span class="p">:</span> <span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
+                     <span class="s1">&#39;geographical&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">)}</span>
+
+
+<div class="viewcode-block" id="read_stations"><a class="viewcode-back" href="../../../packages/pySW4.postp.waveforms.html#pySW4.postp.waveforms.read_stations">[docs]</a><span class="k">def</span> <span class="nf">read_stations</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a line or an array of stations constructed using</span>
+<span class="sd">    :func:`~pySW4.prep.stations.station_line` or</span>
+<span class="sd">    :func:`~pySW4.prep.stations.station_array` in the preprocess phase.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The prefix of the line or array name, should be equal to the</span>
+<span class="sd">        value used for ``&#39;name&#39;`` in</span>
+<span class="sd">        :func:`~pySW4.prep.stations.station_line` or</span>
+<span class="sd">        :func:`~pySW4.prep.stations.station_array` in the preprocess</span>
+<span class="sd">        phase.</span>
+
+<span class="sd">    path : str</span>
+<span class="sd">        Path (relative or absolute) to the files (default is &#39;./&#39;).</span>
+
+<span class="sd">    mode : str</span>
+<span class="sd">        Mode of the ``rec`` files to be read. One of:</span>
+
+<span class="sd">        &#39;displacement&#39;, &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, or &#39;strains&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:~`Strations`</span>
+<span class="sd">        Class with waveform data and methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Stations</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Stations"><a class="viewcode-back" href="../../../packages/pySW4.postp.waveforms.html#pySW4.postp.waveforms.Stations">[docs]</a><span class="k">class</span> <span class="nc">Stations</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle waveform data from a line or an array of</span>
+<span class="sd">    seismograms.</span>
+
+<span class="sd">    Read a line or an array of stations constructed using</span>
+<span class="sd">    :func:`~pySW4.prep.stations.station_line` or</span>
+<span class="sd">    :func:`~pySW4.prep.stations.station_array` in the preprocess phase.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The prefix of the line or array name, should be equal to the</span>
+<span class="sd">        value used for ``&#39;name&#39;`` in</span>
+<span class="sd">        :func:`~pySW4.prep.stations.station_line` or</span>
+<span class="sd">        :func:`~pySW4.prep.stations.station_array` in the preprocess</span>
+<span class="sd">        phase.</span>
+
+<span class="sd">    path : str</span>
+<span class="sd">        Path (relative or absolute) to the files (default is &#39;./&#39;).</span>
+
+<span class="sd">    mode : str</span>
+<span class="sd">        Mode of the ``rec`` files to be read. One of:</span>
+
+<span class="sd">        &#39;displacement&#39;, &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, or &#39;strains&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">traces</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">REC_MODE</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;No files were found in {} with pattern {}*{}...&#39;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">REC_MODE</span><span class="p">[</span><span class="n">mode</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">traces</span> <span class="o">=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">Stream</span><span class="p">()</span>
+        <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+            <span class="c1"># parse the filename to get the location of the trace</span>
+            <span class="n">xcoor</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ycoor</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">zcoor</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_rec_filename</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;SAC&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># add trace location to the trace.stats object</span>
+            <span class="n">trace</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="n">xcoor</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">trace</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="n">ycoor</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">trace</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="n">zcoor</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">traces</span> <span class="o">+=</span> <span class="n">trace</span>
+
+        <span class="k">if</span> <span class="n">xcoor</span> <span class="ow">in</span> <span class="p">(</span><span class="n">COORDINATE_SYSTEM</span><span class="p">[</span><span class="s1">&#39;cartesian&#39;</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span> <span class="o">=</span> <span class="s1">&#39;cartesian&#39;</span>
+        <span class="k">elif</span> <span class="n">xcoor</span> <span class="ow">in</span> <span class="p">(</span><span class="n">COORDINATE_SYSTEM</span><span class="p">[</span><span class="s1">&#39;geographical&#39;</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span> <span class="o">=</span> <span class="s1">&#39;geographical&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">times</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Stations._parse_rec_filename"><a class="viewcode-back" href="../../../packages/pySW4.postp.waveforms.html#pySW4.postp.waveforms.Stations._parse_rec_filename">[docs]</a>    <span class="k">def</span> <span class="nf">_parse_rec_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse &#39;rec&#39; filename and get the x, y or lat, lon coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">xcoor</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+        <span class="n">ycoor</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+        <span class="n">zcoor</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xcoor</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">ycoor</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">zcoor</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

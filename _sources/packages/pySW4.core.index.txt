@@ -1,5 +1,9 @@
 .. _index:
 
+============
+Core package
+============
+
 .. currentmodule:: pySW4.core
 .. automodule:: pySW4.core
 

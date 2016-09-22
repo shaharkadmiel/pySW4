@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.postp.waveforms module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
+    <link rel="up" title="pySW4.postp package" href="pySW4.postp.html" />
+    <link rel="next" title="pySW4.prep package" href="pySW4.prep.html" />
+    <link rel="prev" title="pySW4.postp.image module" href="pySW4.postp.image.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.prep.html" title="pySW4.prep package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.postp.image.html" title="pySW4.postp.image module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.postp.html" accesskey="U">pySW4.postp package</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pySW4.postp.image.html"
+                        title="previous chapter">pySW4.postp.image module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pySW4.prep.html"
+                        title="next chapter">pySW4.prep package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/packages/pySW4.postp.waveforms.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pySW4.postp.waveforms">
+<span id="pysw4-postp-waveforms-module"></span><h1>pySW4.postp.waveforms module<a class="headerlink" href="#module-pySW4.postp.waveforms" title="Permalink to this headline">¶</a></h1>
+<p>Routines for reading a line or an array of synthetic waveforms.</p>
+<span class="target" id="module-waveforms"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">SW4 uses a right handed coordinate system</p>
+<div class="highlight-default"><div class="highlight"><pre>     X
+   ⋰
+ ⋰
+o-------&gt;Y
+|
+|
+V
+Z
+</pre></div>
+</div>
+<p>If the azimuth of the SW4 grid is <code class="docutils literal"><span class="pre">0</span></code> this translates to:</p>
+<ul class="simple">
+<li>X == Northing</li>
+<li>Y == Easting</li>
+<li>Z == Vertical (inverted!)</li>
+</ul>
+<dl class="class">
+<dt id="pySW4.postp.waveforms.Stations">
+<em class="property">class </em><code class="descname">Stations</code><span class="sig-paren">(</span><em>name</em>, <em>path='./'</em>, <em>mode='velocity'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to handle waveform data from a line or an array of
+seismograms.</p>
+<p>Read a line or an array of stations constructed using
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The prefix of the line or array name, should be equal to the
+value used for <code class="docutils literal"><span class="pre">'name'</span></code> in
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess
+phase.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the files (default is &#8216;./&#8217;).</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <p>Mode of the <code class="docutils literal"><span class="pre">rec</span></code> files to be read. One of:</p>
+<p>&#8216;displacement&#8217;, &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, or &#8216;strains&#8217;.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pySW4.postp.waveforms.Stations._parse_rec_filename">
+<code class="descname">_parse_rec_filename</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations._parse_rec_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations._parse_rec_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse &#8216;rec&#8217; filename and get the x, y or lat, lon coordinates.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.postp.waveforms.read_stations">
+<code class="descname">read_stations</code><span class="sig-paren">(</span><em>name</em>, <em>path='./'</em>, <em>mode='velocity'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#read_stations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.read_stations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a line or an array of stations constructed using
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The prefix of the line or array name, should be equal to the
+value used for <code class="docutils literal"><span class="pre">'name'</span></code> in
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess
+phase.</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the files (default is &#8216;./&#8217;).</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <p>Mode of the <code class="docutils literal"><span class="pre">rec</span></code> files to be read. One of:</p>
+<p>&#8216;displacement&#8217;, &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, or &#8216;strains&#8217;.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">class:~`Strations` &#8211; Class with waveform data and methods.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.prep.html" title="pySW4.prep package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.postp.image.html" title="pySW4.postp.image module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.postp.html" >pySW4.postp package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

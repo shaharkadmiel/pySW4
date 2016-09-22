@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.plotting.image module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
+    <link rel="up" title="pySW4.plotting package" href="pySW4.plotting.html" />
+    <link rel="next" title="pySW4.plotting.png2mp4 module" href="pySW4.plotting.png2mp4.html" />
+    <link rel="prev" title="pySW4.plotting.hillshade module" href="pySW4.plotting.hillshade.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.png2mp4.html" title="pySW4.plotting.png2mp4 module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.hillshade.html" title="pySW4.plotting.hillshade module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pySW4.plotting.hillshade.html"
+                        title="previous chapter">pySW4.plotting.hillshade module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pySW4.plotting.png2mp4.html"
+                        title="next chapter">pySW4.plotting.png2mp4 module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/packages/pySW4.plotting.image.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pySW4.plotting.image">
+<span id="pysw4-plotting-image-module"></span><h1>pySW4.plotting.image module<a class="headerlink" href="#module-pySW4.plotting.image" title="Permalink to this headline">¶</a></h1>
+<p>Plotting routines for SW4 images of Maps or Cross-Sections.</p>
+<span class="target" id="module-image"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body"><p class="first last">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pySW4.plotting.image.create_image_plots">
+<code class="descname">create_image_plots</code><span class="sig-paren">(</span><em>input_file</em>, <em>folder=None</em>, <em>stf=None</em>, <em>frames_per_second=5</em>, <em>cmap=None</em>, <em>movies=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/image.html#create_image_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.image.create_image_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all image plots/movies for a SW4 run.</p>
+<p>Currently always only uses first patch in each SW4 image file.
+If the path/filename of the SW4 input file is provided, additional
+information is included in the plots (e.g. receiver/source location,
+automatic determination of source time function type, etc...)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_file</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename (potentially with absolute/relative path) of SW4 input
+file used to control the simulation. Use <code class="docutils literal"><span class="pre">None</span></code> to work on
+folder with SW4 output without using metadata from input file.</li>
+<li><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Folder with SW4 output files or <code class="docutils literal"><span class="pre">None</span></code> if output folder
+location can be used from input file. Only needed when no
+input file is specified or if output folder was moved to a
+different location after the simulation.</li>
+<li><strong>stf</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <code class="docutils literal"><span class="pre">'displacement'</span></code> or <code class="docutils literal"><span class="pre">'velocity'</span></code>.</li>
+<li><strong>frames_per_second</strong> (<em>int or float</em>) &#8211; Image frames to show per second in output videos.</li>
+<li><strong>cmap</strong> (str or <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a>) &#8211; Matplotlib colormap or colormap string understood by matplotlib.</li>
+<li><strong>movies</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Whether to produce movies from image files present at different
+cycles of the simulation. Needs <a href="#id1"><span class="problematic" id="id2">`ffmpeg`_</span></a> to be installed and
+callable on command line.</li>
+<li><strong>_ffmpeg</strong> (<em>.</em>) &#8211; <a class="reference external" href="https://ffmpeg.org/">https://ffmpeg.org/</a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.plotting.image.image_files_to_movie">
+<code class="descname">image_files_to_movie</code><span class="sig-paren">(</span><em>input_filenames</em>, <em>output_filename</em>, <em>input_file=None</em>, <em>stf=None</em>, <em>patch_number=0</em>, <em>frames_per_second=5</em>, <em>overwrite=False</em>, <em>global_colorlimits=True</em>, <em>debug=False</em>, <em>**plot_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/image.html#image_files_to_movie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.image.image_files_to_movie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert SW4 images to an mp4 movie using command line ffmpeg.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_filenames</strong> (<em>str or list</em>) &#8211; Wildcarded filename pattern or list of individual filenames.</li>
+<li><strong>output_filename</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Output movie filename (&#8216;.mp4&#8217; extension will be appended if not
+already present).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.png2mp4.html" title="pySW4.plotting.png2mp4 module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.plotting.hillshade.html" title="pySW4.plotting.hillshade module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

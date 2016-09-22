@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4 Library Reference &mdash; pySW4 0.2.0 documentation</title>
+    <title>pySW4 Library Reference &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
     
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.0',
+        VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 0.2.0 documentation" href="../index.html" />
-    <link rel="next" title="pySW4.core package" href="pySW4.core.html" />
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
+    <link rel="next" title="pySW4.cli package" href="pySW4.cli.html" />
     <link rel="prev" title="pySW4 documentation" href="../index.html" /> 
   </head>
   <body role="document">
@@ -39,22 +39,32 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pySW4.core.html" title="pySW4.core package"
+          <a href="pySW4.cli.html" title="pySW4.cli package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="pySW4 documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pySW4 Library Reference</a><ul>
+<li><a class="reference internal" href="#pysw4-python-routines-for-interaction-with-sw4">pySW4: Python routines for interaction with SW4</a></li>
+<li><a class="reference internal" href="#the-functionality-is-provided-through-the-following-sub-packages">The functionality is provided through the following sub-packages:</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../index.html"
                         title="previous chapter">pySW4  documentation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="pySW4.core.html"
-                        title="next chapter">pySW4.core package</a></p>
+  <p class="topless"><a href="pySW4.cli.html"
+                        title="next chapter">pySW4.cli package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -80,29 +90,79 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="pysw4-library-reference">
-<h1>pySW4 Library Reference<a class="headerlink" href="#pysw4-library-reference" title="Permalink to this headline">¶</a></h1>
-<p>The functionality is provided through the following packages:</p>
+  <div class="section" id="module-pySW4">
+<span id="pysw4-library-reference"></span><h1>pySW4 Library Reference<a class="headerlink" href="#module-pySW4" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pysw4-python-routines-for-interaction-with-sw4">
+<h2>pySW4: Python routines for interaction with SW4<a class="headerlink" href="#pysw4-python-routines-for-interaction-with-sw4" title="Permalink to this headline">¶</a></h2>
+<p><strong>pySW4</strong> is an open-source project dedicated to provide a Python
+framework for working with numerical simulations of seismic-wave
+propagation with SW4 in all phases of the task (preprocessing,
+post-processing and runtime visualization).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body"><p class="first last">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-functionality-is-provided-through-the-following-sub-packages">
+<h2>The functionality is provided through the following sub-packages:<a class="headerlink" href="#the-functionality-is-provided-through-the-following-sub-packages" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.core.index.html#module-pySW4.core" title="pySW4.core"><code class="xref py py-obj docutils literal"><span class="pre">pySW4.core</span></code></a></td>
-<td>Core routines of pySW4</td>
+<tr class="row-odd"><td><a class="reference internal" href="pySW4.cli.html#module-pySW4.cli" title="pySW4.cli"><code class="xref py py-obj docutils literal"><span class="pre">cli</span></code></a></td>
+<td>Command line scripts of pySW4.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="pySW4.plotting.html#module-pySW4.plotting" title="pySW4.plotting"><code class="xref py py-obj docutils literal"><span class="pre">pySW4.plotting</span></code></a></td>
-<td>Plotting routines of pySW4</td>
+<tr class="row-even"><td><a class="reference internal" href="pySW4.plotting.html#module-pySW4.plotting" title="pySW4.plotting"><code class="xref py py-obj docutils literal"><span class="pre">plotting</span></code></a></td>
+<td>Plotting routines of pySW4.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.preprocess.html#module-pySW4.preprocess" title="pySW4.preprocess"><code class="xref py py-obj docutils literal"><span class="pre">pySW4.preprocess</span></code></a></td>
-<td>Various preprocessing routines of pySW4.</td>
+<tr class="row-odd"><td><a class="reference internal" href="pySW4.postp.html#module-pySW4.postp" title="pySW4.postp"><code class="xref py py-obj docutils literal"><span class="pre">postp</span></code></a></td>
+<td>Postprocessing routines of pySW4</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="pySW4.utils.html#module-pySW4.utils" title="pySW4.utils"><code class="xref py py-obj docutils literal"><span class="pre">pySW4.utils</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="pySW4.prep.html#module-pySW4.prep" title="pySW4.prep"><code class="xref py py-obj docutils literal"><span class="pre">prep</span></code></a></td>
+<td>Preprocessing routines of pySW4.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="pySW4.utils.html#module-pySW4.utils" title="pySW4.utils"><code class="xref py py-obj docutils literal"><span class="pre">utils</span></code></a></td>
 <td>Various utilities for pySW4.</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="pySW4.headers.html#module-pySW4.headers" title="pySW4.headers"><code class="xref py py-obj docutils literal"><span class="pre">headers</span></code></a></td>
+<td>Some dictionaries and data_types for SW4 output files.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="pySW4.sw4_input.html#module-pySW4.sw4_input" title="pySW4.sw4_input"><code class="xref py py-obj docutils literal"><span class="pre">sw4_input</span></code></a></td>
+<td>Parsing routines for SW4 input files and directories.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -121,12 +181,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pySW4.core.html" title="pySW4.core package"
+          <a href="pySW4.cli.html" title="pySW4.cli package"
              >next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="pySW4 documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

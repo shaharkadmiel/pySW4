@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.plotting.utils &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pySW4.plotting.utils</h1><div class="highlight"><pre>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python module with general utilities for making plotting easier.</span>
+
+<span class="sd">.. module:: utils</span>
+
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)</span>
+
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">rc</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="pretty_ticks"><a class="viewcode-back" href="../../../packages/pySW4.plotting.utils.html#pySW4.plotting.utils.pretty_ticks">[docs]</a><span class="k">def</span> <span class="nf">pretty_ticks</span><span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">number_of_ticks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">show_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for controlling tickmarks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    min : int or float</span>
+<span class="sd">        Minimum value to tick on the axis.</span>
+
+<span class="sd">    max : int or float</span>
+<span class="sd">        Maximum value to tick on the axis.</span>
+
+<span class="sd">    number_of_ticks : int</span>
+<span class="sd">        The number of tickmarks to plot. Must be &gt; 2.</span>
+
+<span class="sd">    show_zero : bool</span>
+<span class="sd">        If set to ``True`` the zero tickmark will be plotted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`~numpy.ndarray`</span>
+<span class="sd">        A 1d array with tickmark values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">range</span> <span class="o">=</span> <span class="nb">max</span> <span class="o">-</span> <span class="nb">min</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">range</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">magnitude</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">exponent</span>
+    <span class="nb">min</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+    <span class="nb">max</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="n">exponent</span><span class="p">)</span>
+    <span class="n">ticks</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">number_of_ticks</span><span class="p">,</span> <span class="n">retstep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show_zero</span> <span class="ow">and</span> <span class="mi">0</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ticks</span><span class="p">:</span>
+        <span class="n">positive_ticks</span> <span class="o">=</span> <span class="n">ticks</span><span class="p">[</span><span class="n">ticks</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">negative_ticks</span> <span class="o">=</span> <span class="n">ticks</span><span class="p">[</span><span class="n">ticks</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">positive_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">positive_ticks</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">negative_ticks</span><span class="p">,</span> <span class="n">positive_ticks</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ticks</span></div>
+
+
+<div class="viewcode-block" id="set_matplotlib_rc_params"><a class="viewcode-back" href="../../../packages/pySW4.plotting.utils.html#pySW4.plotting.utils.set_matplotlib_rc_params">[docs]</a><span class="k">def</span> <span class="nf">set_matplotlib_rc_params</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set matplotlib rcparams for plotting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">font</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;family&#39;</span>        <span class="p">:</span> <span class="s1">&#39;sans-serif&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;sans-serif&#39;</span>    <span class="p">:</span> <span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;style&#39;</span>         <span class="p">:</span> <span class="s1">&#39;normal&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;variant&#39;</span>       <span class="p">:</span> <span class="s1">&#39;normal&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;weight&#39;</span>        <span class="p">:</span> <span class="s1">&#39;medium&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;stretch&#39;</span>       <span class="p">:</span> <span class="s1">&#39;normal&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;size&#39;</span>          <span class="p">:</span> <span class="mf">12.0</span><span class="p">}</span>
+    <span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">font</span><span class="p">)</span>
+
+    <span class="n">legend</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fontsize&#39;</span>    <span class="p">:</span> <span class="mf">10.0</span><span class="p">}</span>
+    <span class="n">rc</span><span class="p">(</span><span class="s1">&#39;legend&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">legend</span><span class="p">)</span>
+
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;titlesize&#39;</span>     <span class="p">:</span> <span class="mf">14.0</span><span class="p">,</span>
+            <span class="s1">&#39;labelsize&#39;</span>     <span class="p">:</span> <span class="mf">12.0</span><span class="p">}</span>
+    <span class="n">rc</span><span class="p">(</span><span class="s1">&#39;axes&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">axes</span><span class="p">)</span>
+    <span class="n">rc</span><span class="p">(</span><span class="s1">&#39;pdf&#39;</span><span class="p">,</span> <span class="n">fonttype</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="n">ticks</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;direction&#39;</span>    <span class="p">:</span> <span class="s1">&#39;out&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;labelsize&#39;</span>    <span class="p">:</span> <span class="mf">12.0</span><span class="p">,</span>
+             <span class="s1">&#39;major.pad&#39;</span>    <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+             <span class="s1">&#39;major.size&#39;</span>   <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+             <span class="s1">&#39;major.width&#39;</span>  <span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+             <span class="s1">&#39;minor.pad&#39;</span>    <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+             <span class="s1">&#39;minor.size&#39;</span>   <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+             <span class="s1">&#39;minor.width&#39;</span>  <span class="p">:</span> <span class="mf">0.75</span><span class="p">}</span>
+    <span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">ticks</span><span class="p">)</span>
+    <span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">ticks</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+    </div>
+  </body>
+</html>

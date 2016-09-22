@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; pySW4 0.2.0 documentation</title>
+    <title>Core package &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
     
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.0',
+        VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 0.2.0 documentation" href="../index.html" /> 
+    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,19 +36,11 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Introduction</a></li>
-<li><a class="reference internal" href="#classes-and-functions">Classes and Functions</a></li>
-<li><a class="reference internal" href="#scripts">Scripts</a></li>
-<li><a class="reference internal" href="#modules">Modules</a></li>
-</ul>
-
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -74,70 +66,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <span class="target" id="module-pySW4.core"><span id="index"></span></span><p>Core routines of pySW4</p>
-<div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>The core package provides the main post-processing routines of the
-pySW4 package. It has some scripts which can be run from the command
-line for quick plotting. It may be usefull to run these scrips on
-the server-end, even while the computation is running in order to
-generate <em>pseudo-RunTime</em> visualization of the results.
-See the <a class="reference internal" href="pySW4.core.scripts.html#module-pySW4.core.scripts" title="pySW4.core.scripts"><code class="xref py py-mod docutils literal"><span class="pre">scripts</span></code></a> documentations for more
-information.</p>
-</div>
-<div class="section" id="classes-and-functions">
-<h1>Classes and Functions<a class="headerlink" href="#classes-and-functions" title="Permalink to this headline">¶</a></h1>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.core.html#pySW4.core.image.Image" title="pySW4.core.image.Image"><code class="xref py py-obj docutils literal"><span class="pre">Image</span></code></a></td>
-<td>A class to hold SW4 image files.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="pySW4.core.html#pySW4.core.image.Patch" title="pySW4.core.image.Patch"><code class="xref py py-obj docutils literal"><span class="pre">Patch</span></code></a></td>
-<td>A class to hold SW4 patch data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.core.html#pySW4.core.image.read_image" title="pySW4.core.image.read_image"><code class="xref py py-obj docutils literal"><span class="pre">read_image</span></code></a></td>
-<td>Read image data, cross-section or map into a <a class="reference internal" href="pySW4.core.html#pySW4.core.image.Image" title="pySW4.core.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a> object.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="scripts">
-<h1>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.core.scripts.html#module-pySW4.core.scripts" title="pySW4.core.scripts"><code class="xref py py-obj docutils literal"><span class="pre">scripts</span></code></a></td>
-<td>Command line scripts of pySW4.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.core.html#module-pySW4.core.image" title="pySW4.core.image"><code class="xref py py-obj docutils literal"><span class="pre">image</span></code></a></td>
-<td>Python module to handle SW4 images of Maps or Cross-Sections.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="pySW4.core.html#module-pySW4.core.config" title="pySW4.core.config"><code class="xref py py-obj docutils literal"><span class="pre">config</span></code></a></td>
-<td>Parsing routines for SW4 input files and directories.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="pySW4.core.html#module-pySW4.core.header" title="pySW4.core.header"><code class="xref py py-obj docutils literal"><span class="pre">header</span></code></a></td>
-<td>Some dictionaries and data_types for SW4 output files.</td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="core-package">
+<span id="index"></span><h1>Core package<a class="headerlink" href="#core-package" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -155,7 +85,7 @@ information.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 0.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
