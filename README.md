@@ -21,6 +21,9 @@ Installation
 $ pip install https://github.com/shaharkadmiel/pySW4/archive/master.zip
 ```
 
+Quick and dirty plotting from the command line
+----------------------------------------------
+
 Plots and movies for a SW4 simulation run can be created using the
 `pySW4-create-plots` command line utility, e.g.:
 
