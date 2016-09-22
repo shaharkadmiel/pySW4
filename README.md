@@ -21,6 +21,24 @@ Installation
 $ pip install https://github.com/shaharkadmiel/pySW4/archive/master.zip
 ```
 
+Updating a previoius install:
+
+```bash
+$ pip install -U https://github.com/shaharkadmiel/pySW4/archive/master.zip
+```
+
+or without updating dependencies:
+
+```bash
+$ pip install -U --no-deps https://github.com/shaharkadmiel/pySW4/archive/master.zip
+```
+
+or a specific branch:
+
+```bash
+$ pip install -U --no-deps https://github.com/shaharkadmiel/pySW4/archive/0.3.0.zip
+```
+
 Quick and dirty plotting from the command line
 ----------------------------------------------
 
