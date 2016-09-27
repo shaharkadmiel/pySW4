@@ -1,5 +1,6 @@
 import inspect
 import os
+import re
 from setuptools import setup
 
 INSTALL_REQUIRES = [
@@ -31,9 +32,10 @@ def find_packages():
     return [_i.replace(os.sep, ".") for _i in modules]
 
 # get the package version from from the main __init__ file.
+version_regex_pattern = r"__version__ += +(['\"])([^\1]+)\1"
 for line in open('pySW4/__init__.py'):
     if '__version__' in line:
-        package_version = line.split()[-1]
+        package_version = re.match(version_regex_pattern, line).group(2)
 
 setup(
     name="pySW4",
