@@ -26,7 +26,7 @@ runtime visualization).
 """
 from __future__ import absolute_import, print_function, division
 
-__version__ = '0.0.0.dev'
+__version__ = '0.2.2'
 
 from .core.image import read_image
 from .plotting.drape import drape_plot
