@@ -33,7 +33,7 @@ def find_packages():
 
 # get the package version from from the main __init__ file.
 version_regex_pattern = r"__version__ += +(['\"])([^\1]+)\1"
-for line in open('pySW4/__init__.py'):
+for line in open(os.path.join(SETUP_DIRECTORY, 'pySW4', '__init__.py')):
     if '__version__' in line:
         package_version = re.match(version_regex_pattern, line).group(2)
 
