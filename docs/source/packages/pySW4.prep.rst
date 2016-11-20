@@ -4,6 +4,7 @@ pySW4.prep package
 .. automodule:: pySW4.prep
     :members:
     :undoc-members:
+    :private-members:
     :show-inheritance:
 
 Submodules

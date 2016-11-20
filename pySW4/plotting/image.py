@@ -46,7 +46,7 @@ except ImportError:
     cmap_sequential_r = None
 
 from ..postp import read_image
-from ..sw4_input import _parse_input_file_and_folder
+from ..sw4_metadata import _parse_input_file_and_folder
 
 
 def image_files_to_movie(
@@ -179,11 +179,8 @@ def create_image_plots(
 
     movies : bool
         Whether to produce movies from image files present at different
-        cycles of the simulation. Needs `ffmpeg`_ to be installed and
-        callable on command line.
-
-    .. _ffmpeg:
-       https://ffmpeg.org/
+        cycles of the simulation. Needs `ffmpeg <https://ffmpeg.org/>`_
+        to be installed and callable on command line.
     """
     input_, folder = _parse_input_file_and_folder(input_file, folder)
 

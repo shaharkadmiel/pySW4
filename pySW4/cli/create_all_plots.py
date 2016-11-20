@@ -11,7 +11,7 @@ from obspy import read, Stream, read_inventory
 from obspy.core.inventory import Inventory
 
 from pySW4 import __version__
-from pySW4.sw4_input import _decode_string_value
+from pySW4.sw4_metadata import _decode_string_value
 from pySW4.plotting import create_image_plots, create_seismogram_plots
 
 

@@ -14,6 +14,7 @@ Type ``pySW4-plot-image`` to get the help message.
 
 **Example**
 ::
+
     $ pySW4-plot-image -cmap jet \\
         -format png 'results/berkeley.cycle=00000.z=0.p.sw4img'
 
@@ -82,7 +83,7 @@ def main(argv=None):
                              '%(default)s)',
                         metavar='None')
 
-    parser.add_argument('-no_cb', action='store_true',
+    parser.add_argument('-no_cb', action='store_false',
                         help='Suppress colorbar along with the image.')
 
     parser.add_argument('-cmap', action='store', default=None,
@@ -131,7 +132,7 @@ def main(argv=None):
             vmax = args.vmax
 
         fig = image.plot(patches, vmin=vmin, vmax=vmax,
-                         colorbar=args.no_cb, cmap=args.cmap)
+                         colorbar=args.no_cb, cmap=args.cmap)[0]
         name, _ = os.path.splitext(os.path.basename(args.imagefile))
         name = os.path.join(args.save_path, name + '.' + args.format)
 

@@ -35,7 +35,7 @@ from .postp import read_image, read_stations
 from . import plotting
 from . import prep
 from . import utils
-from .sw4_input import Inputfile
+from .sw4_metadata import Inputfile, Outputfile, read_metadata
 
 from .plotting.utils import set_matplotlib_rc_params
 set_matplotlib_rc_params()

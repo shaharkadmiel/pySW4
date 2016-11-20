@@ -91,7 +91,9 @@ def write_hdr(f, magic=1, precision=4, attenuation=1,
 
     precision : int
         The number of bytes per entry in the data section.
+
         4 - single precision (default)
+
         8 - double precision
 
     attenuation : int
@@ -102,30 +104,24 @@ def write_hdr(f, magic=1, precision=4, attenuation=1,
 
     az : float
         Angle in degrees between North and the positive x-axis.
-        Defaults to 0. See the `SW4 User Guide`_.
+        Defaults to 0. See the
+        `SW4 User Guide <https://geodynamics.org/cig/software/sw4/>`_.
 
-    lon0 : float
-        Longitude of the origin of the data. Defaults to 33.5.
-
-    lat0 : float
-        Latitude of the origin of the data. Defaults to 28.0.
+    lon0, lat0 : float
+        Longitude and Latitude of the origin of the data.
+        Defaults to 33.5, 28.0 .
 
     proj_str : str
         Projection string which is read by the Proj4 library if SW4 was
-        built with Proj4 support. See the `SW4 User Guide`_ and the
-        `Proj4`_ documentation. Defaults to
+        built with Proj4 support. See the
+        `SW4 User Guide <https://geodynamics.org/cig/software/sw4/>`_
+        and the `Proj4 <https://trac.osgeo.org/proj/wiki/GenParms>`_
+        documentation. Defaults to
         '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'.
 
     nb : int
         The number of blocks in the data section. Must be > 0.
         Defaults to 1.
-
-
-    .. _SW4 User Guide:
-       https://geodynamics.org/cig/software/sw4/
-
-    .. _Proj4:
-       https://trac.osgeo.org/proj/wiki/GenParms
     """
 
     magic        = np.int32(magic)
@@ -154,58 +150,53 @@ def read_hdr(f):
 
     Returns
     -------
-    tuple
-        A tuple containing rfile header data (9 elements):
-            magic, precision, attenuation,
-            az, lon0, lat0, mlen, proj_str, nb
+    rfile header data (9 elements):
+        magic, precision, attenuation,
+        az, lon0, lat0, mlen, proj_str, nb
 
-
-    .. rubric:: **Description of header data returned**
-
-    ``magic``
+    magic : int
         Determine byte ordering in file.
 
-    ``precision``
+    precision : int
         The number of bytes per entry in the data section.
+
         4 - single precision
+
         8 - double precision
 
-    ``attenuation``
+    attenuation : int
         Indicates whether the visco-elastic attenuation
         parameters QP and QS are included in the data section.
+
         0 - no visco-elastic attenuation parameters included
+
         1 - visco-elastic attenuation parameters included
 
-    ``az``
+    az : numpy.float64
         Angle in degrees between North and the positive x-axis.
 
-    ``lon0``
-        Longitude of the origin of the data
+    lon0, lat0 : numpy.float64
+        Longitude and Latitude of the origin of the data.
 
-    ``lat0``
-        Latitude of the origin of the data
+    mlen : int
+        The number of characters in the string ``proj_str``.
 
-    ``mlen``
-        The number of characters in the string ``proj_str``
-
-    ``proj_str``
+    proj_str : str
         Projection string which is read by the Proj4 library if SW4 was
         built with Proj4 support.
 
-    ``nb``
+    nb : int
         The number of blocks in the data section.
 
-    Note
-    ----
-    See the `SW4 User Guide`_ for more details about these header
-    parameters.
-
-    .. _SW4 User Guide:
-       https://geodynamics.org/cig/software/sw4/
+    Notes
+    -----
+    See the `SW4 User Guide
+    <https://geodynamics.org/cig/software/sw4/>`_ for more details about
+    these header parameters.
 
     See also
     --------
-    :func:`.write_hdr`
+    .write_hdr
     """
 
     (magic, precision, attenuation,
@@ -229,33 +220,29 @@ def write_block_hdr(f, hh, hv, z0, nc, ni, nj, nk):
     f : file
         Open file handle in ``'wa'`` mode.
 
-    hh : numpy.float64
-        Grid size in the horizontal directions (x and y) in meters.
-
-    hv : numpy.float64
-        Grid size in the vertical direction (z) in meters.
+    hh, hv : numpy.float64
+        Grid size in the horizontal (x and y) and vertical (z)
+        directions  in meters.
 
     z0 : numpy.float64
-        The base z-level of the block. Not used for the first block
-        which holds the elevation of the topography/bathymetry.
+        The base z-level of the block. Not used for the
+        first block which holds the elevation of the topography/
+        bathymetry.
 
     nc : int
-        The number of components: The first block holds the elevation
-        of the topography/bathymetry, so ``nc=1``. The following blocks
-        must have either 3 if only rho, vp, and vs are present
-        (``attenuation=0``) or 5 if qp and qs are pressent
+        The number of components:
+
+        The first block holds the elevation of the topography/
+        bathymetry, so ``nc=1``.
+        The following blocks must have either 3 if only rho, vp, and vs
+        are present (``attenuation=0``) or 5 if qp and qs are pressent
         (``attenuation=1``).
 
-    ni : int
-        Number of grid points in the i direction.
+    ni, nj, nk : int
+        Number of grid points in the i, j, k directions.
 
-    nj : int
-        Number of grid points in the j direction.
-
-    nk : int
-        Number of grid points in the k direction. Because the
-        topography/bathymetry is only a function of the horizontal
-        coordinates, the first block must have ``nk=1``.
+        Because the topography/bathymetry is (only) a function of the
+        horizontal coordinates, the first block must have ``nk=1``.
     """
 
     f.write(np.float64(hh))
@@ -278,41 +265,31 @@ def read_block_hdr(f):
 
     Returns
     -------
-    tuple
-        A tuple containing rfile block header data (7 elements):
+    rfile block header data (7 elements)
         hh, hv, z0, nc, ni, nj, nk
 
+    hh, hv : numpy.float64
+        Grid size in the horizontal (x and y) and vertical (z)
+        directions  in meters.
 
-    .. rubric:: **Description of block header data returned**
-
-    ``hh``
-        Grid size in the horizontal directions (x and y) in meters.
-
-    ``hv``
-        Grid size in the vertical direction (z) in meters.
-
-    ``z0``
+    z0 : numpy.float64
         The base z-level of the block. Not used for the
         first block which holds the elevation of the topography/
         bathymetry.
 
-    ``nc``
+    nc : int
         The number of components:
+
         The first block holds the elevation of the topography/
         bathymetry, so ``nc=1``.
         The following blocks must have either 3 if only rho, vp, and vs
         are present (``attenuation=0``) or 5 if qp and qs are pressent
         (``attenuation=1``).
 
-    ``ni``
-        Number of grid points in the i direction.
+    ni, nj, nk : int
+        Number of grid points in the i, j, k directions.
 
-    ``nj``
-        Number of grid points in the j direction.
-
-    ``nk``
-        Number of grid points in the k direction.
-        Because the topography/bathymetry is a function of the
+        Because the topography/bathymetry is (only) a function of the
         horizontal coordinates, the first block must have ``nk=1``.
     """
 
@@ -321,7 +298,9 @@ def read_block_hdr(f):
 
 def read(filename, block_number=None, verbose=False):
     """
-    Docstring will be overwritten by ``Model.__init__.__doc__``
+    Read rfile into :class:`~.Model` object.
+
+    See :class:`~.Model` for documentation.
     """
     model = Model(filename, block_number, verbose)
     return model
@@ -331,7 +310,9 @@ class Model():
     """
     A class to hold rfile header and blocks.
 
-    .. rubric:: **To read rfile into Model object**
+    .. note:: Setting ``block_number='all'`` for large models may take a while and take up a lot of memory.
+
+        Block number 1 holds the elevation of the topography/bathymetry.
 
     Parameters
     ----------
@@ -357,13 +338,7 @@ class Model():
     :class:`~.Model`
         A Model object holding rfile header and block headers and
         perhaps also block data sections, depending on the
-        ``block_number`` value.
-
-    Note
-    ----
-    * ``block_number='all'`` for large models may take a while and take
-        up a lot of memory.
-    * Block number 1 holds the elevation of the topography/bathymetry.
+        `block_number` value.
     """
 
     def __init__(self, filename, block_number=None, verbose=False):
@@ -418,8 +393,11 @@ class Model():
     def read_block_data_section(self, block_number):
         """
         Read the data section of the specified block into the current
-        :class:`pySW4.prep.rfileIO.Model` object to be stored in
+        :class:`~.Model` object to be stored in
         memory.
+
+        .. note:: For large models this may take a while and take up a
+                  lot of memory.
 
         Parameters
         ----------
@@ -429,11 +407,6 @@ class Model():
             and on (``2<=block_number<=self.nb``) hold the material
             properties of the model. If ``block_number='all'``, all
             block data sections are read into memory.
-
-        Note
-        ----
-        For large models this may take a while and take up a lot of
-        memory.
         """
 
         # make sure the cursor is cued o the right position in the
@@ -465,26 +438,20 @@ class Model():
 
         Parameters
         ----------
-        x : float
-            Distance in km along the x-axis of the model.
+        x, y, z : float
+            Distance in km along the x-, y-, and z-axis of the model.
+            (z - positive is down)
 
-        y : float
-            Distance in km along the y-axis of the model.
-
-        z : float
-            Distance in km along the z-axis of the model. (positive is
-            down).
-
-        property : str
-            ``'all'`` returns all 5 material properties.
-            Otherwise, only ``'rho'``, ``'vp'``, ``'vs'``, ``'qp'``, or
-            ``'qs'`` are returned.
+        property : {'all', 'rho', 'vp', 'vs', 'qp', 'qs'}
+            'all' returns all 5 material properties.
+            Otherwise, only 'rho', 'vp', 'vs', 'qp', or 'qs' are
+            returned.
 
         Returns
         -------
         :class:`~numpy.ndarray` or float
             One or all of the material properties at point (x,y,z)
-            (``rho``, ``vp``, ``vs``, ``qp``, ``qs``)
+            (`rho`, `vp`, `vs`, `qp`, `qs`)
         """
 
         # find the right block
@@ -509,29 +476,25 @@ class Model():
 
         Parameters
         ----------
-        x : float
-            Distance in km along the x-axis of the model.
+        x, y : float
+            Distance in km along the x-, and y-axis of the model.
 
-        y : float
-            Distance in km along the y-axis of the model.
-
-        property : str
-            ``'all'`` returns all 5 material properties.
-            Otherwise, only ``'rho'``, ``'vp'``, ``'vs'``, ``'qp'``, or
-            ``'qs'`` are returned.
+        property : {'all', 'rho', 'vp', 'vs', 'qp', 'qs'}
+            'all' returns all 5 material properties.
+            Otherwise, only 'rho', 'vp', 'vs', 'qp', or 'qs' are
+            returned.
 
         Returns
         -------
-        2 :class:`~numpy.ndarray`
-            2 arrays:
+        2 :class:`~numpy.ndarray` 's
 
-            * z elevations, shape (n,)
+        z : :class:`~numpy.ndarray`
+            Elevation values allong the profile, shape (n,)
 
-            and
+        properties : :class:`~numpy.ndarray`
+            Material properties (one or all):
 
-            * the corresponding material properties (one or all)
-                (``rho``, ``vp``, ``vs``, ``qp``, ``qs``),
-                shape (n,) or (n, 5)
+            ('rho', 'vp', 'vs', 'qp', 'qs'), shape (n,) or (n, 5)
         """
 
         properties = np.empty(5)
@@ -557,15 +520,34 @@ class Model():
 
     def get_cross_section(self, x1=None, x2=None, y1=None, y2=None):
         """
-        Docstring will be overwritten by
-        ``CrossSection.__init__.__doc__``
+        Extract a cross-section from a :class:`~.Model` object.
+
+        Generate a cross-section of the material properties along a
+        line in an existing model (:class:`~.Model`).
+
+        Parameters
+        ----------
+        model : :class:`~.Model`
+            A populated Model object from which to extract the data
+
+        x1, x2 : float
+            Distance in km along the x-axis of start- and end-points.
+
+        y1, y2 : float
+            Distance in km along the y-axis of start- and end-points.
+
+        returns
+        -------
+        :class:`~.CrossSection`
+            A :class:`~.CrossSection` object with data and a plotting
+            method.
         """
         return CrossSection(self, x1, x2, y1, y2)
 
     def z(self):
         """
         Return a vector (:class:`~numpy.ndarray`) with z coordinates of
-        the model based on the ``hv`` of each block. Coordinates are
+        the model based on the `hv` of each block. Coordinates are
         distance in km along the z-axis of the model which are elevation
         below sea level (positive is down).
         """
@@ -581,12 +563,10 @@ class Model():
         retrieved from the topography/bathymetry block
         (the first block).
 
-        Note
-        ----
-        The origin of the data is the bottom-left corner so if plotted
-        with :func:`~matplotlib.pyplot.imshow` set the 'origin' keyword
-        to 'lower' or simply use :meth:`~.Model.plot_topography` for
-        plotting.
+        .. note:: The origin of the data is the bottom-left corner so if
+                  plotted with :func:`~matplotlib.pyplot.imshow` set the
+                  `origin` keyword to 'lower' or simply use
+                  :meth:`~.Model.plot_topography` for plotting.
         """
 
         return model.blocks[0].data
@@ -605,16 +585,9 @@ class Model():
             Otherwise, only a :class:`~matplotlib.colorbar.Colorbar`
             instance is returned.
 
-
-        .. rubric:: **Other useful keyword arguments are:**
-
-        Keyword Arguments
-        -----------------
-        vmin : int or float
-            Used to limit the scale of the data. By default the minimum
-            and maximum of the data is used.
-
-        vmax : int or float
+        Other Parameters
+        ----------------
+        vmin, vmax : int or float
             Used to limit the scale of the data. By default the minimum
             and maximum of the data is used.
 
@@ -628,7 +601,7 @@ class Model():
             Horizontal space between the axes and the colorbar.
 
         size : str or float
-            Width of the colorbar. If float, width is set to ``size``.
+            Width of the colorbar. If float, width is set to `size`.
             If string colorbar width is calculated as a fraction of the
             axes width.
 
@@ -644,13 +617,10 @@ class Model():
             Label used for the colorbar. By default the label is set by
             the property plotted.
 
-        Note
-        ----
-        *For other keyword arguments* see:
-        :func:`~matplotlib.pyplot.imshow`.
+        kwargs : :func:`~matplotlib.pyplot.imshow` propeties.
         """
 
-        data = self.blocks[0].data
+        data = self.blocks[0].data[::-1]
         extent = self.blocks[0].xyextent
 
         # parse kwargs
@@ -859,7 +829,7 @@ class CrossSection():
 
     Parameters
     ----------
-    model : :class:`pySW4.prep.rfileIO.Model`
+    model : :class:`~.Model`
         A populated Model object from which to extract the data
 
     x1 : float
@@ -877,7 +847,8 @@ class CrossSection():
     returns
     -------
     :class:`~.CrossSection`
-        A ``CrossSection`` object with data and a plotting method.
+        A :class:`~.CrossSection` object with data and a plotting
+        method.
     """
 
     def __init__(self, model, x1=None, x2=None, y1=None, y2=None):
@@ -939,9 +910,8 @@ class CrossSection():
 
         Parameters
         ----------
-        property : str
-            Which property to plot:
-            ``'vp'``, ``'vs'``, ``'qp'``, or ``'qs'``.
+        property : {'vp', 'vs', 'qp', 'qs'}
+            Which property to plot.
 
         ax : :class:`~matplotlib.axes.Axes`
             Use existing axes. If ``ax=None`` function returns:
@@ -955,10 +925,8 @@ class CrossSection():
             If set to ``True``, a separator is plotted between
             blocks.
 
-        .. rubric:: **Other useful keyword arguments are:**
-
-        Keyword Arguments
-        -----------------
+        Other Parameters
+        ----------------
         vmin : int or float
             Used to limit the scale of the data. By default the minimum
             and maximum of the data is used.
@@ -966,6 +934,9 @@ class CrossSection():
         vmax : int or float
             Used to limit the scale of the data. By default the minimum
             and maximum of the data is used.
+
+        ylim : tuple
+            Set the ylim (vertical) extent of the plot.
 
         aspect : str or int or float
             Changes the axes aspect ratio.
@@ -996,10 +967,7 @@ class CrossSection():
             Label used for the colorbar. By default the label is set by
             the property plotted.
 
-        Note
-        ----
-        *For other keyword arguments* see:
-        :func:`~matplotlib.pyplot.imshow`.
+        kwargs : :func:`~matplotlib.pyplot.imshow` propeties.
         """
 
         # parse kwargs
@@ -1026,6 +994,10 @@ class CrossSection():
             size = kwargs.pop('size')
         else:
             size = 0.025
+        if 'ylim' in kwargs:
+            ylim = kwargs.pop('ylim')
+        else:
+            ylim = None
 
         # setup the figure and the axes
         if not ax:
@@ -1045,6 +1017,9 @@ class CrossSection():
             ax.hlines(extents[:, 2], xmin=extents[:, 0], xmax=extents[:, 1])
 
         ax.axis(self.h_extent + (self.z[-1], self.z[0]))
+        if ylim:
+            ax.set_ylim(ylim)
+
         ax.set_aspect(aspect)
 
         ax.set_xlabel('Distance from origin [km]')
@@ -1103,21 +1078,15 @@ class CrossSection():
 def line_func(h1, h2, v1, v2, spacing=1):
     """
     Return all coordinates along a straight line from point
-    (``h1``,``v1`) to point (``h2``,``v2``) with ``spacing``.
+    (`h1`,`v1`) to point (`h2`,`v2`) with `spacing`.
 
     Parameters
     ----------
-    h1 : int or float
-        Horizontal coordinate of the start-point.
+    h1, h2 : int or float
+        Horizontal coordinate of the start-point and end-point.
 
-    h2 : int or float
-        Horizontal coordinate of the end-point.
-
-    v1 : int or float
-        Vertical coordinate of the start-point.
-
-    v2 : int or float
-        Vertical coordinate of the end-point.
+    v1, v1 : int or float
+        Vertical coordinate of the start-point and end-point.
 
     spacing : int or float
         Spacing along the straight line between coordinates.
@@ -1137,11 +1106,11 @@ def line_func(h1, h2, v1, v2, spacing=1):
     if h_diff == 0:
         n = int(v_diff / spacing)
         v = np.linspace(v1, v2, n + 1)
-        h = h1 * np.ones_like(v)
+        h = np.zeros_like(v)
     elif v_diff == 0:
         n = int(h_diff / spacing)
         h = np.linspace(h1, h2, n + 1)
-        v = v1 * np.ones_like(h)
+        v = np.zeros_like(h)
     else:
         slope = float(v_diff) / (h_diff)
         if slope > 1:
@@ -1162,7 +1131,3 @@ def line_func(h1, h2, v1, v2, spacing=1):
 
     return h, v
 
-
-# Set docstrings
-read.__doc__ = Model.__doc__
-Model.get_cross_section.__func__.__doc__ = CrossSection.__doc__

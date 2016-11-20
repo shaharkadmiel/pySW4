@@ -4,6 +4,7 @@ pySW4.utils package
 .. automodule:: pySW4.utils
     :members:
     :undoc-members:
+    :private-members:
     :show-inheritance:
 
 Submodules

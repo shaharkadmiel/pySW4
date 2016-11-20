@@ -21,12 +21,13 @@ from __future__ import absolute_import, print_function, division
 import os
 import shutil
 import numpy as np
+from obspy import read_inventory, Inventory
 from warnings import warn
 
 
 def _append2infile(infile, name, string):
     """
-    Helper function. Copy an existing SW4 input file, add ``'name'``
+    Helper function. Copy an existing SW4 input file, add `name`
     to the filename, open the new file in append mode and write the
     string to the end of the file.
     """
@@ -57,13 +58,13 @@ def station_array(x1=None, x2=None, y1=None, y2=None,
 
     **Catersian grid coordinates:**
 
-    ``x1``, ``y1``, ``x2``, ``y2``
+    `x1`, `y1`, `x2`, `y2`
 
     or in -
 
     **Geographical coordinates:**
 
-    ``lon1``, ``lat1``, ``lon2``, ``lat2``
+    `lon1`, `lat1`, `lon2`, `lat2`
 
     Parameters
     ----------
@@ -71,26 +72,25 @@ def station_array(x1=None, x2=None, y1=None, y2=None,
         Depth of the stations in the array.
 
     number_of_stations : int or tuple or None
-        If *int*, number of stations is the same in both directions. To
+        If `int`, number of stations is the same in both directions. To
         set a different number of stations in each direction provide a
-        *tuple*. If ``None``, the ``spacing`` argument is expected.
+        `tuple`. If ``None``, the `spacing` argument is expected.
 
     spacing : float or tuple or None
-        If *float*, spacing between stations is taken to be the same in
+        If `float`, spacing between stations is taken to be the same in
         both directions. To set different spacing in each direction
-        provide a *tuple*. If ``None``, the ``number_of_stations``
+        provide a `tuple`. If ``None``, the `number_of_stations`
         argument is expected.
 
-        ``spacing`` must be given in meters if Cartesian grid
+        `spacing` must be given in meters if Cartesian grid
         coordinates are used or in decimal degrees if Geographical
         coordinates are used.
 
     name : str
         Prefix name of the sac file name.
 
-    mode : str
-        'displacement' (default), 'velocity', 'div', 'curl',
-        or 'strains'.
+    mode : {'displacement' (default), 'velocity', 'div', 'curl', 'strains'}
+        Mode of the recorded motions.
 
     writeEvery : int
         Cycle interval to write the data to disk.
@@ -107,9 +107,11 @@ def station_array(x1=None, x2=None, y1=None, y2=None,
     infile : str
         Path (relative or absolute) to the SW4 inputfile. Stations are
         added to a copy of the specified file and saved with the string
-        ``'name'`` where ``name`` is 'array' (by default). If set to
-        ``None``, a formated string is returned that can then be
-        copied manually to an input file.
+        `name` appended to the `infile` name.
+        (`name` is 'array' by default).
+
+        If set to ``None``, a formated string is returned that can then
+        be copied manually to an input file.
 
     Returns
     -------
@@ -189,13 +191,13 @@ def station_line(x1=None, x2=None, y1=None, y2=None,
 
     **Catersian grid coordinates:**
 
-    ``x1``, ``y1``, ``depth1``, ``x2``, ``y2``, ``depth2``
+    `x1`, `y1`, `depth1`, `x2`, `y2`, `depth2`
 
     or in -
 
     **Geographical coordinates:**
 
-    ``lon1``, ``lat1``, ``depth1``, ``lon2``, ``lat2``, ``depth2``
+    `lon1`, `lat1`, `depth1`, `lon2`, `lat2`, `depth2`
 
     Parameters
     ----------
@@ -206,9 +208,8 @@ def station_line(x1=None, x2=None, y1=None, y2=None,
     name : str
         Prefix name of the sac file name.
 
-    mode : str
-        'displacement' (default), 'velocity', 'div', 'curl',
-        or 'strains'.
+    mode : {'displacement' (default), 'velocity', 'div', 'curl', 'strains'}
+        Mode of the recorded motions.
 
     writeEvery : int
         Cycle interval to write the data to disk.
@@ -225,9 +226,11 @@ def station_line(x1=None, x2=None, y1=None, y2=None,
     infile : str
         Path (relative or absolute) to the SW4 inputfile. Stations are
         added to a copy of the specified file and saved with the string
-        ``'name'`` where ``name`` is 'line' (by default). If set to
-        ``None``, a formated string is returned that can then be
-        copied manually to an input file.
+        `name` appended to the `infile` name.
+        (`name` is 'array' by default).
+
+        If set to ``None``, a formated string is returned that can then
+        be copied manually to an input file.
 
     Returns
     -------
@@ -271,26 +274,29 @@ def station_location(x=None, y=None, lat=None, lon=None, depth=0,
     """
     Place stations to record synthetics at specific locations.
 
+    Can handle a single station or a list of stations. If several
+    stations are passes, `x, y` (or `lat, lon`), and `name` must
+    be the same length.
+
     Locations may be given in -
 
     **Catersian grid coordinates:**
 
-    ``x``, ``y``, ``depth``
+    `x`, `y`, `depth`
 
     or in -
 
     **Geographical coordinates:**
 
-    ``lon``, ``lat``, ``depth``
+    `lon`, `lat`, `depth`
 
     Parameters
     ----------
     name : str
         Prefix name of the sac file name.
 
-    mode : str
-        'displacement' (default), 'velocity', 'div', 'curl',
-        or 'strains'.
+    mode : {'displacement' (default), 'velocity', 'div', 'curl', 'strains'}
+        Mode of the recorded motions.
 
     writeEvery : int
         Cycle interval to write the data to disk.
@@ -307,9 +313,11 @@ def station_location(x=None, y=None, lat=None, lon=None, depth=0,
     infile : str
         Path (relative or absolute) to the SW4 inputfile. Stations are
         added to a copy of the specified file and saved with the string
-        ``'name'`` where ``name`` is 'st' (by default). If set to
-        ``None``, a formated string is returned that can then be
-        copied manually to an input file.
+        `name` appended to the `infile` name.
+        (`name` is 'array' by default).
+
+        If set to ``None``, a formated string is returned that can then
+        be copied manually to an input file.
 
     Returns
     -------
@@ -334,6 +342,71 @@ def station_location(x=None, y=None, lat=None, lon=None, depth=0,
     except TypeError:
         string += (sac_string % (float(x), float(y), depth, name,
                                  writeEvery, nsew, mode))
+    if infile is None:
+        return string
+    else:
+        return _append2infile(infile, name, string)
+
+
+def inventory2station_locations(inv, mode='displacement', writeEvery=100,
+                                name='st', nsew=0, fmt='%.3f', infile=None):
+    """
+    Place stations to record synthetics at specific locations.
+
+    Extracts station locations from an
+    :class:`~obspy.core.inventory.inventory.Inventory` object and
+    generate an SW4 inputfile string.
+
+    Parameters
+    ----------
+
+    inv : str or :class:`~obspy.core.inventory.inventory.Inventory`
+        Path to a StationXML file or an
+        :class:`~obspy.core.inventory.inventory.Inventory` object.
+
+    mode : {'displacement' (default), 'velocity', 'div', 'curl', 'strains'}
+        Mode of the recorded motions.
+
+    writeEvery : int
+        Cycle interval to write the data to disk.
+
+    nsew : int
+        The components of the station:
+
+        - 0 - x, y, z (default), or
+        - 1 - East, North, Vertical
+
+    fmt : str
+        Format of the coordinates, default is '%.3f'.
+
+    infile : str
+        Path (relative or absolute) to the SW4 inputfile. Stations are
+        added to a copy of the specified file and saved with the string
+        `name` appended to the `infile` name.
+        (`name` is 'array' by default).
+
+        If set to ``None``, a formated string is returned that can then
+        be copied manually to an input file.
+
+    Returns
+    -------
+    str
+        Filename of the newly saved inputfile or a formatted string that
+        can be copied manually to an SW4 inputfile.
+    """
+
+    if not isinstance(inv, Inventory):
+        inv = read_inventory(inv)
+
+    sac_string = ('rec lon={0} lat={0} depth=0 file=%s '
+                  'writeEvery=%d nsew=%d variables=%s\n').format(fmt)
+
+    string = '\n\n# stations at locations:\n'
+    for net in inv.networks:
+        for sta in net.stations:
+            string += (sac_string % (sta.longitude, sta.latitude,
+                                     '.'.join((net.code, sta.code)),
+                                     writeEvery, nsew, mode))
     if infile is None:
         return string
     else:

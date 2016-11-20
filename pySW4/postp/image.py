@@ -44,7 +44,7 @@ except ImportError:
     cmap_sequential = None
     cmap_sequential_r = None
 
-from ..sw4_input import Inputfile
+from ..sw4_metadata import Inputfile
 from ..headers import (
     IMAGE_HEADER_DTYPE, PATCH_HEADER_DTYPE, IMAGE_PLANE,
     IMAGE_MODE_DISPLACEMENT, IMAGE_MODE_VELOCITY, IMAGE_PRECISION,
@@ -64,9 +64,8 @@ class Image():
         Input file (already parsed or filename) used to compute the
         image output.
 
-    stf : str
-        `'displacement'` or `'velocity'`. Only needed if no metadata
-        from original input_file is used.
+    stf : {'displacement', 'velocity'}
+        Only needed if no metadata from original input_file is used.
     """
     CMAP = {"divergent"    : cmap_divergent,
             "divergent_r"  : cmap_divergent_r,
@@ -87,7 +86,7 @@ class Image():
                     "linewidths" : 1.5}
         }
     MPL_SCATTER_PATH_EFFECTS = [
-        path_effects.Stroke(linewidth=1.5 + 0.7, foreground='w'),
+        path_effects.Stroke(linewidth=1.5 + 1, foreground='w'),
         path_effects.Normal()]
 
     def __init__(self, input_file=None, stf=None):
@@ -261,12 +260,8 @@ class Image():
         patches : list of int
             Patches to plot
 
-
-        .. rubric:: **Other keywoard arguments from**
-            :meth:`.Patch.plot` **args/kwargs:**
-
-        Keyword Arguments
-        -----------------
+        Other Parameters
+        ----------------
         ax : :class:`~matplotlib.axes.Axes`
             Use existing axes.
 
@@ -279,7 +274,7 @@ class Image():
             the colorscale saturates at the given value. Finally, if a
             string is passed (other than 'max'), it is casted to float
             and used as an ``rms`` multiplier. For instance, if
-            ``vmax='3'``, clipping is done at 3.0*rms of the data.
+            ``vmax='3'``, clipping is done at 3.0\*rms of the data.
 
         colorbar : bool or str
             If ``colorbar`` is a string, that string is used to override
@@ -306,8 +301,8 @@ class Image():
             is included but this can cause too many symbols to be
             plotted, obscuring the image.
 
-        Example
-        -------
+        Examples
+        --------
         >>> my_image.plot()  # plots all patches
         >>> my_image.plot(patches=[0, 2])  # plots first and third patch
         """
@@ -317,14 +312,14 @@ class Image():
             fig = None
 
         # set vmin, vmax
-        if vmax is 'max':
+        if vmax is None or vmax is 'max':
             clip = self._max
         elif type(vmax) in [float, int]:
             clip = vmax
         else:
             clip = float(vmax) * self._rms
 
-        if vmin is 'min':
+        if vmin is None or vmin is 'min':
             vmin = self._min
         elif type(vmin) in [int, float]:
             pass
@@ -532,7 +527,7 @@ class Image():
 
     def copy(self):
         """
-        Return a deepcopy of the ``self``.
+        Return a deepcopy of `self`.
         """
         return copy.deepcopy(self)
 
@@ -602,10 +597,8 @@ class Patch():
         """
         Plot patch.
 
-        Note
-        ----
-        Should not really be used directly by the user but rather called
-        by the :meth:`~.Image.plot` method.
+        .. note:: Should not really be used directly by the user but
+                  rather called by the :meth:`~.Image.plot` method.
 
         Parameters
         ----------
@@ -636,10 +629,9 @@ class Patch():
             Places the origin at the 'lower' (default)
             or 'upper' left corner of the plot.
 
-        Note
-        ----
-        For other keywoard arguments (``**kwargs``) see:
-        :func:`matplotlib.pyplot.imshow`.
+        Other Parameters
+        ----------------
+        kwargs : :func:`~matplotlib.pyplot.imshow`
         """
         caller = inspect.stack()[1][3]  # find out who made the call
 
@@ -755,7 +747,7 @@ class Patch():
 
     def copy(self):
         """
-        Return a deepcopy of the ``self``.
+        Return a deepcopy of `self`.
         """
         return copy.deepcopy(self)
 

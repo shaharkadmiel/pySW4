@@ -4,6 +4,7 @@ pySW4.postp package
 .. automodule:: pySW4.postp
     :members:
     :undoc-members:
+    :private-members:
     :show-inheritance:
 
 Submodules

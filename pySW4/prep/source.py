@@ -19,6 +19,7 @@ from __future__ import absolute_import, print_function, division
 
 import os
 import numpy as np
+from ..headers import STF
 
 
 def Mw(M0):
@@ -37,7 +38,7 @@ def M0(Mw):
 
 def source_frequency(fmax, stf='Gaussian'):
     """
-    Calculate the angular frequency :math:`\\omega`, ``freq`` attribute
+    Calculate the angular frequency :math:`\omega`, ``freq`` attribute
     on the source line in the SW4 inputfile.
 
     Parameters
@@ -53,16 +54,14 @@ def source_frequency(fmax, stf='Gaussian'):
         'Brune', 'BruneSmoothed', 'GaussianWindow', 'Liu', 'Dirac', and
         'C6SmoothBump'.
 
-        See the `SW4 User Guide`_ for further details.
+        See the `SW4 User Guide
+        <https://geodynamics.org/cig/software/sw4/>`_ for further
+        details.
 
     Returns:
     2-tuple
         ``f0``, ``freq``. ``freq`` is the value which goes on the source
         line in the SW4 inputfile.
-
-
-    .. _SW4 User Guide:
-       https://geodynamics.org/cig/software/sw4/
     """
 
     f0 = fmax / STF[stf].fmax2f0  # fundamental freqency, Hz
@@ -83,7 +82,7 @@ def t0(freq, t0=0.0, stf='Gaussian'):
         the source line in the SW4 inputfile.
 
     t0 : float
-        The calculated ``t0`` is added to the supllied ``t0`` in the
+        The calculated ``t0`` is added to the supllied `t0` in the
         function call.
 
     stf : str
@@ -106,8 +105,8 @@ def gaussian_stf(time, t0, freq):
 def f_max(vmin, h, ppw=8):
     """
     Calculate the maximum resolved frequency that meets the requirement
-    that the shortest wavelength (:math:`\\lambda=V_{min}/f_{max}`) be
-    sampled by a minimum points-per-wavelength (``ppw``).
+    that the shortest wavelength (:math:`\lambda=V_{min}/f_{max}`) be
+    sampled by a minimum points-per-wavelength (`ppw`).
 
     Parameters
     ----------
@@ -128,8 +127,8 @@ def f_max(vmin, h, ppw=8):
 
     See also
     --------
-    :func:`~pySW4.prep.material_model.grid_spacing`,
-    :func:`~pySW4.prep.material_model.get_vmin`,
-    :func:`~.source_frequency`,
+    .grid_spacing
+    .get_vmin
+    .source_frequency
     """
     return float(vmin) / (h * ppw)

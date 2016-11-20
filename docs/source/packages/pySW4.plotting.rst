@@ -4,6 +4,7 @@ pySW4.plotting package
 .. automodule:: pySW4.plotting
     :members:
     :undoc-members:
+    :private-members:
     :show-inheritance:
 
 Submodules

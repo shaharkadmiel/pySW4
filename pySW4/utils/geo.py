@@ -30,18 +30,17 @@ from warnings import warn
 try:
     from osgeo import gdal, osr, gdal_array
 except ImportError:
-    warnings.warn('gdal not found, you will not be able to use the geo tools '
-                  ' in `pySW4.utils.geo` unless you install gdal.')
+    warn('gdal not found, you will not be able to use the geo tools '
+         ' in `pySW4.utils.geo` unless you install gdal.')
 
 
 class GeoTIFF():
-    """Class for handling GeoTIFF files.
+    """
+    Class for handling GeoTIFF files.
 
-    Note
-    ----
-    This class should be populated by
-    :func:`~pySW4.utils.geo.read_GeoTIFF` or
-    :func:`~pySW4.utils.geo.get_dem`.
+    .. note:: This class should be populated by
+              :func:`~pySW4.utils.geo.read_GeoTIFF` or
+              :func:`~pySW4.utils.geo.get_dem`.
     """
 
     def __init__(self):
@@ -125,7 +124,7 @@ class GeoTIFF():
     @property
     def x(self):
         """
-        Returns ``x`` coordinates vector of the data. This usually
+        Returns `x` coordinates vector of the data. This usually
         corresponds to Longitude.
         """
         return np.linspace(self.w, self.e, self.nx)
@@ -133,7 +132,7 @@ class GeoTIFF():
     @property
     def y(self):
         """
-        Returns ``y`` coordinates vector of the data. This usually
+        Returns `y` coordinates vector of the data. This usually
         corresponds to Latitude.
         """
         return np.linspace(self.n, self.s, self.ny)
@@ -141,26 +140,25 @@ class GeoTIFF():
     @property
     def xy2d(self):
         """
-        Returns 2 2d :class:`numpy.ndarray` s with ``x`` and ``y``
+        Returns 2 2d :class:`~numpy.ndarray` s with `x` and `y`
         coordinates of the data. This is the result of
-        :func:`numpy.meshgrid` of the ``x`` and ``y`` vectors of the
+        :func:`~numpy.meshgrid` of the `x` and `y` vectors of the
         data.
         """
         return np.meshgrid(self.x, self.y)
 
-    def resample(self, by=None, to=None, order=3):
+    def resample(self, by=None, to=None, order=0):
         """
-        Method to resample the data either ``by`` a factor or ``to``
+        Method to resample the data either `by` a factor or `to`
         the specified spacing.
 
-        This method makes use of
-        :func:`scipy.ndimage.zoom`.
+        This method uses :func:`~scipy.ndimage.zoom`.
 
         .. warning:: **Watch Out!** This operation is performed in place
-            on the actual data. The raw data will no longer be
-            accessible afterwards. To keep the original data, use the
-            :meth:`~pySW4.utils.geo.GeoTIFF.copy` method to create a
-            copy of the current object.
+                     on the actual data. The raw data will no longer be
+                     accessible afterwards. To keep the original data,
+                     use the :meth:`~pySW4.utils.geo.GeoTIFF.copy`
+                     method to create a copy of the current object.
 
         Parameters
         ----------
@@ -174,7 +172,7 @@ class GeoTIFF():
             The specified spacing to which the grid is resampled to.
 
         order : int
-            The order of the spline interpolation, default is 3.
+            The order of the spline interpolation, default is 0.
             The order has to be in the range 0-5.
 
             - 0 - nearest (fastest)
@@ -200,26 +198,27 @@ class GeoTIFF():
                   error_threshold=0.125, target_filename=None):
         """
         Reproject the data from the current projection to the specified
-        target projection ``epsg`` or ``proj4`` or to ``match`` an
+        target projection `epsg` or `proj4` or to `match` an
         existing GeoTIFF file.
 
         .. warning:: **Watch Out!** This operation is performed in place
-            on the actual data. The raw data will no longer be
-            accessible afterwards. To keep the original data, use the
-            :meth:`~pySW4.utils.geo.GeoTIFF.copy` method to create a
-            copy of the current object.
+                     on the actual data. The raw data will no longer be
+                     accessible afterwards. To keep the original data,
+                     use the :meth:`~pySW4.utils.geo.GeoTIFF.copy`
+                     method to create a copy of the current object.
 
         Parameters
         ----------
         epsg : int
             The target projection EPSG code. See the
-            `Geodetic Parameter Dataset Registry`_ for more information.
+            `Geodetic Parameter Dataset Registry
+            <http://www.epsg-registry.org/>`_ for more information.
 
         proj4 : str
             The target Proj4 string. If the EPSG code is unknown or a
             custom projection is required, a Proj4 string can be passed.
-            See the `Proj4`_ documentation for a list of general Proj4
-            parameters.
+            See the `Proj4 <https://trac.osgeo.org/proj/wiki/GenParms>`_
+            documentation for a list of general Proj4 parameters.
 
         match : str or :class:`~pySW4.utils.geo.GeoTIFF` instance
             Path (relative or absolute) to an existing GeoTIFF file or
@@ -243,28 +242,22 @@ class GeoTIFF():
             used to save the data at a later point if further
             manipulations are needed.
 
-
-        .. rubric:: Examples of some EPSG codes and their equivalent Proj4
-            strings are:
-        ::
+        Notes
+        -----
+        Examples of some EPSG codes and their equivalent Proj4 strings
+        are::
 
             4326   -> '+proj=longlat +datum=WGS84 +no_defs'
 
             32636  -> '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
 
-            102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 \\
-                       +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m \\
+            102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40
+                       +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m
                        +no_defs'
 
-        and so on ...
-
-        .. _Geodetic Parameter Dataset Registry:
-           http://www.epsg-registry.org/
-
-        .. _Proj4:
-           https://trac.osgeo.org/proj/wiki/GenParms
+        and so on ... See the `Geodetic Parameter Dataset Registry
+        <http://www.epsg-registry.org/>`_ for more information.
         """
-
         if epsg and proj4 and match:
             msg = 'Only `epsg`, `proj4`, or `match` should be specified.'
             raise ValueError(msg)
@@ -299,7 +292,7 @@ class GeoTIFF():
             src_geotrans = src_ds.GetGeoTransform()
 
             if type(match) is str:
-                match = read_GeoTIFF(match,1)
+                match = read_GeoTIFF(match, 1)
 
             gdal_dtype = gdal_array.NumericTypeCodeToGDALTypeCode(self.dtype)
             dstSRS.ImportFromProj4(match.proj4)
@@ -336,48 +329,37 @@ class GeoTIFF():
 
         Parameters
         ----------
-        w : float
-            The west-most coordinate to keep
-            (may also be the xmin coordinate).
-
-        e : float
-            The east-most coordinate to keep
-            (may also be the xmax coordinate).
-
-        s : float
-            The south-most coordinate to keep
-            (may also be the ymin coordinate).
-
-        n : float
-            The north-most coordinate to keep
-            (may also be the ymax coordinate).
+        w, e, s, n: float
+            The west-, east-, south-, and north-most coordinate to keep
+            (may also be the xmin, xmax, ymin, ymax coordinate).
         """
 
-        if not (self.w < w < self.e or
-                self.w < e < self.e or
-                self.s < s < self.n or
+        if (self.w < w < self.e and
+                self.w < e < self.e and
+                self.s < s < self.n and
                 self.s < n < self.n):
+
+            x_start = int((w - self.w) / self.dx)
+            x_stop  = int((e - self.w) / self.dx) + 1
+
+            y_start = int((n - self.n) / self.dy)
+            y_stop  = int((s - self.n) / self.dy) + 1
+
+            # update class data
+            self.e = self.w + x_stop  * self.dx
+            self.w = self.w + x_start * self.dx
+            self.s = self.n + y_stop  * self.dy
+            self.n = self.n + y_start * self.dy
+
+            self.extent = (self.w, self.e, self.s, self.n)
+            self.elev = self.elev[y_start:y_stop, x_start:x_stop]
+
+            self.nx = self.elev.shape[1]
+            self.ny = self.elev.shape[0]
+        else:
             msg = ('One or more of the coordinates given is out of bounds:\n'
                    '{} < `w` and `e` < {} and {} < `s` and `n` < {}')
             raise ValueError(msg.format(self.w, self.e, self.s, self.n))
-
-        x_start = int((w - self.w) / self.dx)
-        x_stop  = int((e - self.w) / self.dx) + 1
-
-        y_start = int((n - self.n) / self.dy)
-        y_stop  = int((s - self.n) / self.dy) + 1
-
-        # update class data
-        self.e = self.w + x_stop  * self.dx
-        self.w = self.w + x_start * self.dx
-        self.s = self.n + y_stop  * self.dy
-        self.n = self.n + y_start * self.dy
-
-        self.extent = (self.w, self.e, self.s, self.n)
-        self.elev = self.elev[y_start:y_stop, x_start:x_stop]
-
-        self.nx = self.elev.shape[1]
-        self.ny = self.elev.shape[0]
 
     def elevation_profile(self, xs, ys):
         """
@@ -402,11 +384,9 @@ class GeoTIFF():
         This is a method to create an intensity array that can be used to
         create a shaded relief map.
 
-        Note
-        ----
-        Since version 0.2.0 this method is not needed anymore as new
-        hillshade code has been implemented in the
-        :mod:`~pySW4.plotting.hillshade` module.
+        .. note:: Since version 0.2.0 this method is not needed anymore
+                  as new hillshade code has been implemented in the
+                  :mod:`~pySW4.plotting.hillshade` module.
 
         Parameters
         ----------
@@ -441,6 +421,23 @@ class GeoTIFF():
                                               self.elev.ravel())),
                    fmt='%f', header=header, comments='')
 
+    def set_nodata(self, value):
+        """
+        Replace the current ``nodata`` value with the new `value`.
+        """
+
+        try:
+            if np.isnan(self.elev).any():
+                self.elev[np.isnan(self.elev)] = value
+            else:
+                self.elev[self.elev == self.nodata] = value
+
+            self.nodata = value
+        except ValueError:
+            self.elev = self.elev.astype(np.float32)
+            self.dtype = np.float32
+            self.set_nodata(value)
+
     def write_GeoTIFF(self, filename, nodata=None):
         """
         Write a GeoTIFF file.
@@ -458,18 +455,37 @@ class GeoTIFF():
         if not nodata:
             nodata = self.nodata
             if not nodata:
-                nodata = np.nan
+                self.nodata = np.nan
+                print('Setting nodata value to NaN')
+        elif nodata != self.nodata:
+            self.set_nodata(nodata)
 
         save_GeoTIFF(filename, self.elev, self.w, self.n,
                      self.dx, self.dy, proj4=self.proj4,
-                     dtype=self.dtype, nodata=nodata,
+                     dtype=self.dtype, nodata=self.nodata,
                      rasterBand=1)
 
     def copy(self):
         """
         Return a deepcopy of the GeoTIFF object.
         """
-        return copy.deepcopy(self)
+        new = GeoTIFF()
+        new.path = copy.deepcopy(self.path)
+        new.name = copy.deepcopy(self.name)
+        new.dtype = copy.deepcopy(self.dtype)
+        new.nodata = copy.deepcopy(self.nodata)
+        new.w = copy.deepcopy(self.w)
+        new.e = copy.deepcopy(self.e)
+        new.s = copy.deepcopy(self.s)
+        new.n = copy.deepcopy(self.n)
+        new.extent = copy.deepcopy(self.extent)
+        new.proj4 = copy.deepcopy(self.proj4)
+        new.dx = copy.deepcopy(self.dx)
+        new.dy = copy.deepcopy(self.dy)
+        new.nx = copy.deepcopy(self.nx)
+        new.ny = copy.deepcopy(self.ny)
+        new.elev = copy.deepcopy(self.elev)
+        return new
 
 
 def calc_intensity(relief, azimuth=315., altitude=45.,
@@ -478,11 +494,9 @@ def calc_intensity(relief, azimuth=315., altitude=45.,
     This is a method to create an intensity array that can be used to
     create a shaded relief map.
 
-    Note
-    ----
-    Since version 0.2.0 this function is not needed anymore as new
-    hillshade code has been implemented in the
-    :mod:`~pySW4.plotting.hillshade` module.
+    .. note:: Since version 0.2.0 this function is not needed anymore as
+              new hillshade code has been implemented in the
+              :mod:`~pySW4.plotting.hillshade` module.
 
     Parameters
     ----------
@@ -534,7 +548,7 @@ def calc_intensity(relief, azimuth=315., altitude=45.,
 def read_GeoTIFF(filename=None, rasterBand=1, verbose=False):
     """
     Reads a single GeoTIFF file and returns a
-    :class:`~pySW4.utils.geo.GeoTIFF` class instance. If ``filename``
+    :class:`~pySW4.utils.geo.GeoTIFF` class instance. If `filename`
     is None, an empty :class:`~pySW4.utils.geo.GeoTIFF` object is
     returnd.
 
@@ -585,16 +599,18 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
 
     epsg : int
         The target projection EPSG code. See the
-        `Geodetic Parameter Dataset Registry`_ for more information.
+        `Geodetic Parameter Dataset Registry
+        <http://www.epsg-registry.org/>`_ for more information.
 
     proj4 : str
         The target Proj4 string. If the EPSG code is unknown or a
         custom projection is required, a Proj4 string can be passed.
-        See the `Proj4`_ documentation for a list of general Proj4
-        parameters.
+        See the `Proj4 <https://trac.osgeo.org/proj/wiki/GenParms>`_
+        documentation for a list of general Proj4 parameters.
 
     dtype : :class:`~numpy.dtype`
         One of following dtypes should be used:
+
         - ``numpy.int16`` (default)
         - ``numpy.int32``
         - ``numpy.float32``
@@ -609,32 +625,21 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
     rasterband : int
         The band number to write. (default is 1)
 
-
-    Note
-    ----
-    Note that ``float`` is not the same as ``numpy.float32``
-
-
-    .. rubric:: Examples of some EPSG codes and their equivalent Proj4
-        strings are:
-    ::
+    Notes
+    -----
+    Examples of some EPSG codes and their equivalent Proj4 strings
+    are::
 
         4326   -> '+proj=longlat +datum=WGS84 +no_defs'
 
         32636  -> '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
 
-        102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40 \\
-                   +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m \\
+        102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40
+                   +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m
                    +no_defs'
 
-    and so on ...
-
-
-    .. _Geodetic Parameter Dataset Registry:
-       http://www.epsg-registry.org/
-
-    .. _Proj4:
-       https://trac.osgeo.org/proj/wiki/GenParms
+    and so on ... See the `Geodetic Parameter Dataset Registry
+    <http://www.epsg-registry.org/>`_ for more information.
     """
 
     if epsg and proj4:
@@ -675,20 +680,18 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
 
 
 def _get_tiles(path, lonmin, lonmax, latmin, latmax,
-               tilename='ASTGTM2_N%02dE%03d', verbose=False):
-    """This is a helper function for :func:`~pySW4.utils.geo.get_dem`
+               tilename='ASTGTM2_%s%02d%s%03d', verbose=False):
+    """
+    This is a helper function for :func:`~pySW4.utils.geo.get_dem`
     function.
 
     It extracts the GeoTIFF tiles from the zipfile downloaded from the
     ASTER-GDEM dowonload site needed to stitch an elevation model
-    with the extent given by ``lonmin``, ``lonmax``, ``latmin``,
-    ``latmax`` in decimal degrees and returns a list of paths pointing
-    to these tiles.
+    with the extent given by `lonmin`, `lonmax`, `latmin`, `latmax` in
+    decimal degrees and returns a list of paths pointing to these tiles.
 
-    Note
-    ----
-    This function sould not be used directly by the user. See
-    :func:`~pySW4.utils.geo.get_dem`.
+    .. note:: This function sould not be used directly by the user. See
+              :func:`~pySW4.utils.geo.get_dem`.
     """
 
     tiles = []
@@ -696,12 +699,26 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
     latrange = range(int(latmin), int(latmax + 1))
     lonrange = range(int(lonmin), int(lonmax + 1))
     for i in latrange:
+        if i < 0:
+            N = 'S'
+            i = -1 * i + 1
+        else:
+            N = 'N'
         for j in lonrange:
-            basename = tilename % (i, j)
+            if j < 0:
+                E = 'W'
+                j = -1 * j + 1
+            else:
+                E = 'E'
+            basename = tilename % (N, i, E, j)
             fullname = os.path.join(path, basename)
-            pwd = os.path.abspath('./')
 
-            f = os.path.join(pwd, basename, basename + '_dem.tif')
+            # make tifs directory on current path
+            tif_path = './tifs'
+            if not os.path.exists(tif_path):
+                os.makedirs('tifs')
+
+            f = os.path.join(tif_path, basename + '_dem.tif')
 
             if verbose:
                 print(f)
@@ -722,21 +739,28 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
                     print('Extracting tiles to %s' % pwd)
 
                 with zipfile.ZipFile(fullname + '.zip') as zf:
-                    zf.extract(os.path.join(basename, basename + '_dem.tif'))
+                    for item in zf.namelist():
+                        if item.endswith('_dem.tif'):
+                            dir_, tif_ = os.path.split(item)
+                            zf.extract(item, tif_path)
+                            if dir_:
+                                shutil.move(
+                                    os.path.join(tif_path, item), tif_path)
+                                shutil.rmtree(os.path.join(tif_path, dir_))
                 tiles += [f]
 
     return tiles
 
 
 def get_dem(path, lonmin, lonmax, latmin, latmax,
-            tilename='ASTGTM2_N%02dE%03d', rasterBand=1,
+            tilename='ASTGTM2_%s%02d%s%03d', rasterBand=1,
             dx=0.000277777777778, dy=-0.000277777777778,
             keep_tiles=False):
     """
     This function reads relevant ASTER-GDEM GeoTIFF tiles into memory,
     stitchs them together if more than one file is read, and cuts to the
-    desired extent given by ``lonmin``, ``lonmax``, ``latmin``,
-    ``latmax`` in decimal degrees.
+    desired extent given by `lonmin`, `lonmax`, `latmin`, `latmax` in
+    decimal degrees.
 
     Parameters
     ----------
@@ -744,21 +768,13 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
         Path (relative or absolute) to where the ASTER-GDEM zipped tiles
         are stored.
 
-    lonmin : float
-        The west-most coordinate of the desired extent
-        (may also be the xmin coordinate).
+    lonmin, lonmax : float
+        The west- and east-most coordinate of the desired extent
+        (may also be the xmin and xmax coordinate).
 
-    lonmax : float
-        The east-most coordinate of the desired extent
-        (may also be the xmax coordinate).
-
-    latmin : float
-        The south-most coordinate of the desired extent
-        (may also be the ymin coordinate).
-
-    latmax : float
-        The north-most coordinate of the desired extent
-        (may also be the ymax coordinate).
+    latmin, latmax : float
+        The south- and north-most coordinate of the desired extent
+        (may also be the ymin and ymax coordinate).
 
     tilename : str
         Wildcard string of the tile names.
@@ -766,13 +782,9 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
     rasterBand : int
         The band number to read from each tile (defaults to 1).
 
-    dx : float
-        Pixel size of data in the x direction, positive in the East
-        direction.
-
-    dy : float
-        Pixel size of data in the y direction, positive in the North
-        direction.
+    dx, dy : float
+        Pixel size of data in the x and y direction, positive in the
+        East and North directions.
 
     keep_tiles : bool
         Zipped tiles get extracted to the current working directory and
@@ -797,18 +809,21 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
         try:
             gdems += [read_GeoTIFF(tile, rasterBand)]
 
-            # remove the tiles after reading them
-            if not keep_tiles:
-                shutil.rmtree(os.path.split(tile)[0])
-
         except RuntimeError:
             empty = GeoTIFF()
             empty.name = tile
             empty.dtype = np.int16
             empty.nodata = np.nan
 
-            coordinates = tile.split('N')[-1]
-            n, w = coordinates.split('E')
+            try:
+                coordinates = tile.split('N')[-1]
+            except ValueError:
+                coordinates = tile.split('S')[-1]
+
+            try:
+                n, w = coordinates.split('E')
+            except:
+                n, w = coordinates.split('W')
             empty.w = float(w) - 0.5 * dx
             empty.e = empty.w + 1 + dx
             empty.n = float(n) + 1 - 0.5 * dy
@@ -824,6 +839,9 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
             empty.elev = np.zeros((empty.ny, empty.nx))
             emptys += [empty]
 
+    # remove the tiles after reading them
+    if not keep_tiles:
+        shutil.rmtree('./tifs')
     gdems += emptys
 
     # create a mosaicGDEM (a GeoTIFF class instance) which will eventually
@@ -864,27 +882,8 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
 
             elev[y_start:y_stop, x_start:x_stop] = gdem.elev
 
-    # subsample the big mosaic to the specified extent in
-    # lonmin, lonmax, latmin, latmax
-    # and update the class data
-    x_start = abs(int((lonmin - mosaicGDEM.w) / mosaicGDEM.dx))
-    x_stop  = abs(int((lonmax - mosaicGDEM.w) / mosaicGDEM.dx)) + 1
-
-    y_start = abs(int((mosaicGDEM.n - latmax) / mosaicGDEM.dy))
-    y_stop  = abs(int((mosaicGDEM.n - latmin) / mosaicGDEM.dy)) + 1
-
-    # update class data
-    mosaicGDEM.e = mosaicGDEM.w + x_stop * mosaicGDEM.dx
-    mosaicGDEM.w = mosaicGDEM.w + x_start * mosaicGDEM.dx
-    mosaicGDEM.s = mosaicGDEM.n + y_stop * mosaicGDEM.dy
-    mosaicGDEM.n = mosaicGDEM.n + y_start * mosaicGDEM.dy
-
-    mosaicGDEM.extent = (mosaicGDEM.w, mosaicGDEM.e,
-                         mosaicGDEM.s, mosaicGDEM.n)
-    mosaicGDEM.elev = elev[y_start:y_stop, x_start:x_stop]
-
-    mosaicGDEM.nx = mosaicGDEM.elev.shape[1]
-    mosaicGDEM.ny = mosaicGDEM.elev.shape[0]
+    mosaicGDEM.elev = elev
+    mosaicGDEM.keep(lonmin, lonmax, latmin, latmax)
 
     return mosaicGDEM
 

@@ -27,6 +27,8 @@ def get_vs(vp):
     """
     Calculate Shear-wave velocity based on Brocher (2008).
 
+    .. note:: Shear-wave velocity is forced to be greater than :math:`V_S>V_P / \\sqrt{2}`.
+
     Parameters
     ----------
     vp : float or sequence
@@ -42,6 +44,14 @@ def get_vs(vp):
           + 0.7949 * vp**2
           - 0.1238 * vp**3
           + 0.0064 * vp**4)
+
+    try:
+        vs[vp / vs < 1.42] = vp[vp / vs < 1.42] / 1.4
+    except TypeError:
+        if vp / vs < 1.42:
+            print(vs)
+            vs = vp / 1.4
+            print(vs)
     return vs
 
 
@@ -71,10 +81,8 @@ def get_qs(vs):
     """
     Calculate Shear-wave Quality Factor based on Brocher (2008).
 
-    Note
-    ----
-    If Shear-wave velocity is less-than 0.3 km/s, Shear-wave Quality
-    Factor is set to 13.
+    .. note:: If Shear-wave velocity is less-than 0.3 km/s, Shear-wave
+              Quality Factor is set to 13.
 
     Parameters
     ----------
@@ -139,6 +147,7 @@ def read_Vfile(filename):
 
     **Example Vfile:**
     ::
+
         # Just a simple made up velocity model
         # Shani-Kadmiel (2016)
         # Depth| Vp    | Vs    | rho   | Qp    | Qs    | Grp/Form./Mbr.
@@ -148,7 +157,6 @@ def read_Vfile(filename):
            5000,   2000,   1000,   1600,     70,     35, Lower made up
         end
 
-
     Parameters
     ----------
     filename : str
@@ -156,12 +164,12 @@ def read_Vfile(filename):
 
     Returns
     -------
-    sequence
+    array-like
         A list of header, depth, vp, vs, rho, qp, qs, gmf values.
 
     See also
     --------
-    :class:`~.V_model`
+    .V_model
     """
     header = ''
     depth = []
@@ -287,7 +295,8 @@ class V_model():
 
         Returns
         -------
-        vp, vs, rho, qp, qs
+        array-like
+            vp, vs, rho, qp, qs
         """
 
         properties = [self.vp, self.vs, self.rho, self.qp, self.qs]
@@ -314,14 +323,8 @@ class V_model():
         values : sequence or int or float
             The property for which to evaluate the depth of.
 
-        property : str
-            One of:
-
-            - ``'vp'`` (default)
-            - ``'vs'``
-            - ``'rho'``
-            - ``'qp'``
-            - ``'qs'``
+        property : {'vp' (default), 'vs', 'rho, 'qp', 'qs'}
+            Property corresponding to `value`.
 
         Returns
         -------
@@ -391,9 +394,9 @@ def grid_spacing(vmin, fmax, ppw=8):
 
     See also
     --------
-    :func:`~.vmin`,
-    :func:`~pySW4.prep.source.source_frequency`,
-    :func:`~pySW4.prep.source.f_max`,
+    .get_vmin
+    .source_frequency
+    .f_max
     """
     return float(vmin) / (fmax * ppw)
 
@@ -402,7 +405,7 @@ def get_vmin(h, fmax, ppw=8):
     """
     Calculate the minimum allowed velocity that meets the requirement
     that the shortest wavelength (:math:`\\lambda=V_{min}/f_{max}`) be
-    sampled by a minimum points-per-wavelength (``ppw``).
+    sampled by a minimum points-per-wavelength (`ppw`).
 
     Parameters
     ----------
@@ -424,9 +427,9 @@ def get_vmin(h, fmax, ppw=8):
 
     See also
     --------
-    :func:`~.grid_spacing`,
-    :func:`~pySW4.prep.source.source_frequency`,
-    :func:`~pySW4.prep.source.f_max`,
+    .grid_spacing
+    .source_frequency
+    .f_max
     """
     return h * fmax * ppw
 

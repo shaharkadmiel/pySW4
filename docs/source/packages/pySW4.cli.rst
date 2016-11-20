@@ -4,6 +4,7 @@ pySW4.cli package
 .. automodule:: pySW4.cli
     :members:
     :undoc-members:
+    :private-members:
     :show-inheritance:
 
 Submodules

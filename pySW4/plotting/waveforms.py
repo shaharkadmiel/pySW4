@@ -52,7 +52,7 @@ from matplotlib.dates import date2num
 from matplotlib.gridspec import GridSpec
 import numpy as np
 import obspy
-from ..sw4_input import _parse_input_file_and_folder
+from ..sw4_metadata import _parse_input_file_and_folder
 from ..headers import STF
 from ..utils import fourier_spectrum
 
@@ -64,7 +64,7 @@ MODE = {'displacement' : 'displacement, m' ,
 
 
 def plot_traces(traces, mode='', yscale='auto', hspace=0.2, wspace=0.05,
-                figsize=None, fig=None, color='k'):
+                figsize=None, fig=None, **kwargs):
     """
     Plot all traces and their Fourier specra side-by-side.
 
@@ -73,23 +73,24 @@ def plot_traces(traces, mode='', yscale='auto', hspace=0.2, wspace=0.05,
     traces : :class:`~obspy.Stream`
         Traces to be plotted in an :class:`~obspy.Stream` object.
 
-    mode : str
-        Mode describes the type of data in traces. One of:
-
-        'displacement', 'velocity', 'div', 'curl', or 'strains'.
+    mode : {'displacement', 'velocity', 'div', 'curl', 'strains'}
+        Mode describes the type of data in traces.
 
         Optionaly, an alternative string can be given that will be used
         as the y-label of the time-histories.
 
-    yscale : str
+    yscale : {'auto', 'all', 'normalize'}
         Set the scale of the vertical y-axis:
 
         - ``auto`` - Vertical scale of each axes is automatically set to
-        the -|max| and |max| of each trace.
+          the -\|max\| and \|max\| of each trace.
+
         - ``all`` - Vertical scale of all axes is set to the same limits
-        which are the -|max| and |max| of all traces.
+          which are the -\|max\| and \|max\| of all traces.
+
         - ``normalize`` - Each trace is normalized and plotted
-        (``ylim=(-1, 1)``).
+          (``ylim=(-1, 1)``).
+
 
     hspace : float
         The hight space between axes. See
@@ -105,8 +106,9 @@ def plot_traces(traces, mode='', yscale='auto', hspace=0.2, wspace=0.05,
     fig : :class:`~matplotlib.figure.Figure`
         A :class:`~matplotlib.figure.Figure` instance.
 
-    color : str
-        Color of the line in the time-histories and Fourier spectra.
+    Other Parameters
+    ----------------
+    kwargs : :func:`~matplotlib.pyplot.plot` propeties.
     """
     count = traces.count()
 
@@ -137,25 +139,34 @@ def plot_traces(traces, mode='', yscale='auto', hspace=0.2, wspace=0.05,
             axi.set_ylim(-1, 1)
         axi.yaxis.tick_left()
         if set_title:
+            location = ''
+            for k, v in zip(tr.stats.coordinates.keys(),
+                            tr.stats.coordinates.values()):
+                location += '{}\n'.format(k + '=' + str(v))
             axi.text(0.99, 0.97,
-                     tr.stats.channel,
+                     '{}:\n{}'.format(tr.id.split('..')[0], location),
+                     color='r',
                      transform=axi.transAxes, ha='right', va='top',
-                     fontsize=10)
+                     fontsize=8)
+            axi.text(0.01, 0.03,
+                     tr.stats.starttime, color='r',
+                     transform=axi.transAxes, ha='left', va='bottom',
+                     fontsize=8)
 
         try:
             axi.set_ylabel(MODE[mode])
         except KeyError:
             axi.set_ylabel(mode)
 
-        axi.plot(tr.times(), tr.data, color=color)
+        axi.plot(tr.times(), tr.data, **kwargs)
         axi.set_xlim(tr.times()[0], tr.times()[-1])
 
         # plot spectrum
         axi = ax[i * 2 + 1]
         freq, amp = fourier_spectrum(tr)
-        axi.loglog(freq, amp, color=color)
+        axi.loglog(freq, amp, **kwargs)
         axi.yaxis.tick_right()
-        axi.grid(True)
+        axi.grid(True, ls='dashed')
         axi.set_xlim(freq[0], freq[-1])
 
     for axi in ax[:-2]:

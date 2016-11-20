@@ -22,13 +22,20 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LightSource, Normalize
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from ..utils import resample
+
+INT_AND_FLOAT = ([int, float]
+                 + np.sctypes.get('int')
+                 + np.sctypes.get('uint')
+                 + np.sctypes.get('float'))
+
 
 def drape_plot(data, relief, extent, vmax='max', vmin='min',
                az=315, alt=45, cmap='hot_r', blend_mode='hsv',
                contrast=1, definition=1, origin='upper', ax=None,
                colorbar=True):
     """
-    Drape ``data`` over ``relief``.
+    Drape `data` over `relief`.
 
     This is done using the
     :meth:`~matplotlib.colors.LightSource.shade_rgb` method of the
@@ -42,23 +49,21 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
     relief : a 2d :class:`~numpy.ndarray`
         Contains elevation (usually).
 
-    extent : list or tuple
+    extent : array-like
         Extent of the domain plotted.
         (xmin,xmax,ymin,ymax) or (w,e,s,n)
 
-    vmax : str or float
+    vmax, vmin : str or float
         Used to clip the coloring of the data at the set value.
-        Default is 'max' which shows all the data. If  ``float``, the
-        colorscale saturates at the given value. Finally, if a string is
-        passed (other than 'max'), it is casted to float and used as an
-        ``rms`` multiplier. For instance, if ``vmax='3'``, clipping is
-        done at 3.0*rms of the data.
+        Default is 'max' and 'min' which used the extent of the data.
+        If  ``float``s, the colorscale saturates at the given values.
+        Finally, if a string is passed (other than 'max' or 'min'), it
+        is casted to float and used as an ``rms`` multiplier. For
+        instance, if ``vmax='3'``, clipping is done at 3.0\*rms of the
+        data.
 
-    vmin : str or float or None
-        Used as data minimum clipping. Default is ``'min'``, which shows
-        all data. If set to ``None`` or ``False``, ``vmin`` is set to
-        ``-vmax`` so that the coloring of the data is symmetric arround
-        0.
+        To force symmetric coloring around 0 set `vmin` to ``None`` or
+        ``False``. This will cause `vmin` to equal `vmax`.
 
     az : int or float
         The azimuth (0-360, degrees clockwise from North) of the light
@@ -69,22 +74,19 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
         source. Defaults to 45 degrees from horizontal.
 
     cmap : str or :class:`~matplotlib.colors.Colormap` instance
-        String of the name of the colormap, i.e. ``'Greys'``, or a
+        String of the name of the colormap, i.e. 'Greys', or a
         :class:`~matplotlib.colors.Colormap` instance used for the
         data.
 
-    blend_mode : str or callable
+    blend_mode : {'hsv', 'overlay', 'soft', callable}
         The type of blending used to combine the colormapped data values
         with the illumination intensity. For backwards compatibility,
-        this defaults to ``'hsv'``. Note that for most topographic
-        surfaces, ``'overlay'`` or ``'soft'`` appear more visually
+        this defaults to 'hsv'. Note that for most topographic
+        surfaces, 'overlay' or 'soft' appear more visually
         realistic. If a user-defined function is supplied, it is
         expected to combine an MxNx3 RGB array of floats (ranging 0 to
         1) with an MxNx1 hillshade array (also 0 to 1). (Call signature
-        func(rgb, illum, **kwargs))
-
-        Can be ``'hsv'`` or ``'overlay'`` or ``'soft'`` or a callable
-        user-defined function.
+        func(rgb, illum, \*\*kwargs))
 
     contrast : int or float
         Increases or decreases the contrast of the hillshade.
@@ -100,9 +102,9 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
         the elevation coordinate system (e.g. decimal degrees vs meters)
         or to exaggerate or de-emphasize topography.
 
-    origin : str
-        Places the origin at the 'upper' (default)
-        or 'lower' left corner of the plot.
+    origin : {'upper', 'lower'}
+        Places the origin at the 'upper' (default) or 'lower' left
+        corner of the plot.
 
     ax : :class:`~matplotlib.axes.Axes` instance
         Plot to an existing axes. If None, a
@@ -111,24 +113,23 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
         are returned for further manipulation.
 
     colorbar : bool
-        By default, a colorbar is drawn with the plot. If ``colorbar``
+        By default, a colorbar is drawn with the plot. If `colorbar`
         is a string, it is used for the label of the colorbar.
         Otherwise, the colorbar can be omitted by setting to False.
         :class:`~matplotlib.colorbar.Colorbar` instance is returned.
 
-    Note
-    ----
-    *All* grids must have the same extent and origin!
+    .. note:: *All* grids must have the same extent and origin!
     """
 
     if not ax:
         fig, ax = plt.subplots()
         ax.axis(extent)
+        ax.set_aspect(1)
 
     # data
     if vmax is 'max':
         clip = np.nanmax(data)
-    elif type(vmax) in [float, int]:
+    elif type(vmax) in INT_AND_FLOAT:
         clip = vmax
     else:
         clip = float(vmax) * np.nanstd(data)
@@ -154,6 +155,11 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
     im = ax.imshow(data, cmap=cmap, vmin=vmin, vmax=vmax)
     im.remove()
 
+    if data.size < relief.size:
+        _, _, data = resample(data, extent, relief.shape)
+    elif data.size > relief.size:
+        _, _, relief = resample(relief, extent, data.shape)
+
     norm = Normalize(vmin, vmax)
     ls = LightSource(azdeg=az, altdeg=alt)
     if type(cmap) is str:
@@ -162,6 +168,8 @@ def drape_plot(data, relief, extent, vmax='max', vmin='min',
     rgba = ls.shade_rgb(cmap(norm(data)), relief, fraction=contrast,
                         blend_mode=blend_mode, vert_exag=definition)
     ax.imshow(rgba, extent=extent, origin=origin)
+    # make sure no offsets are introduced
+    ax.ticklabel_format(useOffset=False)
 
     if colorbar:
         divider = make_axes_locatable(ax)
@@ -187,7 +195,7 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
                    contrast=1, definition=1, origin='upper', ax=None,
                    colorbar=True):
     """
-    Plot hillshade of ``relief``.
+    Plot hillshade of `relief`.
 
     This is done using the :meth:`~matplotlib.colors.LightSource.shade`
     method of the :class:`~matplotlib.colors.LightSource` class.
@@ -201,18 +209,17 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
         Extent of the domain plotted.
         (xmin,xmax,ymin,ymax) or (w,e,s,n)
 
-    vmax : str or int or float
+    vmax, vmin : str or float
         Used to clip the coloring of the data at the set value.
-        Default is 'max' which shows all the data. If ``int`` or
-        ``float``, the colorscale saturates at the given value. Finally,
-        if a string is passed, it is casted to float and used as an
-        ``rms`` multiplier. For instance, if ``vmax='3'``, clipping is
-        done at 3.0*rms of the data.
+        Default is 'max' and 'min' which used the extent of the data.
+        If  ``float``s, the colorscale saturates at the given values.
+        Finally, if a string is passed (other than 'max' or 'min'), it
+        is casted to float and used as an ``rms`` multiplier. For
+        instance, if ``vmax='3'``, clipping is done at 3.0\*rms of the
+        data.
 
-    vmin : str or int or float or None
-        Used as data minimum clipping. Default is ``'min'``, which shows
-        all data. If set to ``None`` or ``False``, vmin is set to -vmax
-        so that the coloring of the data is symmetric arround 0.
+        To force symmetric coloring around 0 set `vmin` to ``None`` or
+        ``False``. This will cause `vmin` to equal `vmax`.
 
     az : int or float
         The azimuth (0-360, degrees clockwise from North) of the light
@@ -223,21 +230,18 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
         source. Defaults to 45 degrees from horizontal.
 
     cmap : str or :class:`~matplotlib.colors.Colormap` instance
-        String of the name of the colormap, i.e. ``'Greys'``, or a
+        String of the name of the colormap, i.e. 'Greys', or a
         :class:`~matplotlib.colors.Colormap` instance.
 
-    blend_mode : str or callable
+    blend_mode : {'hsv', 'overlay', 'soft', callable}
         The type of blending used to combine the colormapped data values
         with the illumination intensity. For backwards compatibility,
-        this defaults to ``'hsv'``. Note that for most topographic
-        surfaces, ``'overlay'`` or ``'soft'`` appear more visually
+        this defaults to 'hsv'. Note that for most topographic
+        surfaces, 'overlay' or 'soft' appear more visually
         realistic. If a user-defined function is supplied, it is
         expected to combine an MxNx3 RGB array of floats (ranging 0 to
         1) with an MxNx1 hillshade array (also 0 to 1). (Call signature
-        func(rgb, illum, **kwargs))
-
-        Can be ``'hsv'`` or ``'overlay'`` or ``'soft'`` or a callable
-        user-defined function.
+        func(rgb, illum, \*\*kwargs))
 
     contrast : int or float
         Increases or decreases the contrast of the hillshade.
@@ -253,9 +257,9 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
         the elevation coordinate system (e.g. decimal degrees vs meters)
         or to exaggerate or de-emphasize topography.
 
-    origin : str
-        Places the origin at the 'upper' (default)
-        or 'lower' left corner of the plot.
+    origin : {'upper', 'lower'}
+        Places the origin at the 'upper' (default) or 'lower' left
+        corner of the plot.
 
     ax : :class:`~matplotlib.axes.Axes` instance
         Plot to an existing axes. If None, a
@@ -264,14 +268,12 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
         are returned for further manipulation.
 
     colorbar : bool
-        By default, a colorbar is drawn with the plot. If ``colorbar``
+        By default, a colorbar is drawn with the plot. If `colorbar`
         is a string, it is used for the label of the colorbar.
         Otherwise, the colorbar can be omitted by setting to False.
         :class:`~matplotlib.colorbar.Colorbar` instance is returned.
 
-    Note
-    ----
-    *All* grids must have the same extent and origin!
+    .. note:: *All* grids must have the same extent and origin!
     """
 
     if not ax:
@@ -281,14 +283,14 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
     # data
     if vmax is 'max':
         clip = np.nanmax(relief)
-    elif type(vmax) in [float, int]:
+    elif type(vmax) in INT_AND_FLOAT:
         clip = vmax
     else:
         clip = float(vmax) * np.nanstd(relief)
 
     if vmin is 'min':
         vmin = np.nanmin(relief)
-    elif type(vmin) in [int, float]:
+    elif type(vmin) in INT_AND_FLOAT:
         pass
     elif vmin in [None, False]:
         vmin = -clip
@@ -315,6 +317,8 @@ def hillshade_plot(relief, extent, vmax='max', vmin='min',
                     vmin=vmin, vmax=vmax, vert_exag=definition,
                     fraction=contrast)
     ax.imshow(rgba, extent=extent, origin=origin)
+    # make sure no offsets are introduced
+    ax.ticklabel_format(useOffset=False)
 
     if colorbar:
         divider = make_axes_locatable(ax)

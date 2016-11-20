@@ -28,21 +28,27 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
+    # 'sphinx.ext.napoleon',
+    'numpydoc',
     'sphinx.ext.autosummary'
 ]
 
+# numpydoc settings
+numpydoc_show_class_members = False
+
+
 # Napoleon settings
-napoleon_google_docstring = True
-napoleon_numpy_docstring = True
-napoleon_include_private_with_doc = True
-napoleon_include_special_with_doc = False
-napoleon_use_admonition_for_examples = False
-napoleon_use_admonition_for_notes = False
-napoleon_use_admonition_for_references = False
-napoleon_use_ivar = False
-napoleon_use_param = True
-napoleon_use_rtype = False
+# napoleon_google_docstring = True
+# napoleon_numpy_docstring = True
+# napoleon_include_init_with_doc = True
+# napoleon_include_private_with_doc = True
+# napoleon_include_special_with_doc = False
+# napoleon_use_admonition_for_examples = False
+# napoleon_use_admonition_for_notes = False
+# napoleon_use_admonition_for_references = False
+# napoleon_use_ivar = False
+# napoleon_use_param = True
+# napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -132,7 +138,9 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinxdoc'
+# html_theme = 'sphinxdoc'
+html_theme = 'custom_theme'
+html_theme_path = ['.']
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -187,7 +195,9 @@ html_static_path = ['static']
 
 # Custom sidebar templates, maps document names to template names.
 #
-# html_sidebars = {}
+html_sidebars = {
+    '**': ['localtoc.html', 'relations.html', 'sourcelink.html',
+           'searchbox.html']}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

@@ -79,7 +79,7 @@ def png2mp4(outfile, inpath='./', crf=23, pts=1, fps=30, verbose=True):
                "-vcodec libx264 -crf {} -pass 1 -vb 6M "
                "-pix_fmt yuv420p "
                "-vf scale=trunc(iw/2)*2:trunc(ih/2)*2,setpts={}*PTS "
-               "-r {} -an {}").fotmat(inpath, crf, pts, fps, outfile)
+               "-r {} -an {}").format(inpath, crf, pts, fps, outfile)
 
     command = command.split()
 

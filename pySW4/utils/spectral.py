@@ -151,10 +151,8 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
     unwanted effects will be canceled out by one another or averaged by
     several windows.
 
-    Note
-    ----
-    This function is a convinient wrapper for the :func:`numpy.fft`
-    function.
+    .. note:: This function is a convinient wrapper for the
+              :func:`~numpy.fft` function.
 
     Parameters
     ----------
@@ -170,17 +168,17 @@ def fourier_spectrum(data, womean=False, winsize=None, stepsize=None,
         ``womean=True`` will result in a smaller DC.
 
     winsize : int
-        By default ``winsize`` is None, taking the FFT of the entire
-        signal as-is. Otherwise, ``winsize`` sets the size of the
-        sliding window, taking ``winsize`` points of the signal at a
-        time. Works fastest when ``winsize`` is a whole power of 2,
+        By default `winsize` is None, taking the FFT of the entire
+        signal as-is. Otherwise, `winsize` sets the size of the
+        sliding window, taking `winsize` points of the signal at a
+        time. Works fastest when `winsize` is a whole power of 2,
         i.e., 128, 512, 1024, 2048, 4096 etc.
 
     stepsize : int
         The number of points by which the window slides each time.
-        By default, ``stepsize`` is None, making it equal to
-        ``winsize``, no overlap. Setting ``stepsize`` to half
-        ``winsize`` is common practice and will cause a 50% overlap.
+        By default, `stepsize` is None, making it equal to
+        `winsize`, no overlap. Setting `stepsize` to half
+        `winsize` is common practice and will cause a 50% overlap.
 
     delta : float
         The dt from one sample to the next such that 1/delta is the
