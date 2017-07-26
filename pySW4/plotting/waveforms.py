@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 
+import glob
 import os
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
@@ -25,8 +26,8 @@ from ..core.header import SOURCE_TIME_FUNCTION_TYPE
 def create_seismogram_plots(
         config_file, folder=None, stream_observed=None, inventory=None,
         water_level=None, pre_filt=None, filter_kwargs=None,
-        channel_map={"-Vz": "Z", "Vx": "N", "Vy": "E"}, used_stations=None,
-        synthetic_starttime=None):
+        channel_map=None, used_stations=None, synthetic_starttime=None,
+        synthetic_data_glob='*.?v'):
     """
     Create all waveform plots, comparing synthetic and observed data.
 
@@ -68,6 +69,11 @@ def create_seismogram_plots(
     :param synthetic_starttime: Start time of synthetic data, only needed if no
         config file is specified or if config file did not set the correct
         origin time of the event.
+    :type synthetic_data_glob: str
+    :param synthetic_data_glob: Glob pattern to lookup synthetic data. Use e.g.
+        '*.[xyz]' or '*.?' for synthetic data saved as "displacement" (the
+        solution of the forward solver), or '*.?v' for synthetic data saved as
+        "velocity" (the differentiated solution of the forward solver).
     """
     config, folder = _parse_config_file_and_folder(config_file, folder)
 
@@ -81,7 +87,16 @@ def create_seismogram_plots(
     else:
         raise NotImplementedError()
 
-    st_synth = obspy.read(os.path.join(folder, "*.?v"))
+    if channel_map is None:
+        channel_map = {
+            "-Vz": "Z", "Vx": "N", "Vy": "E",
+            "-Z": "Z", "X": "N", "Y": "E"}
+
+    files_synth = glob.glob(os.path.join(folder, synthetic_data_glob))
+    st_synth = obspy.Stream()
+    for file_ in files_synth:
+        st_synth += obspy.read(file_)
+
     st_real = stream_observed or obspy.Stream()
     if used_stations is not None:
         st_synth.traces = [tr for tr in st_synth
@@ -95,6 +110,9 @@ def create_seismogram_plots(
         # seismometer vertical up trace.
         if tr.stats.channel == "Vz":
             tr.stats.channel = "-Vz"
+            tr.data *= -1
+        elif tr.stats.channel == "Z":
+            tr.stats.channel = "-Z"
             tr.data *= -1
     t_min = min([tr.stats.starttime for tr in st_synth])
     t_max = min([tr.stats.endtime for tr in st_synth])
