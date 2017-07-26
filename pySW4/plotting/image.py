@@ -16,6 +16,7 @@ from io import BytesIO
 
 import numpy as np
 import matplotlib.pyplot as plt
+from osgeo import gdal, osr
 try:
     from obspy.imaging.cm import obspy_divergent as cmap_divergent
     from obspy.imaging.cm import obspy_divergent_r as cmap_divergent_r
@@ -29,6 +30,7 @@ except ImportError:
 
 from ..core import read_image
 from ..core.config import _parse_config_file_and_folder
+from ..core.image import Patch, Image
 from .util import set_matplotlib_rc_params
 
 
@@ -210,3 +212,93 @@ def create_image_plots(
                 except Exception as e:
                     msg = ("Failed to create a movie: {}").format(str(e))
                     warnings.warn(msg)
+
+
+def sw4_image_to_geotiff(image, filename, grid_origin, data_scaling=None):
+    """
+    Convert an SW4 image file to geotiff.
+
+    Currently expects an cartesian grid in the image file, without rotation of
+    grid (azimuth and/or geographic transform used in SW4). Currently only
+    works if all patches in the image have the same grid spacing/extent.
+
+    :type image: str or :class:`pySW4.core.image.Image` (or
+        :class:`pySW4.core.image.Patch`)
+    :param image: pySW4 image object to output in geotiff format or filename of
+        SW4 image file.
+    :type filename: str
+    :param filename: Filename for geotiff output.
+    :type grid_origin: (float, float, int)
+    :param grid_origin: Origin of SW4 grid in a meter-based reference
+        coordinate system. Specified as a three-tuple of easting, northing and
+        EPSG code of reference coordinate system (has to be meter-based, like
+        e.g. UTM coordinate systems).
+    :type data_scaling: float
+    :param data_scaling: Scaling factor to apply to data written to geotiff
+        (e.g. to avoid very low numbers in m/s in GIS applications and have
+        data in mm/s instead). Information about the data scaling applied will
+        be written to tif tag TIFFTAG_IMAGEDESCRIPTION.
+    """
+    if isinstance(image, Image):
+        patches = image.patches
+    elif isinstance(image, Patch):
+        patches = [image]
+    else:
+        msg = 'Wrong input type for "image": "{}"'.format(type(image))
+        raise TypeError(msg)
+
+    if not len(grid_origin) == 3:
+        msg = "Input parameter 'grid_origin' has wrong shape."
+        raise TypeError(msg)
+
+    first_patch = patches[0]
+    for patch in patches[1:]:
+        try:
+            assert patch.extent == first_patch.extent
+            assert patch.ni == first_patch.ni
+            assert patch.nj == first_patch.nj
+            assert patch.h == first_patch.h
+        except AssertionError:
+            msg = ("This functionality currently does not support Image "
+                   "objects that contain Patch objects with differing grid "
+                   "spacing/extent/grid points.")
+            raise NotImplementedError(msg)
+
+    grid_spacing = first_patch.h
+    # we need to cast from numpy int to Python builtin int
+    n_sw4_x = int(first_patch.ni)
+    n_sw4_y = int(first_patch.nj)
+    # SW4 X is northing, Y is easting
+    n_easting = n_sw4_y
+    n_northing = n_sw4_x
+    sw4_origin_easting = grid_origin[0]
+    sw4_origin_northing = grid_origin[1]
+    sw4_origin_epsg = grid_origin[2]
+    lower_left_easting = sw4_origin_easting + first_patch.extent[0]
+    lower_left_northing = sw4_origin_northing + first_patch.extent[2]
+
+    driver = gdal.GetDriverByName('GTiff')
+    ds = driver.Create(filename, n_easting, n_northing, 1, gdal.GDT_Float32)
+    srs = osr.SpatialReference()
+    srs.ImportFromEPSG(sw4_origin_epsg)
+    ds.SetProjection(srs.ExportToWkt())
+    gt = [lower_left_easting, grid_spacing, 0,
+          lower_left_northing, 0, grid_spacing]
+    ds.SetGeoTransform(gt)
+    ds.SetMetadataItem(
+        'TIFFTAG_IMAGEDESCRIPTION',
+        'data scaling in sw4_image_to_geotiff: {!s}'.format(data_scaling))
+    ds.FlushCache()
+    for i, patch in enumerate(patches):
+        data = patch.data
+        if data_scaling is not None:
+            data = data * data_scaling
+        outband = ds.GetRasterBand(i + 1)
+        # again, we need to cast from numpy types to Python builtin types
+        outband.SetStatistics(float(data.min()), float(data.max()),
+                              float(np.average(data)), float(np.std(data)))
+        outband.WriteArray(data)
+        # dereference to flush data to disk
+        # https://trac.osgeo.org/gdal/wiki/PythonGotchas
+        outband = None
+    ds = None

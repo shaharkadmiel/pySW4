@@ -239,6 +239,43 @@ class Image(object):
             return None
         return x, y
 
+    def write_geotiff(self, filename, grid_origin, data_scaling=None):
+        """
+        Save SW4 image to disk in geotiff format.
+
+        Currently expects an cartesian grid in the image file, without rotation
+        of grid (azimuth and/or geographic transform used in SW4). Currently
+        only works if all patches in the image have the same grid
+        spacing/extent.
+
+        :type image: :class:`pySW4.core.image.Image` (or
+            :class:`pySW4.core.image.Patch`)
+        :param image: pySW4 image object to output in geotiff format.
+        :type filename: str
+        :param filename: Filename for geotiff output. Suffix '.geotiff' is
+            appended if filename does not end with one of '.tif', '.tiff',
+            '.geotif' or '.geotiff'.
+        :type grid_origin: (float, float, int)
+        :param grid_origin: Origin of SW4 grid in a meter-based reference
+            coordinate system. Specified as a three-tuple of easting, northing
+            and EPSG code of reference coordinate system (has to be
+            meter-based, like e.g. UTM coordinate systems).
+        :type data_scaling: float
+        :param data_scaling: Scaling factor to apply to data written to geotiff
+            (e.g. to avoid very low numbers in m/s in GIS applications and have
+            data in mm/s instead). Information about the data scaling applied
+            will be written to tif tag TIFFTAG_IMAGEDESCRIPTION.
+        """
+        if not any(filename.endswith(suffix)
+                   for suffix in ('.tif', '.tiff', '.geotif', '.geotiff')):
+            filename += '.geotiff'
+            msg = ('No appropriate file suffix detected.. appending '
+                   '".geotiff" to output filename ("{}").').format(filename)
+            warnings.warn(msg)
+        from pySW4.plotting.image import sw4_image_to_geotiff
+        sw4_image_to_geotiff(self, filename, grid_origin,
+                             data_scaling=data_scaling)
+
     def get_source_coordinates(self):
         return self._get_plot_coordinates_from_config("source")
 
