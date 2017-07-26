@@ -3,6 +3,8 @@ from __future__ import absolute_import, print_function, division
 
 import glob
 import os
+import warnings
+
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 import obspy
@@ -163,7 +165,15 @@ def _plot_seismograms(
     for ax in fig.axes:
         id = ax.texts[0].get_text()
         _, sta, _, cha = id.split(".")
-        real_component = channel_map[cha]
+        real_component = channel_map.get(cha)
+        if real_component is None:
+            real_component = cha[-1]
+            msg = ('Synthetic channel could not be mapped to component code '
+                   'of observed data. Using last character of synthetic data '
+                   '("{}") to match observed data component code. Are data '
+                   'already rotated by SW4 through config '
+                   'file settings?').format(real_component)
+            warnings.warn(msg)
         # find appropriate synthetic trace
         for tr_real in st_real_:
             if tr_real.stats.station != sta:
