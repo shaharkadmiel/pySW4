@@ -29,7 +29,7 @@ def create_seismogram_plots(
         config_file, folder=None, stream_observed=None, inventory=None,
         water_level=None, pre_filt=None, filter_kwargs=None,
         channel_map=None, used_stations=None, synthetic_starttime=None,
-        synthetic_data_glob='*.?v'):
+        synthetic_data_glob='*.?v', t0_correction_fraction=0.0):
     """
     Create all waveform plots, comparing synthetic and observed data.
 
@@ -76,6 +76,12 @@ def create_seismogram_plots(
         '*.[xyz]' or '*.?' for synthetic data saved as "displacement" (the
         solution of the forward solver), or '*.?v' for synthetic data saved as
         "velocity" (the differentiated solution of the forward solver).
+    :type t0_correction_fraction: float
+    :param t0_correction_fraction: Fraction of t0 used in SW4 simulation
+        (offset of source time function to prevent solver artifacts) to account
+        for (i.e. shift synthetics left to earlier absolute time). '0.0' means
+        no correction of synthetics time is done, '1.0' means that synthetic
+        trace is shifted left in time by ``t0`` of SW4 run.
     """
     config, folder = _parse_config_file_and_folder(config_file, folder)
 
@@ -98,6 +104,15 @@ def create_seismogram_plots(
     st_synth = obspy.Stream()
     for file_ in files_synth:
         st_synth += obspy.read(file_)
+    if t0_correction_fraction:
+        if len(config.source) > 1:
+            msg = ('t0_correction_fraction is not implemented for SW4 run '
+                   'with multiple sources.')
+            raise NotImplementedError(msg)
+        t0 = config.source[0].t0
+        t0_correction = t0 * t0_correction_fraction
+        for tr in st_synth:
+            tr.stats.starttime -= t0_correction
 
     st_real = stream_observed or obspy.Stream()
     if used_stations is not None:
