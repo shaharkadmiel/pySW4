@@ -158,8 +158,8 @@ def _plot_seismograms(
             continue
         ax.text(0.95, 0.9, tr_real.id, ha="right", va="top", color="r",
                 transform=ax.transAxes)
-        t = date2num([tr_real.stats.starttime + t_ for
-                      t_ in tr_real.times()])
+        t = date2num([(tr_real.stats.starttime + t_).datetime
+                      for t_ in tr_real.times()])
         ax.plot(t, tr_real.data, "r-")
         ax.set_ylabel(unit_label)
     fig.tight_layout()
