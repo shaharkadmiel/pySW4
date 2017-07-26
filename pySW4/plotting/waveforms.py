@@ -29,7 +29,8 @@ def create_seismogram_plots(
         config_file, folder=None, stream_observed=None, inventory=None,
         water_level=None, pre_filt=None, filter_kwargs=None,
         channel_map=None, used_stations=None, synthetic_starttime=None,
-        synthetic_data_glob='*.?v', t0_correction_fraction=0.0):
+        synthetic_data_glob='*.?v', t0_correction_fraction=0.0,
+        synthetic_scaling=False):
     """
     Create all waveform plots, comparing synthetic and observed data.
 
@@ -82,6 +83,11 @@ def create_seismogram_plots(
         for (i.e. shift synthetics left to earlier absolute time). '0.0' means
         no correction of synthetics time is done, '1.0' means that synthetic
         trace is shifted left in time by ``t0`` of SW4 run.
+    :type synthetic_scaling: bool or float
+    :param synthetic_scaling: Scaling to apply to synthetic seismograms. If
+        ``False``, no scaling is applied. If a float is provided, all
+        synthetics' will be scaled with the given factor (e.g. using ``2.0``
+        will scale up synthetics by a factor of 2).
     """
     config, folder = _parse_config_file_and_folder(config_file, folder)
 
@@ -113,6 +119,9 @@ def create_seismogram_plots(
         t0_correction = t0 * t0_correction_fraction
         for tr in st_synth:
             tr.stats.starttime -= t0_correction
+    if synthetic_scaling is not False:
+        for tr in st_synth:
+            tr.data *= synthetic_scaling
 
     st_real = stream_observed or obspy.Stream()
     if used_stations is not None:
