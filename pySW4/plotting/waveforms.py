@@ -30,7 +30,7 @@ def create_seismogram_plots(
         water_level=None, pre_filt=None, filter_kwargs=None,
         channel_map=None, used_stations=None, synthetic_starttime=None,
         synthetic_data_glob='*.?v', t0_correction_fraction=0.0,
-        synthetic_scaling=False):
+        synthetic_scaling=False, verbose=False):
     """
     Create all waveform plots, comparing synthetic and observed data.
 
@@ -101,10 +101,16 @@ def create_seismogram_plots(
     else:
         raise NotImplementedError()
 
+    if verbose:
+        print('Correcting observed seismograms to output "{}" using '
+              'evalresp.'.format(evalresp_output))
+
     if channel_map is None:
         channel_map = {
             "-Vz": "Z", "Vx": "N", "Vy": "E",
             "-Z": "Z", "X": "N", "Y": "E"}
+
+    info_text = ''
 
     files_synth = glob.glob(os.path.join(folder, synthetic_data_glob))
     st_synth = obspy.Stream()
@@ -117,11 +123,18 @@ def create_seismogram_plots(
             raise NotImplementedError(msg)
         t0 = config.source[0].t0
         t0_correction = t0 * t0_correction_fraction
+        info_text += (
+            ' Synthetics start time corrected by {}*t0 '
+            '(-{}s).').format(t0_correction_fraction, t0_correction)
         for tr in st_synth:
             tr.stats.starttime -= t0_correction
     if synthetic_scaling is not False:
+        info_text += (' Synthetics scaled with a factor of {}.').format(
+            synthetic_scaling)
         for tr in st_synth:
             tr.data *= synthetic_scaling
+        if verbose:
+            print('Scaling synthetics by {}'.format(synthetic_scaling))
 
     st_real = stream_observed or obspy.Stream()
     if used_stations is not None:
@@ -150,18 +163,20 @@ def create_seismogram_plots(
     st_real.trim(t_min, t_max)
 
     outfile = os.path.join(folder, "seismograms.png")
-    _plot_seismograms(st_synth, st_real, channel_map, unit_label, outfile)
+    _plot_seismograms(st_synth, st_real, channel_map, unit_label, outfile,
+                      info_text=info_text)
     for station in stations:
         outfile = os.path.join(folder, "seismograms.{}.png".format(station))
         st_synth_ = st_synth.select(station=station)
         st_real_ = st_real.select(station=station)
         _plot_seismograms(
             st_synth_, st_real_, channel_map, unit_label, outfile,
-            figsize=(10, 8))
+            figsize=(10, 8), info_text=info_text)
 
 
 def _plot_seismograms(
-        st_synth_, st_real_, channel_map, unit_label, outfile, figsize=None):
+        st_synth_, st_real_, channel_map, unit_label, outfile, figsize=None,
+        info_text=None):
     """
     Helper function that plots synthetic vs. real data to an image file.
 
@@ -214,6 +229,9 @@ def _plot_seismograms(
                       for t_ in tr_real.times()])
         ax.plot(t, tr_real.data, "r-")
         ax.set_ylabel(unit_label)
+    if info_text:
+        ax.text(0.95, 0.02, info_text, ha="right", va="bottom", color="b",
+                transform=ax.transAxes)
     fig.tight_layout()
     fig.subplots_adjust(left=0.15, hspace=0.0, wspace=0.0)
     fig.savefig(outfile)
