@@ -2,10 +2,14 @@
 from __future__ import absolute_import, print_function, division
 
 import os
+import warnings
+from math import sqrt, pi
+
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 import obspy
-from ..core.config import _parse_config_file_and_folder
+from ..core.config import _parse_config_file_and_folder, read_input_file
 from ..core.header import SOURCE_TIME_FUNCTION_TYPE
 
 
@@ -166,3 +170,50 @@ def _plot_seismograms(
     fig.subplots_adjust(left=0.15, hspace=0.0, wspace=0.0)
     fig.savefig(outfile)
     plt.close(fig)
+
+
+def plot_source_time_function(config_file, t_max=None, time_step=None):
+    """
+    Plot source time function used in SW4 run.
+
+    :type config_file: str
+    :param config_file: Input file for SW4 used in the SW4 run (including
+        absolute or relative path).
+    :type t_max: float
+    :param t_max: Maximum time to plot source time function for. This can
+        be omitted if the SW4 input file specifies the end time of the
+        simulation explicitly (as opposed to specifying the number of time
+        steps run).
+    :type time_step: float
+    :param time_step: Time step used in the simulation. If not known the source
+        time function will simply be plotted sampled at arbitrary sampling
+        points in time (i.e. the general shape can be inspected, but not the
+        actual shape at the sampling points used in the SW4 run).
+    """
+    config = read_input_file(config_file)
+
+    t_max = config.time[0].get('t')
+    if t_max is None:
+        t_max = 20
+        msg = ('No information of maximum time to use, using 20 seconds '
+               'as default.')
+        warnings.warn(msg)
+
+    if time_step is None:
+        t = np.linspace(0, t_max, 1000)
+    else:
+        t = np.arange(0, t_max, time_step)
+
+    for i, source in enumerate(config.source):
+        if source.type == 'Gaussian':
+            omega = source.freq
+            y = omega * np.exp(
+                -(omega ** 2) * ((t - source.t0) ** 2) / 2.0) / (sqrt(2 * pi))
+        else:
+            msg = 'Source time function type "{}" not yet implemented.'
+            raise NotImplementedError(msg.format(source.type))
+        fig, ax = plt.subplots()
+        ax.plot(t, y)
+        ax.set_title('Source #{:d}, Type: {}, Freq: {}, t0: {}'.format(
+            i+1, source.type, source.freq, source.t0))
+    plt.show()
