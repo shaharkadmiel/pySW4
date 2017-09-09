@@ -1,0 +1,14 @@
+@import url("sphinxdoc.css"); /* make sure to sync this with the base theme's css filename */
+
+th {
+    hyphens: none;
+    background-color: whitesmoke;
+}
+
+body {
+    margin: 0px 10px 0px 10px;
+}
+
+p.rubric {
+    background-color: #afc1c4;
+}
