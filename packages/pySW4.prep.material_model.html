@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.prep.material_model module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.prep.material_model module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.prep package" href="pySW4.prep.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.prep.rfileIO module" href="pySW4.prep.rfileIO.html" />
     <link rel="prev" title="pySW4.prep package" href="pySW4.prep.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.prep.html" title="pySW4.prep package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.prep.material_model.txt"
+      <li><a href="../_sources/packages/pySW4.prep.material_model.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -110,11 +111,15 @@ GNU Lesser General Public License, Version 3
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the Vfile.</li>
-<li><strong>calculate_missing_data</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If <code class="docutils literal"><span class="pre">True</span></code> (default), any missing data is calculated based on
-Brocher (2008).</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the Vfile.</p>
+</div></blockquote>
+<p><strong>calculate_missing_data</strong> : bool</p>
+<blockquote class="last">
+<div><p>If <code class="docutils literal"><span class="pre">True</span></code> (default), any missing data is calculated based on
+Brocher (2008).</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -136,21 +141,20 @@ the requested property.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>values</strong> (<em>sequence or int or float</em>) &#8211; The property for which to evaluate the depth of.</li>
-<li><strong>property</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <p>One of:</p>
-<ul>
-<li><code class="docutils literal"><span class="pre">'vp'</span></code> (default)</li>
-<li><code class="docutils literal"><span class="pre">'vs'</span></code></li>
-<li><code class="docutils literal"><span class="pre">'rho'</span></code></li>
-<li><code class="docutils literal"><span class="pre">'qp'</span></code></li>
-<li><code class="docutils literal"><span class="pre">'qs'</span></code></li>
-</ul>
-</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>values</strong> : sequence or int or float</p>
+<blockquote>
+<div><p>The property for which to evaluate the depth of.</p>
+</div></blockquote>
+<p><strong>property</strong> : {&#8216;vp&#8217; (default), &#8216;vs&#8217;, &#8216;rho, &#8216;qp&#8217;, &#8216;qs&#8217;}</p>
+<blockquote>
+<div><p>Property corresponding to <cite>value</cite>.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>sequence or float</em> &#8211; Depth of the requested property.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">sequence or float</p>
+<blockquote class="last">
+<div><p>Depth of the requested property.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -169,18 +173,24 @@ that uses the nearest value or on a linear interpolation.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>depth</strong> (<em>sequence or int or float</em>) &#8211; Depths at which to evaluate the properties.</li>
-<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; <p>Interpolation method:</p>
-<ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>depth</strong> : sequence or int or float</p>
+<blockquote>
+<div><p>Depths at which to evaluate the properties.</p>
+</div></blockquote>
+<p><strong>k</strong> : int</p>
+<blockquote>
+<div><p>Interpolation method:</p>
+<ul class="simple">
 <li>0 - nearest value (default)</li>
 <li>1 - linear interpolation between data points</li>
 </ul>
-</li>
-</ul>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>vp, vs, rho, qp, qs</em></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array-like</p>
+<blockquote class="last">
+<div><p>vp, vs, rho, qp, qs</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -213,9 +223,17 @@ and
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qs</strong> (<em>float or sequence</em>) &#8211; Shear-wave Quality Factor.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>qs</strong> : float or sequence</p>
+<blockquote>
+<div><p>Shear-wave Quality Factor.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>float or sequence</em> &#8211; Pressure-wave Quality Factor.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float or sequence</p>
+<blockquote class="last">
+<div><p>Pressure-wave Quality Factor.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
@@ -227,16 +245,24 @@ and
 <dd><p>Calculate Shear-wave Quality Factor based on Brocher (2008).</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If Shear-wave velocity is less-than 0.3 km/s, Shear-wave Quality
-Factor is set to 13.</p>
+<p class="last">If Shear-wave velocity is less-than 0.3 km/s, Shear-wave
+Quality Factor is set to 13.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vs</strong> (<em>float or sequence</em>) &#8211; Shear-wave velocity in km/s.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>vs</strong> : float or sequence</p>
+<blockquote>
+<div><p>Shear-wave velocity in km/s.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>float or sequence</em> &#8211; Shear-wave Quality Factor.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float or sequence</p>
+<blockquote class="last">
+<div><p>Shear-wave Quality Factor.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
@@ -250,9 +276,17 @@ Factor is set to 13.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vp</strong> (<em>float or sequence</em>) &#8211; Pressure-wave velocity in km/s.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>vp</strong> : float or sequence</p>
+<blockquote>
+<div><p>Pressure-wave velocity in km/s.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>float or sequence</em> &#8211; <span class="math">\(\rho\)</span> (density) in gr/cm^3.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float or sequence</p>
+<blockquote class="last">
+<div><p><span class="math">\(\rho\)</span> (density) in gr/cm^3.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
@@ -263,30 +297,38 @@ Factor is set to 13.</p>
 <code class="descname">get_vmin</code><span class="sig-paren">(</span><em>h</em>, <em>fmax</em>, <em>ppw=8</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/material_model.html#get_vmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.material_model.get_vmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the minimum allowed velocity that meets the requirement
 that the shortest wavelength (<span class="math">\(\lambda=V_{min}/f_{max}\)</span>) be
-sampled by a minimum points-per-wavelength (<code class="docutils literal"><span class="pre">ppw</span></code>).</p>
+sampled by a minimum points-per-wavelength (<cite>ppw</cite>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>h</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Grid spacing of the computational doamin in meters.</li>
-<li><strong>fmax</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Maximum frequency in the source-time function frequency content,
-Hz.</li>
-<li><strong>ppw</strong> &#8211; Minimum points-per-wavelenght required for the computation. Set
-to 8 by default.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>h</strong> : float</p>
+<blockquote>
+<div><p>Grid spacing of the computational doamin in meters.</p>
+</div></blockquote>
+<p><strong>fmax</strong> : float</p>
+<blockquote>
+<div><p>Maximum frequency in the source-time function frequency content,
+Hz.</p>
+</div></blockquote>
+<p><strong>ppw :</strong></p>
+<blockquote>
+<div><p>Minimum points-per-wavelenght required for the computation. Set
+to 8 by default.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>float</em> &#8211; The suggested grid spacing in meters.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
+<blockquote class="last">
+<div><p>The suggested grid spacing in meters.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#pySW4.prep.material_model.grid_spacing" title="pySW4.prep.material_model.grid_spacing"><code class="xref py py-func docutils literal"><span class="pre">grid_spacing()</span></code></a>,
-<a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.source_frequency" title="pySW4.prep.source.source_frequency"><code class="xref py py-func docutils literal"><span class="pre">source_frequency()</span></code></a>,
-<a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.f_max" title="pySW4.prep.source.f_max"><code class="xref py py-func docutils literal"><span class="pre">f_max()</span></code></a>,</p>
+<p class="last"><a class="reference internal" href="#pySW4.prep.material_model.grid_spacing" title="pySW4.prep.material_model.grid_spacing"><code class="xref py py-obj docutils literal"><span class="pre">grid_spacing</span></code></a>, <a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.source_frequency" title="pySW4.prep.source.source_frequency"><code class="xref py py-obj docutils literal"><span class="pre">source_frequency</span></code></a>, <a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.f_max" title="pySW4.prep.source.f_max"><code class="xref py py-obj docutils literal"><span class="pre">f_max</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -294,13 +336,25 @@ to 8 by default.</li>
 <dt id="pySW4.prep.material_model.get_vs">
 <code class="descname">get_vs</code><span class="sig-paren">(</span><em>vp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/material_model.html#get_vs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.material_model.get_vs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate Shear-wave velocity based on Brocher (2008).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Shear-wave velocity is forced to be greater than <span class="math">\(V_S&gt;V_P / \sqrt{2}\)</span>.</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vp</strong> (<em>float or sequence</em>) &#8211; Pressure-wave velocity in km/s.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>vp</strong> : float or sequence</p>
+<blockquote>
+<div><p>Pressure-wave velocity in km/s.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>float or sequence</em> &#8211; Shear-wave velocity in km/s.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float or sequence</p>
+<blockquote class="last">
+<div><p>Shear-wave velocity in km/s.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
@@ -317,25 +371,33 @@ points-per-wavelength (<code class="docutils literal"><span class="pre">ppw</spa
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Minimum seismic velocity in the computational doamin in m/s.</li>
-<li><strong>fmax</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Maximum frequency in the source-time function frequency content,
-Hz.</li>
-<li><strong>ppw</strong> &#8211; Minimum points-per-wavelenght required for the computation. Set
-to 8 by default.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>vmin</strong> : float</p>
+<blockquote>
+<div><p>Minimum seismic velocity in the computational doamin in m/s.</p>
+</div></blockquote>
+<p><strong>fmax</strong> : float</p>
+<blockquote>
+<div><p>Maximum frequency in the source-time function frequency content,
+Hz.</p>
+</div></blockquote>
+<p><strong>ppw :</strong></p>
+<blockquote>
+<div><p>Minimum points-per-wavelenght required for the computation. Set
+to 8 by default.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>float</em> &#8211; The suggested grid spacing in meters.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
+<blockquote class="last">
+<div><p>The suggested grid spacing in meters.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal"><span class="pre">vmin()</span></code>,
-<a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.source_frequency" title="pySW4.prep.source.source_frequency"><code class="xref py py-func docutils literal"><span class="pre">source_frequency()</span></code></a>,
-<a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.f_max" title="pySW4.prep.source.f_max"><code class="xref py py-func docutils literal"><span class="pre">f_max()</span></code></a>,</p>
+<p class="last"><a class="reference internal" href="#pySW4.prep.material_model.get_vmin" title="pySW4.prep.material_model.get_vmin"><code class="xref py py-obj docutils literal"><span class="pre">get_vmin</span></code></a>, <a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.source_frequency" title="pySW4.prep.source.source_frequency"><code class="xref py py-obj docutils literal"><span class="pre">source_frequency</span></code></a>, <a class="reference internal" href="pySW4.prep.source.html#pySW4.prep.source.f_max" title="pySW4.prep.source.f_max"><code class="xref py py-obj docutils literal"><span class="pre">f_max</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -349,7 +411,7 @@ line has <em>Depth</em>, <em>Vp</em>, <em>Vs</em>, <em>rho</em>, <em>Qp</em>, <e
 values and ends with a line containing one word &#8216;end&#8217;. The values
 in each line are &#8220;true&#8221; to that specific depth-point.</p>
 <p><strong>Example Vfile:</strong></p>
-<div class="highlight-default"><div class="highlight"><pre><span class="c1"># Just a simple made up velocity model</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Just a simple made up velocity model</span>
 <span class="c1"># Shani-Kadmiel (2016)</span>
 <span class="c1"># Depth| Vp    | Vs    | rho   | Qp    | Qs    | Grp/Form./Mbr.</span>
 <span class="c1">#   m  | m/s   | m/s   | kg/m^3|</span>
@@ -363,15 +425,23 @@ in each line are &#8220;true&#8221; to that specific depth-point.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the Vfile.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the Vfile.</p>
+</div></blockquote>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>sequence</em> &#8211; A list of header, depth, vp, vs, rho, qp, qs, gmf values.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array-like</p>
+<blockquote class="last">
+<div><p>A list of header, depth, vp, vs, rho, qp, qs, gmf values.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#pySW4.prep.material_model.V_model" title="pySW4.prep.material_model.V_model"><code class="xref py py-class docutils literal"><span class="pre">V_model</span></code></a></p>
+<p class="last"><a class="reference internal" href="#pySW4.prep.material_model.V_model" title="pySW4.prep.material_model.V_model"><code class="xref py py-obj docutils literal"><span class="pre">V_model</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -398,14 +468,14 @@ in each line are &#8220;true&#8221; to that specific depth-point.</p>
         <li class="right" >
           <a href="pySW4.prep.html" title="pySW4.prep package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

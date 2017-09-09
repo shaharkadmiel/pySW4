@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.sw4_metadata module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pySW4 Tutorials" href="tutorials.html" />
+    <link rel="prev" title="pySW4.headers module" href="pySW4.headers.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorials.html" title="pySW4 Tutorials"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.headers.html" title="pySW4.headers module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">pySW4 Library Reference</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pySW4.headers.html"
+                        title="previous chapter">pySW4.headers module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorials.html"
+                        title="next chapter">pySW4 Tutorials</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/packages/pySW4.sw4_metadata.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pySW4.sw4_metadata">
+<span id="pysw4-sw4-metadata-module"></span><h1>pySW4.sw4_metadata module<a class="headerlink" href="#module-pySW4.sw4_metadata" title="Permalink to this headline">¶</a></h1>
+<p>Parsing routines for SW4 input and output files and directories.</p>
+<span class="target" id="module-sw4_metadata"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body"><p class="first last">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="pySW4.sw4_metadata.Inputfile">
+<em class="property">class </em><code class="descname">Inputfile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#Inputfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.util.attribdict.AttribDict</span></code></a></p>
+<p>A container for the simulation metadata parsed from the SW4
+inputfile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">AttribDict</span></code></a></p>
+<blockquote class="last">
+<div><p>Path (relative or absolute) of an SW4 input file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Inputfile._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Inputfile._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Inputfile._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 178</em><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Inputfile._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pySW4.sw4_metadata.Inputfile.get_Proj4">
+<code class="descname">get_Proj4</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#Inputfile.get_Proj4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile.get_Proj4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the <code class="docutils literal"><span class="pre">grid</span></code> line and figure out if a Proj4 projection
+was used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pySW4.sw4_metadata.Inputfile.get_coordinates">
+<code class="descname">get_coordinates</code><span class="sig-paren">(</span><em>key</em>, <em>xi=None</em>, <em>elev=None</em>, <em>plane=0</em>, <em>coordinate=0</em>, <em>distance=inf</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#Inputfile.get_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata.Inputfile.get_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets coordinates for input keys that have 3D coordinates:</p>
+<p><strong>Catersian grid coordinates:</strong></p>
+<p><cite>x</cite>, <cite>y</cite>, <cite>z</cite> (or <cite>depth</cite>)</p>
+<p>or in -</p>
+<p><strong>Geographical coordinates:</strong></p>
+<p><cite>lon</cite>, <cite>lat</cite>, <cite>depth</cite> (or <cite>z</cite>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : str</p>
+<blockquote>
+<div><p>Keyword to look for.</p>
+</div></blockquote>
+<p><strong>xi</strong> : array-like</p>
+<blockquote>
+<div><p><cite>x</cite> coordinate along the cross-section</p>
+</div></blockquote>
+<p><strong>elev</strong> : array-like</p>
+<blockquote>
+<div><p>Elevation of the top surface. Same size as <cite>xi</cite>.
+Used to correct the returned y-plotting coordinate if
+<cite>depth</cite> is encounterd.</p>
+</div></blockquote>
+<p><strong>plane</strong> : int</p>
+<blockquote>
+<div><p>Indicates cross-section (<code class="docutils literal"><span class="pre">0</span></code> or <code class="docutils literal"><span class="pre">1</span></code>) or map (<code class="docutils literal"><span class="pre">2</span></code>).</p>
+</div></blockquote>
+<p><strong>coordinate</strong> : float</p>
+<blockquote>
+<div><p>Plane coordinate.</p>
+</div></blockquote>
+<p><strong>distance</strong> : float</p>
+<blockquote>
+<div><p>Threshold distance from the plane coordinate to include. By
+default everything is included but this can cause too many
+symbols to be plotted obscuring the image.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2-sequence</p>
+<blockquote class="last">
+<div><p>x- and y-plotting coordinates.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_coordinates</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>for easy plotting with <a class="reference internal" href="pySW4.postp.image.html#pySW4.postp.image.Image.plot" title="pySW4.postp.image.Image.plot"><code class="xref py py-meth docutils literal"><span class="pre">plot()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pySW4.sw4_metadata.Outputfile">
+<em class="property">class </em><code class="descname">Outputfile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#Outputfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata.Outputfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.util.attribdict.AttribDict</span></code></a></p>
+<p>A container for simulation metadata parsed from the SW4 STDOUT
+saved to a file.</p>
+<p><strong>The keywords the parser looks for are:</strong></p>
+<ul class="simple">
+<li>&#8216;Grid&#8217; - Information about the grid discretization.</li>
+<li>&#8216;Receiver INFO&#8217; - Cartesian (x, y, z) coordinates of recievers placed with geographical (lon, lat, z or depth) coordinates.</li>
+<li>&#8216;Geographic and Cartesian&#8217; - corners of the computational grid.</li>
+<li>&#8216;Start Time&#8217; - of the simulation.</li>
+<li>&#8216;Goal Time&#8217; - time to simulate.</li>
+<li>&#8216;Number of time steps&#8217; - steps to compute.</li>
+<li>&#8216;dt&#8217; - size of each time step</li>
+<li>&#8216;Total seismic moment&#8217; - sum of all sources in the simulation.</li>
+<li>&#8216;Moment magnitude&#8217; - Moment magnitude based on <span class="math">\(M_0\)</span> .</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">AttribDict</span></code></a></p>
+<blockquote class="last">
+<div><p>Path (relative or absolute) of an SW4 input file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Outputfile._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#pySW4.sw4_metadata.Outputfile._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Outputfile._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#pySW4.sw4_metadata.Outputfile._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Outputfile._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 178</em><a class="headerlink" href="#pySW4.sw4_metadata.Outputfile._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pySW4.sw4_metadata.Outputfile._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#pySW4.sw4_metadata.Outputfile._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.sw4_metadata._decode_string_value">
+<code class="descname">_decode_string_value</code><span class="sig-paren">(</span><em>string_item</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#_decode_string_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata._decode_string_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts string representations of int/float to the
+corresponding Python type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>string_item: str</strong></p>
+<blockquote>
+<div><p>Configuration value from SW4 input file in its string
+representation.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">int or float or str</p>
+<blockquote class="last">
+<div><p>Configuration value from SW4 input file as the correct
+Python type (bool values specified as <code class="docutils literal"><span class="pre">0</span></code> or <code class="docutils literal"><span class="pre">1</span></code> in SW4
+input file will still be of <code class="docutils literal"><span class="pre">int</span></code> type).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.sw4_metadata._parse_input_file_and_folder">
+<code class="descname">_parse_input_file_and_folder</code><span class="sig-paren">(</span><em>input_file=None</em>, <em>folder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#_parse_input_file_and_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata._parse_input_file_and_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to unify input location (or <cite>None</cite>) and output
+folder to work on.</p>
+<p>Use cases (in order of preference):</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">input_file=&quot;/path/to/input&quot;,</span> <span class="pre">folder=None</span></code>:
+input file is used for metadata and location of output folder</li>
+<li><code class="docutils literal"><span class="pre">input_file=&quot;/path/to/input&quot;,</span> <span class="pre">folder=&quot;/path/to/output&quot;</span></code>:
+input file is used for metadata, folder location is specified
+separately (make sure to not mismatch).</li>
+<li><code class="docutils literal"><span class="pre">input_file=None,</span> <span class="pre">folder=&quot;/path/to/output&quot;</span></code>:
+Do not use metadata from input (station locations etc. will not
+show up in plots) and only use output files from specified
+location.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.sw4_metadata.read_metadata">
+<code class="descname">read_metadata</code><span class="sig-paren">(</span><em>inputfile</em>, <em>outputfile</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/sw4_metadata.html#read_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.sw4_metadata.read_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to read both SW4 input and output files at once.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorials.html" title="pySW4 Tutorials"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pySW4.headers.html" title="pySW4.headers module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

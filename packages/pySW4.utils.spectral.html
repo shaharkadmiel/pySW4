@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.utils.spectral module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.utils.spectral module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.utils package" href="pySW4.utils.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.utils.utils module" href="pySW4.utils.utils.html" />
     <link rel="prev" title="pySW4.utils.geo module" href="pySW4.utils.geo.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.utils.geo.html" title="pySW4.utils.geo module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.utils.html" accesskey="U">pySW4.utils package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.utils.html" accesskey="U">pySW4.utils package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.utils.spectral.txt"
+      <li><a href="../_sources/packages/pySW4.utils.spectral.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -132,43 +133,60 @@ unwanted effects will be canceled out by one another or averaged by
 several windows.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This function is a convinient wrapper for the <code class="xref py py-func docutils literal"><span class="pre">numpy.fft()</span></code>
-function.</p>
+<p class="last">This function is a convinient wrapper for the
+<code class="xref py py-func docutils literal"><span class="pre">fft()</span></code> function.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance) &#8211; If a sequence (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) of time-history values
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance</p>
+<blockquote>
+<div><p>If a sequence (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) of time-history values
 is passed <code class="docutils literal"><span class="pre">delta</span></code> must be supplied as well. Otherwise pass an
-<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance.</li>
-<li><strong>womean</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Remove the mean of the signal before performing the transform.
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance.</p>
+</div></blockquote>
+<p><strong>womean</strong> : bool</p>
+<blockquote>
+<div><p>Remove the mean of the signal before performing the transform.
 Default is False, transform as is. In cases where there is a
 shift in the signal such that the baseline is not zero, setting
-<code class="docutils literal"><span class="pre">womean=True</span></code> will result in a smaller DC.</li>
-<li><strong>winsize</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; By default <code class="docutils literal"><span class="pre">winsize</span></code> is None, taking the FFT of the entire
-signal as-is. Otherwise, <code class="docutils literal"><span class="pre">winsize</span></code> sets the size of the
-sliding window, taking <code class="docutils literal"><span class="pre">winsize</span></code> points of the signal at a
-time. Works fastest when <code class="docutils literal"><span class="pre">winsize</span></code> is a whole power of 2,
-i.e., 128, 512, 1024, 2048, 4096 etc.</li>
-<li><strong>stepsize</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of points by which the window slides each time.
-By default, <code class="docutils literal"><span class="pre">stepsize</span></code> is None, making it equal to
-<code class="docutils literal"><span class="pre">winsize</span></code>, no overlap. Setting <code class="docutils literal"><span class="pre">stepsize</span></code> to half
-<code class="docutils literal"><span class="pre">winsize</span></code> is common practice and will cause a 50% overlap.</li>
-<li><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The dt from one sample to the next such that 1/delta is the
-sampling rate.</li>
-<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; If set to <code class="docutils literal"><span class="pre">True</span></code> some information about the process is
-printed.</li>
-</ul>
+<code class="docutils literal"><span class="pre">womean=True</span></code> will result in a smaller DC.</p>
+</div></blockquote>
+<p><strong>winsize</strong> : int</p>
+<blockquote>
+<div><p>By default <cite>winsize</cite> is None, taking the FFT of the entire
+signal as-is. Otherwise, <cite>winsize</cite> sets the size of the
+sliding window, taking <cite>winsize</cite> points of the signal at a
+time. Works fastest when <cite>winsize</cite> is a whole power of 2,
+i.e., 128, 512, 1024, 2048, 4096 etc.</p>
+</div></blockquote>
+<p><strong>stepsize</strong> : int</p>
+<blockquote>
+<div><p>The number of points by which the window slides each time.
+By default, <cite>stepsize</cite> is None, making it equal to
+<cite>winsize</cite>, no overlap. Setting <cite>stepsize</cite> to half
+<cite>winsize</cite> is common practice and will cause a 50% overlap.</p>
+</div></blockquote>
+<p><strong>delta</strong> : float</p>
+<blockquote>
+<div><p>The dt from one sample to the next such that 1/delta is the
+sampling rate.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>If set to <code class="docutils literal"><span class="pre">True</span></code> some information about the process is
+printed.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> &#8211;</p>
-<ul class="simple">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><ul class="simple">
 <li>frequency array and</li>
 <li>amplitude array</li>
 </ul>
-</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -183,7 +201,7 @@ printed.</li>
 <dl class="function">
 <dt id="pySW4.utils.spectral.psde">
 <code class="descname">psde</code><span class="sig-paren">(</span><em>data</em>, <em>womean=False</em>, <em>winsize='default'</em>, <em>stepsize=None</em>, <em>delta=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/spectral.html#psde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.spectral.psde" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for <a class="reference external" href="http://matplotlib.org/api/mlab_api.html#matplotlib.mlab.psd" title="(in Matplotlib v1.5.3)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.mlab.psd()</span></code></a> for conveniently estimating
+<dd><p>Wrapper for <a class="reference external" href="http://matplotlib.org/api/mlab_api.html#matplotlib.mlab.psd" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.mlab.psd()</span></code></a> for conveniently estimating
 the power spectral density of a signal.</p>
 <p>See <a class="reference internal" href="#pySW4.utils.spectral.fourier_spectrum" title="pySW4.utils.spectral.fourier_spectrum"><code class="xref py py-func docutils literal"><span class="pre">fourier_spectrum()</span></code></a> documentation for
 keyword argument explanation and rational.</p>
@@ -191,10 +209,13 @@ keyword argument explanation and rational.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> &#8211;<ul class="simple">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><ul class="simple">
 <li>frequency array and</li>
 <li>amplitude array</li>
 </ul>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -224,14 +245,14 @@ keyword argument explanation and rational.</p>
         <li class="right" >
           <a href="pySW4.utils.geo.html" title="pySW4.utils.geo module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.utils.html" >pySW4.utils package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.utils.html" >pySW4.utils package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

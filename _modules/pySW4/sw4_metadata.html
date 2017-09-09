@@ -1,0 +1,530 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pySW4.sw4_metadata &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pySW4.sw4_metadata</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Parsing routines for SW4 input and output files and directories.</span>
+
+<span class="sd">.. module:: sw4_metadata</span>
+
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)</span>
+
+<span class="sd">    Omry Volk (omryv@post.bgu.ac.il)</span>
+
+<span class="sd">    Tobias Megies (megies@geophysik.uni-muenchen.de)</span>
+
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)</span>
+
+<span class="sd">    Omry Volk (omryv@post.bgu.ac.il)</span>
+
+<span class="sd">    Tobias Megies (megies@geophysik.uni-muenchen.de)</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">obspy.core.util</span> <span class="k">import</span> <span class="n">AttribDict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">nearest_values</span><span class="p">,</span> <span class="n">geographic2cartesian</span>
+
+
+<div class="viewcode-block" id="Inputfile"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata.Inputfile">[docs]</a><span class="k">class</span> <span class="nc">Inputfile</span><span class="p">(</span><span class="n">AttribDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container for the simulation metadata parsed from the SW4</span>
+<span class="sd">    inputfile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str or :class:`~obspy.core.util.attribdict.AttribDict`</span>
+<span class="sd">        Path (relative or absolute) of an SW4 input file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">input_</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+                    <span class="c1"># get rid of comments</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">input_category</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="p">[])</span>
+                    <span class="n">input_item</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">input_item</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_decode_string_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">input_category</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">input_</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Inputfile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_Proj4</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Inputfile.get_Proj4"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata.Inputfile.get_Proj4">[docs]</a>    <span class="k">def</span> <span class="nf">get_Proj4</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the ``grid`` line and figure out if a Proj4 projection</span>
+<span class="sd">        was used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">proj_dict</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;proj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;proj&#39;</span><span class="p">]</span>
+            <span class="n">proj</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># warn(&#39;No proj found... setting to ``utm``.&#39;)</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;proj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;utm&#39;</span>
+            <span class="n">proj</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;ellps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;ellps&#39;</span><span class="p">]</span>
+            <span class="n">ellps</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;datum&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="c1"># warn(&#39;No ellps found, but datum was....&#39;)</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># warn(&#39;No ellps found... setting to ``WGS84``.&#39;)</span>
+                <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;ellps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;WGS84&#39;</span>
+            <span class="n">ellps</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;datum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;datum&#39;</span><span class="p">]</span>
+            <span class="n">datum</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># warn(&#39;No datum found... &#39;</span>
+            <span class="c1">#      &#39;setting to ``{}``.&#39;.format(proj_dict[&#39;ellps&#39;]))</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;datum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;ellps&#39;</span><span class="p">]</span>
+            <span class="n">datum</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lon_p&#39;</span><span class="p">]</span>
+            <span class="n">lon_p</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># warn(&#39;No lon_p found... &#39;</span>
+            <span class="c1">#      &#39;setting to ``{}``.&#39;.format(self.grid[0][&#39;lon&#39;]))</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+            <span class="n">lon_p</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;lat_0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lat_p&#39;</span><span class="p">]</span>
+            <span class="n">lat_p</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># warn(&#39;No lat_p found... &#39;</span>
+            <span class="c1">#      &#39;setting to ``{}``.&#39;.format(self.grid[0][&#39;lat&#39;]))</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;lat_0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+            <span class="n">lat_p</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proj_dict</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># warn(&#39;No scale found... setting to ``None``.&#39;)</span>
+            <span class="c1"># proj_dict[&#39;scale&#39;] = self.grid[0][&#39;lat&#39;]</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">proj</span> <span class="ow">or</span> <span class="n">ellps</span> <span class="ow">or</span> <span class="n">datum</span> <span class="ow">or</span> <span class="n">lon_p</span> <span class="ow">or</span> <span class="n">lat_p</span> <span class="ow">or</span> <span class="n">scale</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_proj4</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="n">proj_dict</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_proj4</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Inputfile.get_coordinates"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata.Inputfile.get_coordinates">[docs]</a>    <span class="k">def</span> <span class="nf">get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elev</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">plane</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">coordinate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">distance</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets coordinates for input keys that have 3D coordinates:</span>
+
+<span class="sd">        **Catersian grid coordinates:**</span>
+
+<span class="sd">        `x`, `y`, `z` (or `depth`)</span>
+
+<span class="sd">        or in -</span>
+
+<span class="sd">        **Geographical coordinates:**</span>
+
+<span class="sd">        `lon`, `lat`, `depth` (or `z`)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key : str</span>
+<span class="sd">            Keyword to look for.</span>
+
+<span class="sd">        xi : array-like</span>
+<span class="sd">            `x` coordinate along the cross-section</span>
+
+<span class="sd">        elev : array-like</span>
+<span class="sd">            Elevation of the top surface. Same size as `xi`.</span>
+<span class="sd">            Used to correct the returned y-plotting coordinate if</span>
+<span class="sd">            `depth` is encounterd.</span>
+
+<span class="sd">        plane : int</span>
+<span class="sd">            Indicates cross-section (``0`` or ``1``) or map (``2``).</span>
+
+<span class="sd">        coordinate : float</span>
+<span class="sd">            Plane coordinate.</span>
+
+<span class="sd">        distance : float</span>
+<span class="sd">            Threshold distance from the plane coordinate to include. By</span>
+<span class="sd">            default everything is included but this can cause too many</span>
+<span class="sd">            symbols to be plotted obscuring the image.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        2-sequence</span>
+<span class="sd">            x- and y-plotting coordinates.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; get_coordinates(&#39;source&#39;)</span>
+
+<span class="sd">        for easy plotting with :meth:`~pySW4.postp.image.Image.plot`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">x_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">y_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">y</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">z_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">z</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="n">z_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">depth</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="c1"># warn(&#39;NotImplementedError: &#39; + msg.format(key, item))</span>
+                <span class="c1"># continue</span>
+                <span class="n">x_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">lon</span>
+                <span class="n">y_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">lat</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">z_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">z</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="n">z_</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">depth</span>
+
+                <span class="c1"># geographical ===&gt; cartesian coordinates</span>
+                <span class="n">x_</span><span class="p">,</span> <span class="n">y_</span> <span class="o">=</span> <span class="n">geographic2cartesian</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span><span class="p">,</span> <span class="n">lon0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                    <span class="n">az</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">az</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">x_</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">y_</span><span class="p">,</span>
+                    <span class="n">m_per_lat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mlat&#39;</span><span class="p">,</span> <span class="mf">111319.5</span><span class="p">),</span>
+                    <span class="n">m_per_lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mlon&#39;</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x_</span><span class="p">]</span>
+                <span class="n">y</span> <span class="o">+=</span> <span class="p">[</span><span class="n">y_</span><span class="p">]</span>
+                <span class="n">z</span> <span class="o">+=</span> <span class="p">[</span><span class="n">z_</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">UnboundLocalError</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plane</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">nearest</span> <span class="o">=</span> <span class="n">nearest_values</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">nearest</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">nearest</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">z_cor</span> <span class="o">=</span> <span class="n">elev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">return</span> <span class="n">xi</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">z_cor</span>
+        <span class="k">elif</span> <span class="n">plane</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">nearest</span> <span class="o">=</span> <span class="n">nearest_values</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">nearest</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">nearest</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">z_cor</span> <span class="o">=</span> <span class="n">elev</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">return</span> <span class="n">xi</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">z_cor</span>
+        <span class="k">elif</span> <span class="n">plane</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">nearest</span> <span class="o">=</span> <span class="n">nearest_values</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">nearest</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">nearest</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="n">nearest</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span></div></div>
+
+
+<div class="viewcode-block" id="Outputfile"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata.Outputfile">[docs]</a><span class="k">class</span> <span class="nc">Outputfile</span><span class="p">(</span><span class="n">AttribDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container for simulation metadata parsed from the SW4 STDOUT</span>
+<span class="sd">    saved to a file.</span>
+
+<span class="sd">    **The keywords the parser looks for are:**</span>
+
+<span class="sd">    - &#39;Grid&#39; - Information about the grid discretization.</span>
+<span class="sd">    - &#39;Receiver INFO&#39; - Cartesian (x, y, z) coordinates of recievers placed with geographical (lon, lat, z or depth) coordinates.</span>
+<span class="sd">    - &#39;Geographic and Cartesian&#39; - corners of the computational grid.</span>
+<span class="sd">    - &#39;Start Time&#39; - of the simulation.</span>
+<span class="sd">    - &#39;Goal Time&#39; - time to simulate.</span>
+<span class="sd">    - &#39;Number of time steps&#39; - steps to compute.</span>
+<span class="sd">    - &#39;dt&#39; - size of each time step</span>
+<span class="sd">    - &#39;Total seismic moment&#39; - sum of all sources in the simulation.</span>
+<span class="sd">    - &#39;Moment magnitude&#39; - Moment magnitude based on :math:`M_0` .</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str or :class:`~obspy.core.util.attribdict.AttribDict`</span>
+<span class="sd">        Path (relative or absolute) of an SW4 input file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">output_</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">()</span>
+
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">reciever</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;reciever&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">corners</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;corners&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+            <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="s1">&#39;reading input file&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">read_input_file_phase</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                        <span class="s1">&#39;reading input file&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="s1">&#39;start up phase&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">start_up_phase</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;start up phase&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="s1">&#39;solver phase&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">solver_phase</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;solver phase&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Grid&#39;</span><span class="p">):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">keys</span> <span class="o">=</span> <span class="n">line</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">):</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">AttribDict</span><span class="p">(</span>
+                                    <span class="p">{</span><span class="s1">&#39;points&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))}))</span>
+                            <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                            <span class="n">grid_i</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">()</span>
+                            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+                                <span class="n">grid_i</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid_i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Receiver INFO&#39;</span><span class="p">):</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;nearest&#39;</span><span class="p">):</span>
+                            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">5</span><span class="p">:</span><span class="mi">8</span><span class="p">]]</span>
+                            <span class="n">station</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">(</span>
+                                <span class="p">{</span><span class="s1">&#39;station&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="p">})</span>
+                            <span class="n">reciever</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">station</span><span class="p">)</span>
+                            <span class="k">break</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Geographic and Cartesian&#39;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                        <span class="n">number</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+                        <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">lon</span>
+                        <span class="n">corner</span> <span class="o">=</span> <span class="n">AttribDict</span><span class="p">({</span><span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="n">number</span><span class="p">})</span>
+                        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+                            <span class="n">corner</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                        <span class="n">corners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">corner</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Start Time&#39;</span><span class="p">):</span>
+                    <span class="n">start_time</span><span class="p">,</span> <span class="n">goal_time</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Goal Time =&#39;</span><span class="p">)</span>
+
+                    <span class="n">output_</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">start_time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">goal_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">goal_time</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Number of time steps&#39;</span><span class="p">):</span>
+                    <span class="n">npts</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;dt:&#39;</span><span class="p">)</span>
+
+                    <span class="n">output_</span><span class="o">.</span><span class="n">npts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">npts</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Total seismic moment&#39;</span><span class="p">):</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">M0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">4</span><span class="p">])</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Moment magnitude&#39;</span><span class="p">):</span>
+                    <span class="n">output_</span><span class="o">.</span><span class="n">Mw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Outputfile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">output_</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_metadata"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata.read_metadata">[docs]</a><span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">outputfile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to read both SW4 input and output files at once.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Inputfile</span><span class="p">(</span><span class="n">inputfile</span><span class="p">),</span> <span class="n">Outputfile</span><span class="p">(</span><span class="n">outputfile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_decode_string_value"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata._decode_string_value">[docs]</a><span class="k">def</span> <span class="nf">_decode_string_value</span><span class="p">(</span><span class="n">string_item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts string representations of int/float to the</span>
+<span class="sd">    corresponding Python type.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string_item: str</span>
+<span class="sd">        Configuration value from SW4 input file in its string</span>
+<span class="sd">        representation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int or float or str</span>
+<span class="sd">        Configuration value from SW4 input file as the correct</span>
+<span class="sd">        Python type (bool values specified as ``0`` or ``1`` in SW4</span>
+<span class="sd">        input file will still be of ``int`` type).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">string_item</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">string_item</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">string_item</span></div>
+
+
+<div class="viewcode-block" id="_parse_input_file_and_folder"><a class="viewcode-back" href="../../packages/pySW4.sw4_metadata.html#pySW4.sw4_metadata._parse_input_file_and_folder">[docs]</a><span class="k">def</span> <span class="nf">_parse_input_file_and_folder</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to unify input location (or `None`) and output</span>
+<span class="sd">    folder to work on.</span>
+
+<span class="sd">    Use cases (in order of preference):</span>
+
+<span class="sd">     * ``input_file=&quot;/path/to/input&quot;, folder=None``:</span>
+<span class="sd">       input file is used for metadata and location of output folder</span>
+<span class="sd">     * ``input_file=&quot;/path/to/input&quot;, folder=&quot;/path/to/output&quot;``:</span>
+<span class="sd">       input file is used for metadata, folder location is specified</span>
+<span class="sd">       separately (make sure to not mismatch).</span>
+<span class="sd">     * ``input_file=None, folder=&quot;/path/to/output&quot;``:</span>
+<span class="sd">       Do not use metadata from input (station locations etc. will not</span>
+<span class="sd">       show up in plots) and only use output files from specified</span>
+<span class="sd">       location.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;At least one of `input_file` or `folder` has to be &quot;</span>
+               <span class="s2">&quot;specified.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="n">input_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
+        <span class="n">input_</span> <span class="o">=</span> <span class="n">parse_input_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">input_</span><span class="p">:</span>
+        <span class="n">folder_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_folder</span><span class="p">,</span> <span class="n">input_</span><span class="o">.</span><span class="n">fileio</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">folder</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">!=</span> <span class="n">folder_</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Both `input` and `folder` option specified. Overriding &quot;</span>
+                   <span class="s2">&quot;folder found in input file (</span><span class="si">{}</span><span class="s2">) with user specified &quot;</span>
+                   <span class="s2">&quot;folder (</span><span class="si">{}</span><span class="s2">).&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder_</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">folder</span> <span class="o">=</span> <span class="n">folder_</span>
+    <span class="k">return</span> <span class="n">input_</span><span class="p">,</span> <span class="n">folder</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

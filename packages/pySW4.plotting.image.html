@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.plotting.image module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.plotting.image module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.plotting package" href="pySW4.plotting.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.plotting.png2mp4 module" href="pySW4.plotting.png2mp4.html" />
     <link rel="prev" title="pySW4.plotting.hillshade module" href="pySW4.plotting.hillshade.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.plotting.hillshade.html" title="pySW4.plotting.hillshade module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.plotting.image.txt"
+      <li><a href="../_sources/packages/pySW4.plotting.image.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -119,22 +120,37 @@ automatic determination of source time function type, etc...)</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_file</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename (potentially with absolute/relative path) of SW4 input
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>input_file</strong> : str</p>
+<blockquote>
+<div><p>Filename (potentially with absolute/relative path) of SW4 input
 file used to control the simulation. Use <code class="docutils literal"><span class="pre">None</span></code> to work on
-folder with SW4 output without using metadata from input file.</li>
-<li><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Folder with SW4 output files or <code class="docutils literal"><span class="pre">None</span></code> if output folder
+folder with SW4 output without using metadata from input file.</p>
+</div></blockquote>
+<p><strong>folder</strong> : str</p>
+<blockquote>
+<div><p>Folder with SW4 output files or <code class="docutils literal"><span class="pre">None</span></code> if output folder
 location can be used from input file. Only needed when no
 input file is specified or if output folder was moved to a
-different location after the simulation.</li>
-<li><strong>stf</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <code class="docutils literal"><span class="pre">'displacement'</span></code> or <code class="docutils literal"><span class="pre">'velocity'</span></code>.</li>
-<li><strong>frames_per_second</strong> (<em>int or float</em>) &#8211; Image frames to show per second in output videos.</li>
-<li><strong>cmap</strong> (str or <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a>) &#8211; Matplotlib colormap or colormap string understood by matplotlib.</li>
-<li><strong>movies</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Whether to produce movies from image files present at different
-cycles of the simulation. Needs <a href="#id1"><span class="problematic" id="id2">`ffmpeg`_</span></a> to be installed and
-callable on command line.</li>
-<li><strong>_ffmpeg</strong> (<em>.</em>) &#8211; <a class="reference external" href="https://ffmpeg.org/">https://ffmpeg.org/</a></li>
-</ul>
+different location after the simulation.</p>
+</div></blockquote>
+<p><strong>stf</strong> : str</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">'displacement'</span></code> or <code class="docutils literal"><span class="pre">'velocity'</span></code>.</p>
+</div></blockquote>
+<p><strong>frames_per_second</strong> : int or float</p>
+<blockquote>
+<div><p>Image frames to show per second in output videos.</p>
+</div></blockquote>
+<p><strong>cmap</strong> : str or <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
+<blockquote>
+<div><p>Matplotlib colormap or colormap string understood by matplotlib.</p>
+</div></blockquote>
+<p><strong>movies</strong> : bool</p>
+<blockquote class="last">
+<div><p>Whether to produce movies from image files present at different
+cycles of the simulation. Needs <a class="reference external" href="https://ffmpeg.org/">ffmpeg</a>
+to be installed and callable on command line.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -149,11 +165,15 @@ callable on command line.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_filenames</strong> (<em>str or list</em>) &#8211; Wildcarded filename pattern or list of individual filenames.</li>
-<li><strong>output_filename</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Output movie filename (&#8216;.mp4&#8217; extension will be appended if not
-already present).</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>input_filenames</strong> : str or list</p>
+<blockquote>
+<div><p>Wildcarded filename pattern or list of individual filenames.</p>
+</div></blockquote>
+<p><strong>output_filename</strong> : str</p>
+<blockquote class="last">
+<div><p>Output movie filename (&#8216;.mp4&#8217; extension will be appended if not
+already present).</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -183,14 +203,14 @@ already present).</li>
         <li class="right" >
           <a href="pySW4.plotting.hillshade.html" title="pySW4.plotting.hillshade module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

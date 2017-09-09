@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.prep.stations module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.prep.stations module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.prep package" href="pySW4.prep.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.utils package" href="pySW4.utils.html" />
     <link rel="prev" title="pySW4.prep.source module" href="pySW4.prep.source.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.prep.source.html" title="pySW4.prep.source module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.prep.stations.txt"
+      <li><a href="../_sources/packages/pySW4.prep.stations.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -104,9 +105,67 @@ GNU Lesser General Public License, Version 3
 <dl class="function">
 <dt id="pySW4.prep.stations._append2infile">
 <code class="descname">_append2infile</code><span class="sig-paren">(</span><em>infile</em>, <em>name</em>, <em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/stations.html#_append2infile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.stations._append2infile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function. Copy an existing SW4 input file, add <code class="docutils literal"><span class="pre">'name'</span></code>
+<dd><p>Helper function. Copy an existing SW4 input file, add <cite>name</cite>
 to the filename, open the new file in append mode and write the
 string to the end of the file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.prep.stations.inventory2station_locations">
+<code class="descname">inventory2station_locations</code><span class="sig-paren">(</span><em>inv</em>, <em>mode='displacement'</em>, <em>writeEvery=100</em>, <em>name='st'</em>, <em>nsew=0</em>, <em>fmt='%.3f'</em>, <em>infile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/stations.html#inventory2station_locations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.stations.inventory2station_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Place stations to record synthetics at specific locations.</p>
+<p>Extracts station locations from an
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a> object and
+generate an SW4 inputfile string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>inv</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a></p>
+<blockquote>
+<div><p>Path to a StationXML file or an
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a> object.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<blockquote>
+<div><p>Mode of the recorded motions.</p>
+</div></blockquote>
+<p><strong>writeEvery</strong> : int</p>
+<blockquote>
+<div><p>Cycle interval to write the data to disk.</p>
+</div></blockquote>
+<p><strong>nsew</strong> : int</p>
+<blockquote>
+<div><p>The components of the station:</p>
+<ul class="simple">
+<li>0 - x, y, z (default), or</li>
+<li>1 - East, North, Vertical</li>
+</ul>
+</div></blockquote>
+<p><strong>fmt</strong> : str</p>
+<blockquote>
+<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+</div></blockquote>
+<p><strong>infile</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
+added to a copy of the specified file and saved with the string
+<cite>name</cite> appended to the <cite>infile</cite> name.
+(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+<p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
+be copied manually to an input file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
+<blockquote class="last">
+<div><p>Filename of the newly saved inputfile or a formatted string that
+can be copied manually to an SW4 inputfile.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -115,48 +174,74 @@ string to the end of the file.</p>
 <dd><p>Place stations to record synthetics on a line.</p>
 <p>Corners of the array can be given in -</p>
 <p><strong>Catersian grid coordinates:</strong></p>
-<p><code class="docutils literal"><span class="pre">x1</span></code>, <code class="docutils literal"><span class="pre">y1</span></code>, <code class="docutils literal"><span class="pre">x2</span></code>, <code class="docutils literal"><span class="pre">y2</span></code></p>
+<p><cite>x1</cite>, <cite>y1</cite>, <cite>x2</cite>, <cite>y2</cite></p>
 <p>or in -</p>
 <p><strong>Geographical coordinates:</strong></p>
-<p><code class="docutils literal"><span class="pre">lon1</span></code>, <code class="docutils literal"><span class="pre">lat1</span></code>, <code class="docutils literal"><span class="pre">lon2</span></code>, <code class="docutils literal"><span class="pre">lat2</span></code></p>
+<p><cite>lon1</cite>, <cite>lat1</cite>, <cite>lon2</cite>, <cite>lat2</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Depth of the stations in the array.</li>
-<li><strong>number_of_stations</strong> (<em>int or tuple or None</em>) &#8211; If <em>int</em>, number of stations is the same in both directions. To
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>depth</strong> : float</p>
+<blockquote>
+<div><p>Depth of the stations in the array.</p>
+</div></blockquote>
+<p><strong>number_of_stations</strong> : int or tuple or None</p>
+<blockquote>
+<div><p>If <cite>int</cite>, number of stations is the same in both directions. To
 set a different number of stations in each direction provide a
-<em>tuple</em>. If <code class="docutils literal"><span class="pre">None</span></code>, the <code class="docutils literal"><span class="pre">spacing</span></code> argument is expected.</li>
-<li><strong>spacing</strong> (<em>float or tuple or None</em>) &#8211; <p>If <em>float</em>, spacing between stations is taken to be the same in
+<cite>tuple</cite>. If <code class="docutils literal"><span class="pre">None</span></code>, the <cite>spacing</cite> argument is expected.</p>
+</div></blockquote>
+<p><strong>spacing</strong> : float or tuple or None</p>
+<blockquote>
+<div><p>If <cite>float</cite>, spacing between stations is taken to be the same in
 both directions. To set different spacing in each direction
-provide a <em>tuple</em>. If <code class="docutils literal"><span class="pre">None</span></code>, the <code class="docutils literal"><span class="pre">number_of_stations</span></code>
+provide a <cite>tuple</cite>. If <code class="docutils literal"><span class="pre">None</span></code>, the <cite>number_of_stations</cite>
 argument is expected.</p>
-<p><code class="docutils literal"><span class="pre">spacing</span></code> must be given in meters if Cartesian grid
+<p><cite>spacing</cite> must be given in meters if Cartesian grid
 coordinates are used or in decimal degrees if Geographical
 coordinates are used.</p>
-</li>
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Prefix name of the sac file name.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; &#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;,
-or &#8216;strains&#8217;.</li>
-<li><strong>writeEvery</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Cycle interval to write the data to disk.</li>
-<li><strong>nsew</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; <p>The components of the station:</p>
-<ul>
+</div></blockquote>
+<p><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Prefix name of the sac file name.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<blockquote>
+<div><p>Mode of the recorded motions.</p>
+</div></blockquote>
+<p><strong>writeEvery</strong> : int</p>
+<blockquote>
+<div><p>Cycle interval to write the data to disk.</p>
+</div></blockquote>
+<p><strong>nsew</strong> : int</p>
+<blockquote>
+<div><p>The components of the station:</p>
+<ul class="simple">
 <li>0 - x, y, z (default), or</li>
 <li>1 - East, North, Vertical</li>
 </ul>
-</li>
-<li><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Format of the coordinates, default is &#8216;%.3f&#8217;.</li>
-<li><strong>infile</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the SW4 inputfile. Stations are
+</div></blockquote>
+<p><strong>fmt</strong> : str</p>
+<blockquote>
+<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+</div></blockquote>
+<p><strong>infile</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
-<code class="docutils literal"><span class="pre">'name'</span></code> where <code class="docutils literal"><span class="pre">name</span></code> is &#8216;array&#8217; (by default). If set to
-<code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then be
-copied manually to an input file.</li>
-</ul>
+<cite>name</cite> appended to the <cite>infile</cite> name.
+(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+<p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
+be copied manually to an input file.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211; Filename of the newly saved inputfile or a formatted string that
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
+<blockquote class="last">
+<div><p>Filename of the newly saved inputfile or a formatted string that
 can be copied manually to an SW4 inputfile.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -169,38 +254,59 @@ can be copied manually to an SW4 inputfile.</p>
 <dd><p>Place stations to record synthetics on a line.</p>
 <p>Start- and end-point can be given in -</p>
 <p><strong>Catersian grid coordinates:</strong></p>
-<p><code class="docutils literal"><span class="pre">x1</span></code>, <code class="docutils literal"><span class="pre">y1</span></code>, <code class="docutils literal"><span class="pre">depth1</span></code>, <code class="docutils literal"><span class="pre">x2</span></code>, <code class="docutils literal"><span class="pre">y2</span></code>, <code class="docutils literal"><span class="pre">depth2</span></code></p>
+<p><cite>x1</cite>, <cite>y1</cite>, <cite>depth1</cite>, <cite>x2</cite>, <cite>y2</cite>, <cite>depth2</cite></p>
 <p>or in -</p>
 <p><strong>Geographical coordinates:</strong></p>
-<p><code class="docutils literal"><span class="pre">lon1</span></code>, <code class="docutils literal"><span class="pre">lat1</span></code>, <code class="docutils literal"><span class="pre">depth1</span></code>, <code class="docutils literal"><span class="pre">lon2</span></code>, <code class="docutils literal"><span class="pre">lat2</span></code>, <code class="docutils literal"><span class="pre">depth2</span></code></p>
+<p><cite>lon1</cite>, <cite>lat1</cite>, <cite>depth1</cite>, <cite>lon2</cite>, <cite>lat2</cite>, <cite>depth2</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>number_of_stations</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Number of stations to place on the line (defaults to 3 - one at
-each end and another one in the middle).</li>
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Prefix name of the sac file name.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; &#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;,
-or &#8216;strains&#8217;.</li>
-<li><strong>writeEvery</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Cycle interval to write the data to disk.</li>
-<li><strong>nsew</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; <p>The components of the station:</p>
-<ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>number_of_stations</strong> : int</p>
+<blockquote>
+<div><p>Number of stations to place on the line (defaults to 3 - one at
+each end and another one in the middle).</p>
+</div></blockquote>
+<p><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Prefix name of the sac file name.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<blockquote>
+<div><p>Mode of the recorded motions.</p>
+</div></blockquote>
+<p><strong>writeEvery</strong> : int</p>
+<blockquote>
+<div><p>Cycle interval to write the data to disk.</p>
+</div></blockquote>
+<p><strong>nsew</strong> : int</p>
+<blockquote>
+<div><p>The components of the station:</p>
+<ul class="simple">
 <li>0 - x, y, z (default), or</li>
 <li>1 - East, North, Vertical</li>
 </ul>
-</li>
-<li><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Format of the coordinates, default is &#8216;%.3f&#8217;.</li>
-<li><strong>infile</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the SW4 inputfile. Stations are
+</div></blockquote>
+<p><strong>fmt</strong> : str</p>
+<blockquote>
+<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+</div></blockquote>
+<p><strong>infile</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
-<code class="docutils literal"><span class="pre">'name'</span></code> where <code class="docutils literal"><span class="pre">name</span></code> is &#8216;line&#8217; (by default). If set to
-<code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then be
-copied manually to an input file.</li>
-</ul>
+<cite>name</cite> appended to the <cite>infile</cite> name.
+(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+<p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
+be copied manually to an input file.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211; Filename of the newly saved inputfile or a formatted string that
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
+<blockquote class="last">
+<div><p>Filename of the newly saved inputfile or a formatted string that
 can be copied manually to an SW4 inputfile.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -211,38 +317,59 @@ can be copied manually to an SW4 inputfile.</p>
 <dt id="pySW4.prep.stations.station_location">
 <code class="descname">station_location</code><span class="sig-paren">(</span><em>x=None</em>, <em>y=None</em>, <em>lat=None</em>, <em>lon=None</em>, <em>depth=0</em>, <em>name='st'</em>, <em>mode='displacement'</em>, <em>writeEvery=100</em>, <em>nsew=0</em>, <em>fmt='%.3f'</em>, <em>infile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/stations.html#station_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.stations.station_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Place stations to record synthetics at specific locations.</p>
+<p>Can handle a single station or a list of stations. If several
+stations are passes, <cite>x, y</cite> (or <cite>lat, lon</cite>), and <cite>name</cite> must
+be the same length.</p>
 <p>Locations may be given in -</p>
 <p><strong>Catersian grid coordinates:</strong></p>
-<p><code class="docutils literal"><span class="pre">x</span></code>, <code class="docutils literal"><span class="pre">y</span></code>, <code class="docutils literal"><span class="pre">depth</span></code></p>
+<p><cite>x</cite>, <cite>y</cite>, <cite>depth</cite></p>
 <p>or in -</p>
 <p><strong>Geographical coordinates:</strong></p>
-<p><code class="docutils literal"><span class="pre">lon</span></code>, <code class="docutils literal"><span class="pre">lat</span></code>, <code class="docutils literal"><span class="pre">depth</span></code></p>
+<p><cite>lon</cite>, <cite>lat</cite>, <cite>depth</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Prefix name of the sac file name.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; &#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;,
-or &#8216;strains&#8217;.</li>
-<li><strong>writeEvery</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Cycle interval to write the data to disk.</li>
-<li><strong>nsew</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; <p>The components of the station:</p>
-<ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Prefix name of the sac file name.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<blockquote>
+<div><p>Mode of the recorded motions.</p>
+</div></blockquote>
+<p><strong>writeEvery</strong> : int</p>
+<blockquote>
+<div><p>Cycle interval to write the data to disk.</p>
+</div></blockquote>
+<p><strong>nsew</strong> : int</p>
+<blockquote>
+<div><p>The components of the station:</p>
+<ul class="simple">
 <li>0 - x, y, z (default), or</li>
 <li>1 - East, North, Vertical</li>
 </ul>
-</li>
-<li><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Format of the coordinates, default is &#8216;%.3f&#8217;.</li>
-<li><strong>infile</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path (relative or absolute) to the SW4 inputfile. Stations are
+</div></blockquote>
+<p><strong>fmt</strong> : str</p>
+<blockquote>
+<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+</div></blockquote>
+<p><strong>infile</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
-<code class="docutils literal"><span class="pre">'name'</span></code> where <code class="docutils literal"><span class="pre">name</span></code> is &#8216;st&#8217; (by default). If set to
-<code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then be
-copied manually to an input file.</li>
-</ul>
+<cite>name</cite> appended to the <cite>infile</cite> name.
+(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+<p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
+be copied manually to an input file.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211; Filename of the newly saved inputfile or a formatted string that
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
+<blockquote class="last">
+<div><p>Filename of the newly saved inputfile or a formatted string that
 can be copied manually to an SW4 inputfile.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -272,14 +399,14 @@ can be copied manually to an SW4 inputfile.</p>
         <li class="right" >
           <a href="pySW4.prep.source.html" title="pySW4.prep.source module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

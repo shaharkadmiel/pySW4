@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.prep.source module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.prep.source module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.prep package" href="pySW4.prep.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.prep.stations module" href="pySW4.prep.stations.html" />
     <link rel="prev" title="pySW4.prep.rfileIO module" href="pySW4.prep.rfileIO.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.prep.rfileIO.html" title="pySW4.prep.rfileIO module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.prep.source.txt"
+      <li><a href="../_sources/packages/pySW4.prep.source.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,29 +118,37 @@ GNU Lesser General Public License, Version 3
 <code class="descname">f_max</code><span class="sig-paren">(</span><em>vmin</em>, <em>h</em>, <em>ppw=8</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/source.html#f_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.source.f_max" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the maximum resolved frequency that meets the requirement
 that the shortest wavelength (<span class="math">\(\lambda=V_{min}/f_{max}\)</span>) be
-sampled by a minimum points-per-wavelength (<code class="docutils literal"><span class="pre">ppw</span></code>).</p>
+sampled by a minimum points-per-wavelength (<cite>ppw</cite>).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Minimum seismic velocity in the computational doamin in m/s.</li>
-<li><strong>h</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Grid spacing of the computational doamin in meters.</li>
-<li><strong>ppw</strong> &#8211; Minimum points-per-wavelenght required for the computation. Set
-to 8 by default.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>vmin</strong> : float</p>
+<blockquote>
+<div><p>Minimum seismic velocity in the computational doamin in m/s.</p>
+</div></blockquote>
+<p><strong>h</strong> : float</p>
+<blockquote>
+<div><p>Grid spacing of the computational doamin in meters.</p>
+</div></blockquote>
+<p><strong>ppw :</strong></p>
+<blockquote>
+<div><p>Minimum points-per-wavelenght required for the computation. Set
+to 8 by default.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>float</em> &#8211; The suggested <code class="docutils literal"><span class="pre">fmax</span></code> in Hz.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
+<blockquote class="last">
+<div><p>The suggested <code class="docutils literal"><span class="pre">fmax</span></code> in Hz.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="pySW4.prep.material_model.html#pySW4.prep.material_model.grid_spacing" title="pySW4.prep.material_model.grid_spacing"><code class="xref py py-func docutils literal"><span class="pre">grid_spacing()</span></code></a>,
-<a class="reference internal" href="pySW4.prep.material_model.html#pySW4.prep.material_model.get_vmin" title="pySW4.prep.material_model.get_vmin"><code class="xref py py-func docutils literal"><span class="pre">get_vmin()</span></code></a>,
-<a class="reference internal" href="#pySW4.prep.source.source_frequency" title="pySW4.prep.source.source_frequency"><code class="xref py py-func docutils literal"><span class="pre">source_frequency()</span></code></a>,</p>
+<p class="last"><a class="reference internal" href="pySW4.prep.material_model.html#pySW4.prep.material_model.grid_spacing" title="pySW4.prep.material_model.grid_spacing"><code class="xref py py-obj docutils literal"><span class="pre">grid_spacing</span></code></a>, <a class="reference internal" href="pySW4.prep.material_model.html#pySW4.prep.material_model.get_vmin" title="pySW4.prep.material_model.get_vmin"><code class="xref py py-obj docutils literal"><span class="pre">get_vmin</span></code></a>, <a class="reference internal" href="#pySW4.prep.source.source_frequency" title="pySW4.prep.source.source_frequency"><code class="xref py py-obj docutils literal"><span class="pre">source_frequency</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -158,20 +167,27 @@ on the source line in the SW4 inputfile.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fmax</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Maximum frequency in the source-time function frequency content,
-Hz.</li>
-<li><strong>stf</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <p>Source-time function name. It can have the following values:
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fmax</strong> : float</p>
+<blockquote>
+<div><p>Maximum frequency in the source-time function frequency content,
+Hz.</p>
+</div></blockquote>
+<p><strong>stf</strong> : str</p>
+<blockquote>
+<div><p>Source-time function name. It can have the following values:
 &#8216;GaussianInt&#8217;, &#8216;Gaussian&#8217; (<strong>default</strong>), &#8216;RickerInt&#8217;, &#8216;Ricker&#8217;,
 &#8216;Ramp&#8217;, &#8216;Triangle&#8217;, &#8216;Sawtooth&#8217;, &#8216;Smoothwave&#8217;, &#8216;VerySmoothBump&#8217;,
 &#8216;Brune&#8217;, &#8216;BruneSmoothed&#8217;, &#8216;GaussianWindow&#8217;, &#8216;Liu&#8217;, &#8216;Dirac&#8217;, and
 &#8216;C6SmoothBump&#8217;.</p>
-<p>See the <a class="reference external" href="https://geodynamics.org/cig/software/sw4/">SW4 User Guide</a> for further details.</p>
-</li>
-<li><strong>Returns</strong> &#8211; </li>
-<li><strong>2-tuple</strong> &#8211; <code class="docutils literal"><span class="pre">f0</span></code>, <code class="docutils literal"><span class="pre">freq</span></code>. <code class="docutils literal"><span class="pre">freq</span></code> is the value which goes on the source
-line in the SW4 inputfile.</li>
-</ul>
+<p>See the <a class="reference external" href="https://geodynamics.org/cig/software/sw4/">SW4 User Guide</a> for further
+details.</p>
+</div></blockquote>
+<p><strong>Returns:</strong></p>
+<p><strong>2-tuple</strong></p>
+<blockquote class="last">
+<div><p><code class="docutils literal"><span class="pre">f0</span></code>, <code class="docutils literal"><span class="pre">freq</span></code>. <code class="docutils literal"><span class="pre">freq</span></code> is the value which goes on the source
+line in the SW4 inputfile.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -187,13 +203,20 @@ inputfile.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>freq</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The angular frequency value used for the <code class="docutils literal"><span class="pre">freq</span></code> attribute on
-the source line in the SW4 inputfile.</li>
-<li><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The calculated <code class="docutils literal"><span class="pre">t0</span></code> is added to the supllied <code class="docutils literal"><span class="pre">t0</span></code> in the
-function call.</li>
-<li><strong>stf</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The source-time function name.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freq</strong> : float</p>
+<blockquote>
+<div><p>The angular frequency value used for the <code class="docutils literal"><span class="pre">freq</span></code> attribute on
+the source line in the SW4 inputfile.</p>
+</div></blockquote>
+<p><strong>t0</strong> : float</p>
+<blockquote>
+<div><p>The calculated <code class="docutils literal"><span class="pre">t0</span></code> is added to the supllied <cite>t0</cite> in the
+function call.</p>
+</div></blockquote>
+<p><strong>stf</strong> : str</p>
+<blockquote class="last">
+<div><p>The source-time function name.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -223,14 +246,14 @@ function call.</li>
         <li class="right" >
           <a href="pySW4.prep.rfileIO.html" title="pySW4.prep.rfileIO module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.plotting.waveforms module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.plotting.waveforms module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.plotting package" href="pySW4.plotting.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.postp package" href="pySW4.postp.html" />
     <link rel="prev" title="pySW4.plotting.utils module" href="pySW4.plotting.utils.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.plotting.utils.html" title="pySW4.plotting.utils module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.plotting.waveforms.txt"
+      <li><a href="../_sources/packages/pySW4.plotting.waveforms.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -108,7 +109,7 @@ GNU Lesser General Public License, Version 3
 </tbody>
 </table>
 <p class="rubric">SW4 uses a right handed coordinate system</p>
-<div class="highlight-default"><div class="highlight"><pre>     X
+<div class="highlight-default"><div class="highlight"><pre><span></span>     X
    ⋰
  ⋰
 o-------&gt;Y
@@ -132,16 +133,32 @@ Z
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>st_synth</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a>) &#8211; Synthetic waveform data.</li>
-<li><strong>st_real</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a>) &#8211; Observed waveform data.</li>
-<li><strong>channel_map</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Mapping dictionary to match synthetic channel to component in
-observed data.</li>
-<li><strong>unit_label</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Label string for y-axis of waveforms.</li>
-<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Output filename (absolute or relative path) for image including
-suffix (e.g. png).</li>
-<li><strong>figsize</strong> (<em>2-tuple of floats</em>) &#8211; Matplotlib figure size (inches x/y).</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>st_synth</strong> : <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a></p>
+<blockquote>
+<div><p>Synthetic waveform data.</p>
+</div></blockquote>
+<p><strong>st_real</strong> : <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a></p>
+<blockquote>
+<div><p>Observed waveform data.</p>
+</div></blockquote>
+<p><strong>channel_map</strong> : dict</p>
+<blockquote>
+<div><p>Mapping dictionary to match synthetic channel to component in
+observed data.</p>
+</div></blockquote>
+<p><strong>unit_label</strong> : str</p>
+<blockquote>
+<div><p>Label string for y-axis of waveforms.</p>
+</div></blockquote>
+<p><strong>outfile</strong> : str</p>
+<blockquote>
+<div><p>Output filename (absolute or relative path) for image including
+suffix (e.g. png).</p>
+</div></blockquote>
+<p><strong>figsize</strong> : 2-tuple of floats</p>
+<blockquote class="last">
+<div><p>Matplotlib figure size (inches x/y).</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -160,31 +177,59 @@ parameters to get to physical units.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_file</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename (potentially with absolute/relative path) of SW4 input
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>input_file</strong> : str</p>
+<blockquote>
+<div><p>Filename (potentially with absolute/relative path) of SW4 input
 file used to control the simulation. Use <code class="docutils literal"><span class="pre">None</span></code> to work on
-folder with SW4 output without using metadata from input file.</li>
-<li><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Folder with SW4 output files or <code class="docutils literal"><span class="pre">None</span></code> if output folder
+folder with SW4 output without using metadata from input file.</p>
+</div></blockquote>
+<p><strong>folder</strong> : str</p>
+<blockquote>
+<div><p>Folder with SW4 output files or <code class="docutils literal"><span class="pre">None</span></code> if output folder
 location can be used from input file. Only needed when no input
 file is specified or if output folder was moved to a different
-location after the simulation.</li>
-<li><strong>stream_observed</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a>) &#8211; Observed/real data to compare with synthetics.</li>
-<li><strong>inventory</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.inventory.inventory.Inventory</span></code></a>) &#8211; Station metadata for observed/real data.</li>
-<li><strong>water_level</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Water level for instrument response removal (see
-<code class="xref py py-meth docutils literal"><span class="pre">obspy.core.trace.remove_response()</span></code>).</li>
-<li><strong>pre_filt</strong> (<em>4-tuple of float</em>) &#8211; Frequency domain pre-filtering in response removal (see
-<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.remove_response.html#obspy.core.trace.Trace.remove_response" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">obspy.core.trace.Trace.remove_response()</span></code></a>).</li>
-<li><strong>filter_kwargs</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Filter parameters for filtering applied to observed data after
+location after the simulation.</p>
+</div></blockquote>
+<p><strong>stream_observed</strong> : <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a></p>
+<blockquote>
+<div><p>Observed/real data to compare with synthetics.</p>
+</div></blockquote>
+<p><strong>inventory</strong> : <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.inventory.inventory.Inventory</span></code></a></p>
+<blockquote>
+<div><p>Station metadata for observed/real data.</p>
+</div></blockquote>
+<p><strong>water_level</strong> : float</p>
+<blockquote>
+<div><p>Water level for instrument response removal (see
+<code class="xref py py-meth docutils literal"><span class="pre">obspy.core.trace.remove_response()</span></code>).</p>
+</div></blockquote>
+<p><strong>pre_filt</strong> : 4-tuple of float</p>
+<blockquote>
+<div><p>Frequency domain pre-filtering in response removal (see
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.remove_response.html#obspy.core.trace.Trace.remove_response" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">obspy.core.trace.Trace.remove_response()</span></code></a>).</p>
+</div></blockquote>
+<p><strong>filter_kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Filter parameters for filtering applied to observed data after
 response removal before comparison to synthetic data. <code class="docutils literal"><span class="pre">kwargs</span></code>
-are passed on to <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.filter.html#obspy.core.stream.Stream.filter" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">obspy.core.stream.Stream.filter()</span></code></a>.</li>
-<li><strong>channel_map</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Mapping dictionary to match synthetic channel to component in
-observed data.</li>
-<li><strong>used_stations</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; Station codes to consider in plot output. Use all stations if
-left <code class="docutils literal"><span class="pre">None</span></code>.</li>
-<li><strong>synthetic_starttime</strong> (<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.utcdatetime.UTCDateTime.html#obspy.core.utcdatetime.UTCDateTime" title="(in ObsPy Documentation (1.0.2) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.utcdatetime.UTCDateTime</span></code></a>) &#8211; Start time of synthetic data, only needed if no input file is
+are passed on to <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.filter.html#obspy.core.stream.Stream.filter" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">obspy.core.stream.Stream.filter()</span></code></a>.</p>
+</div></blockquote>
+<p><strong>channel_map</strong> : dict</p>
+<blockquote>
+<div><p>Mapping dictionary to match synthetic channel to component in
+observed data.</p>
+</div></blockquote>
+<p><strong>used_stations</strong> : list</p>
+<blockquote>
+<div><p>Station codes to consider in plot output. Use all stations if
+left <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</div></blockquote>
+<p><strong>synthetic_starttime: :class:`obspy.core.utcdatetime.UTCDateTime`</strong></p>
+<blockquote class="last">
+<div><p>Start time of synthetic data, only needed if no input file is
 specified or if input file did not set the correct origin time
-of the event.</li>
-</ul>
+of the event.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -193,37 +238,56 @@ of the event.</li>
 
 <dl class="function">
 <dt id="pySW4.plotting.waveforms.plot_traces">
-<code class="descname">plot_traces</code><span class="sig-paren">(</span><em>traces</em>, <em>mode=''</em>, <em>yscale='auto'</em>, <em>hspace=0.2</em>, <em>wspace=0.05</em>, <em>figsize=None</em>, <em>fig=None</em>, <em>color='k'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#plot_traces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms.plot_traces" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_traces</code><span class="sig-paren">(</span><em>traces</em>, <em>mode=''</em>, <em>yscale='auto'</em>, <em>hspace=0.2</em>, <em>wspace=0.05</em>, <em>figsize=None</em>, <em>fig=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#plot_traces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms.plot_traces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot all traces and their Fourier specra side-by-side.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>traces</strong> (<code class="xref py py-class docutils literal"><span class="pre">Stream</span></code>) &#8211; Traces to be plotted in an <code class="xref py py-class docutils literal"><span class="pre">Stream</span></code> object.</li>
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <p>Mode describes the type of data in traces. One of:</p>
-<p>&#8216;displacement&#8217;, &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, or &#8216;strains&#8217;.</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>traces</strong> : <code class="xref py py-class docutils literal"><span class="pre">Stream</span></code></p>
+<blockquote>
+<div><p>Traces to be plotted in an <code class="xref py py-class docutils literal"><span class="pre">Stream</span></code> object.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {&#8216;displacement&#8217;, &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<blockquote>
+<div><p>Mode describes the type of data in traces.</p>
 <p>Optionaly, an alternative string can be given that will be used
 as the y-label of the time-histories.</p>
-</li>
-<li><strong>yscale</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; <p>Set the scale of the vertical y-axis:</p>
-<ul>
-<li><code class="docutils literal"><span class="pre">auto</span></code> - Vertical scale of each axes is automatically set to</li>
+</div></blockquote>
+<p><strong>yscale</strong> : {&#8216;auto&#8217;, &#8216;all&#8217;, &#8216;normalize&#8217;}</p>
+<blockquote>
+<div><p>Set the scale of the vertical y-axis:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">auto</span></code> - Vertical scale of each axes is automatically set to
+the -|max| and |max| of each trace.</li>
+<li><code class="docutils literal"><span class="pre">all</span></code> - Vertical scale of all axes is set to the same limits
+which are the -|max| and |max| of all traces.</li>
+<li><code class="docutils literal"><span class="pre">normalize</span></code> - Each trace is normalized and plotted
+(<code class="docutils literal"><span class="pre">ylim=(-1,</span> <span class="pre">1)</span></code>).</li>
 </ul>
-<p>the -<a href="#id1"><span class="problematic" id="id2">|max|</span></a> and <a href="#id3"><span class="problematic" id="id4">|max|</span></a> of each trace.
-- <code class="docutils literal"><span class="pre">all</span></code> - Vertical scale of all axes is set to the same limits
-which are the -<a href="#id5"><span class="problematic" id="id6">|max|</span></a> and <a href="#id7"><span class="problematic" id="id8">|max|</span></a> of all traces.
-- <code class="docutils literal"><span class="pre">normalize</span></code> - Each trace is normalized and plotted
-(<code class="docutils literal"><span class="pre">ylim=(-1,</span> <span class="pre">1)</span></code>).</p>
-</li>
-<li><strong>hspace</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The hight space between axes. See
-<a class="reference external" href="http://matplotlib.org/api/gridspec_api.html#matplotlib.gridspec.GridSpec" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">GridSpec</span></code></a> documentation.</li>
-<li><strong>wspace</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The width space between axes. See
-<a class="reference external" href="http://matplotlib.org/api/gridspec_api.html#matplotlib.gridspec.GridSpec" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">GridSpec</span></code></a> documentation.</li>
-<li><strong>figsize</strong> (<em>2-tuple</em>) &#8211; Size of the <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a>.</li>
-<li><strong>fig</strong> (<a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a>) &#8211; A <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v1.5.3)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance.</li>
-<li><strong>color</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Color of the line in the time-histories and Fourier spectra.</li>
-</ul>
+</div></blockquote>
+<p><strong>hspace</strong> : float</p>
+<blockquote>
+<div><p>The hight space between axes. See
+<a class="reference external" href="http://matplotlib.org/api/gridspec_api.html#matplotlib.gridspec.GridSpec" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">GridSpec</span></code></a> documentation.</p>
+</div></blockquote>
+<p><strong>wspace</strong> : float</p>
+<blockquote>
+<div><p>The width space between axes. See
+<a class="reference external" href="http://matplotlib.org/api/gridspec_api.html#matplotlib.gridspec.GridSpec" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">GridSpec</span></code></a> documentation.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : 2-tuple</p>
+<blockquote>
+<div><p>Size of the <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a>.</p>
+</div></blockquote>
+<p><strong>fig</strong> : <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a></p>
+<blockquote>
+<div><p>A <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last"><strong>kwargs</strong> : <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">plot()</span></code></a> propeties.</p>
 </td>
 </tr>
 </tbody>
@@ -253,14 +317,14 @@ which are the -<a href="#id5"><span class="problematic" id="id6">|max|</span></a
         <li class="right" >
           <a href="pySW4.plotting.utils.html" title="pySW4.plotting.utils module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

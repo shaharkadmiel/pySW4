@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.prep.stations &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.prep.stations &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,8 +38,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -62,7 +63,7 @@
           <div class="body" role="main">
             
   <h1>Source code for pySW4.prep.stations</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Python module for placing stations to record synthetic seismograms in</span>
 <span class="sd">SW4 simulations.</span>
@@ -85,12 +86,13 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">obspy</span> <span class="k">import</span> <span class="n">read_inventory</span><span class="p">,</span> <span class="n">Inventory</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
 
 <div class="viewcode-block" id="_append2infile"><a class="viewcode-back" href="../../../packages/pySW4.prep.stations.html#pySW4.prep.stations._append2infile">[docs]</a><span class="k">def</span> <span class="nf">_append2infile</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Helper function. Copy an existing SW4 input file, add ``&#39;name&#39;``</span>
+<span class="sd">    Helper function. Copy an existing SW4 input file, add `name`</span>
 <span class="sd">    to the filename, open the new file in append mode and write the</span>
 <span class="sd">    string to the end of the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -121,13 +123,13 @@
 
 <span class="sd">    **Catersian grid coordinates:**</span>
 
-<span class="sd">    ``x1``, ``y1``, ``x2``, ``y2``</span>
+<span class="sd">    `x1`, `y1`, `x2`, `y2`</span>
 
 <span class="sd">    or in -</span>
 
 <span class="sd">    **Geographical coordinates:**</span>
 
-<span class="sd">    ``lon1``, ``lat1``, ``lon2``, ``lat2``</span>
+<span class="sd">    `lon1`, `lat1`, `lon2`, `lat2`</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -135,26 +137,25 @@
 <span class="sd">        Depth of the stations in the array.</span>
 
 <span class="sd">    number_of_stations : int or tuple or None</span>
-<span class="sd">        If *int*, number of stations is the same in both directions. To</span>
+<span class="sd">        If `int`, number of stations is the same in both directions. To</span>
 <span class="sd">        set a different number of stations in each direction provide a</span>
-<span class="sd">        *tuple*. If ``None``, the ``spacing`` argument is expected.</span>
+<span class="sd">        `tuple`. If ``None``, the `spacing` argument is expected.</span>
 
 <span class="sd">    spacing : float or tuple or None</span>
-<span class="sd">        If *float*, spacing between stations is taken to be the same in</span>
+<span class="sd">        If `float`, spacing between stations is taken to be the same in</span>
 <span class="sd">        both directions. To set different spacing in each direction</span>
-<span class="sd">        provide a *tuple*. If ``None``, the ``number_of_stations``</span>
+<span class="sd">        provide a `tuple`. If ``None``, the `number_of_stations`</span>
 <span class="sd">        argument is expected.</span>
 
-<span class="sd">        ``spacing`` must be given in meters if Cartesian grid</span>
+<span class="sd">        `spacing` must be given in meters if Cartesian grid</span>
 <span class="sd">        coordinates are used or in decimal degrees if Geographical</span>
 <span class="sd">        coordinates are used.</span>
 
 <span class="sd">    name : str</span>
 <span class="sd">        Prefix name of the sac file name.</span>
 
-<span class="sd">    mode : str</span>
-<span class="sd">        &#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;,</span>
-<span class="sd">        or &#39;strains&#39;.</span>
+<span class="sd">    mode : {&#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, &#39;strains&#39;}</span>
+<span class="sd">        Mode of the recorded motions.</span>
 
 <span class="sd">    writeEvery : int</span>
 <span class="sd">        Cycle interval to write the data to disk.</span>
@@ -171,9 +172,11 @@
 <span class="sd">    infile : str</span>
 <span class="sd">        Path (relative or absolute) to the SW4 inputfile. Stations are</span>
 <span class="sd">        added to a copy of the specified file and saved with the string</span>
-<span class="sd">        ``&#39;name&#39;`` where ``name`` is &#39;array&#39; (by default). If set to</span>
-<span class="sd">        ``None``, a formated string is returned that can then be</span>
-<span class="sd">        copied manually to an input file.</span>
+<span class="sd">        `name` appended to the `infile` name.</span>
+<span class="sd">        (`name` is &#39;array&#39; by default).</span>
+
+<span class="sd">        If set to ``None``, a formated string is returned that can then</span>
+<span class="sd">        be copied manually to an input file.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -188,7 +191,7 @@
     <span class="k">elif</span> <span class="n">number_of_stations</span> <span class="ow">and</span> <span class="n">spacing</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s1">&#39;Both ``number_of_stations`` and ``spacing`` are specified, &#39;</span>
-            <span class="s1">&#39;using ``number_of_stations={}``.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number_of_stations</span><span class="p">))</span>
+            <span class="s1">&#39;using ``number_of_stations=</span><span class="si">{}</span><span class="s1">``.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number_of_stations</span><span class="p">))</span>
     <span class="k">elif</span> <span class="n">number_of_stations</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">number_of_stations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_stations</span><span class="p">)</span>
@@ -210,8 +213,8 @@
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">spacing</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">spacing</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec x={0} y={0} depth={0} &#39;</span>
-                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_x={0}_y={0}_z={0}_ &#39;</span>
+        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec x=</span><span class="si">{0}</span><span class="s1"> y=</span><span class="si">{0}</span><span class="s1"> depth=</span><span class="si">{0}</span><span class="s1"> &#39;</span>
+                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_x=</span><span class="si">{0}</span><span class="s1">_y=</span><span class="si">{0}</span><span class="s1">_z=</span><span class="si">{0}</span><span class="s1">_ &#39;</span>
                       <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">lon1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lon2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -222,8 +225,8 @@
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lon1</span><span class="p">,</span> <span class="n">lon2</span><span class="p">,</span> <span class="n">spacing</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">spacing</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon={0} lat={0} depth={0} &#39;</span>
-                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_lon={0}_lat={0}_z={0}_ &#39;</span>
+        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon=</span><span class="si">{0}</span><span class="s1"> lat=</span><span class="si">{0}</span><span class="s1"> depth=</span><span class="si">{0}</span><span class="s1"> &#39;</span>
+                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_lon=</span><span class="si">{0}</span><span class="s1">_lat=</span><span class="si">{0}</span><span class="s1">_z=</span><span class="si">{0}</span><span class="s1">_ &#39;</span>
                       <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
 
     <span class="n">points</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">y</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
@@ -253,13 +256,13 @@
 
 <span class="sd">    **Catersian grid coordinates:**</span>
 
-<span class="sd">    ``x1``, ``y1``, ``depth1``, ``x2``, ``y2``, ``depth2``</span>
+<span class="sd">    `x1`, `y1`, `depth1`, `x2`, `y2`, `depth2`</span>
 
 <span class="sd">    or in -</span>
 
 <span class="sd">    **Geographical coordinates:**</span>
 
-<span class="sd">    ``lon1``, ``lat1``, ``depth1``, ``lon2``, ``lat2``, ``depth2``</span>
+<span class="sd">    `lon1`, `lat1`, `depth1`, `lon2`, `lat2`, `depth2`</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -270,9 +273,8 @@
 <span class="sd">    name : str</span>
 <span class="sd">        Prefix name of the sac file name.</span>
 
-<span class="sd">    mode : str</span>
-<span class="sd">        &#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;,</span>
-<span class="sd">        or &#39;strains&#39;.</span>
+<span class="sd">    mode : {&#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, &#39;strains&#39;}</span>
+<span class="sd">        Mode of the recorded motions.</span>
 
 <span class="sd">    writeEvery : int</span>
 <span class="sd">        Cycle interval to write the data to disk.</span>
@@ -289,9 +291,11 @@
 <span class="sd">    infile : str</span>
 <span class="sd">        Path (relative or absolute) to the SW4 inputfile. Stations are</span>
 <span class="sd">        added to a copy of the specified file and saved with the string</span>
-<span class="sd">        ``&#39;name&#39;`` where ``name`` is &#39;line&#39; (by default). If set to</span>
-<span class="sd">        ``None``, a formated string is returned that can then be</span>
-<span class="sd">        copied manually to an input file.</span>
+<span class="sd">        `name` appended to the `infile` name.</span>
+<span class="sd">        (`name` is &#39;array&#39; by default).</span>
+
+<span class="sd">        If set to ``None``, a formated string is returned that can then</span>
+<span class="sd">        be copied manually to an input file.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -304,16 +308,16 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
 
-        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec x={0} y={0} depth={0} &#39;</span>
-                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_x={0}_y={0}_z={0}_ &#39;</span>
+        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec x=</span><span class="si">{0}</span><span class="s1"> y=</span><span class="si">{0}</span><span class="s1"> depth=</span><span class="si">{0}</span><span class="s1"> &#39;</span>
+                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_x=</span><span class="si">{0}</span><span class="s1">_y=</span><span class="si">{0}</span><span class="s1">_z=</span><span class="si">{0}</span><span class="s1">_ &#39;</span>
                       <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">lon1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lon2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lon1</span><span class="p">,</span> <span class="n">lon2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
 
-        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon={0} lat={0} depth={0} &#39;</span>
-                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_lon={0}_lat={0}_z={0}_ &#39;</span>
+        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon=</span><span class="si">{0}</span><span class="s1"> lat=</span><span class="si">{0}</span><span class="s1"> depth=</span><span class="si">{0}</span><span class="s1"> &#39;</span>
+                      <span class="s1">&#39;file=</span><span class="si">%s</span><span class="s1">_lon=</span><span class="si">{0}</span><span class="s1">_lat=</span><span class="si">{0}</span><span class="s1">_z=</span><span class="si">{0}</span><span class="s1">_ &#39;</span>
                       <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
 
     <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">depth1</span><span class="p">,</span> <span class="n">depth2</span><span class="p">,</span> <span class="n">number_of_stations</span><span class="p">)</span>
@@ -335,26 +339,29 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Place stations to record synthetics at specific locations.</span>
 
+<span class="sd">    Can handle a single station or a list of stations. If several</span>
+<span class="sd">    stations are passes, `x, y` (or `lat, lon`), and `name` must</span>
+<span class="sd">    be the same length.</span>
+
 <span class="sd">    Locations may be given in -</span>
 
 <span class="sd">    **Catersian grid coordinates:**</span>
 
-<span class="sd">    ``x``, ``y``, ``depth``</span>
+<span class="sd">    `x`, `y`, `depth`</span>
 
 <span class="sd">    or in -</span>
 
 <span class="sd">    **Geographical coordinates:**</span>
 
-<span class="sd">    ``lon``, ``lat``, ``depth``</span>
+<span class="sd">    `lon`, `lat`, `depth`</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
 <span class="sd">        Prefix name of the sac file name.</span>
 
-<span class="sd">    mode : str</span>
-<span class="sd">        &#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;,</span>
-<span class="sd">        or &#39;strains&#39;.</span>
+<span class="sd">    mode : {&#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, &#39;strains&#39;}</span>
+<span class="sd">        Mode of the recorded motions.</span>
 
 <span class="sd">    writeEvery : int</span>
 <span class="sd">        Cycle interval to write the data to disk.</span>
@@ -371,9 +378,11 @@
 <span class="sd">    infile : str</span>
 <span class="sd">        Path (relative or absolute) to the SW4 inputfile. Stations are</span>
 <span class="sd">        added to a copy of the specified file and saved with the string</span>
-<span class="sd">        ``&#39;name&#39;`` where ``name`` is &#39;st&#39; (by default). If set to</span>
-<span class="sd">        ``None``, a formated string is returned that can then be</span>
-<span class="sd">        copied manually to an input file.</span>
+<span class="sd">        `name` appended to the `infile` name.</span>
+<span class="sd">        (`name` is &#39;array&#39; by default).</span>
+
+<span class="sd">        If set to ``None``, a formated string is returned that can then</span>
+<span class="sd">        be copied manually to an input file.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -383,11 +392,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec x={0} y={0} depth={0} file=</span><span class="si">%s</span><span class="s1"> &#39;</span>
+        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec x=</span><span class="si">{0}</span><span class="s1"> y=</span><span class="si">{0}</span><span class="s1"> depth=</span><span class="si">{0}</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1"> &#39;</span>
                       <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">lon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span>
-        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon={0} lat={0} depth={0} file=</span><span class="si">%s</span><span class="s1"> &#39;</span>
+        <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon=</span><span class="si">{0}</span><span class="s1"> lat=</span><span class="si">{0}</span><span class="s1"> depth=</span><span class="si">{0}</span><span class="s1"> file=</span><span class="si">%s</span><span class="s1"> &#39;</span>
                       <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
 
     <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1"># stations at locations:</span><span class="se">\n</span><span class="s1">&#39;</span>
@@ -398,6 +407,71 @@
     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span> <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">depth</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
                                  <span class="n">writeEvery</span><span class="p">,</span> <span class="n">nsew</span><span class="p">,</span> <span class="n">mode</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">infile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">string</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_append2infile</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="inventory2station_locations"><a class="viewcode-back" href="../../../packages/pySW4.prep.stations.html#pySW4.prep.stations.inventory2station_locations">[docs]</a><span class="k">def</span> <span class="nf">inventory2station_locations</span><span class="p">(</span><span class="n">inv</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;displacement&#39;</span><span class="p">,</span> <span class="n">writeEvery</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;st&#39;</span><span class="p">,</span> <span class="n">nsew</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">infile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Place stations to record synthetics at specific locations.</span>
+
+<span class="sd">    Extracts station locations from an</span>
+<span class="sd">    :class:`~obspy.core.inventory.inventory.Inventory` object and</span>
+<span class="sd">    generate an SW4 inputfile string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    inv : str or :class:`~obspy.core.inventory.inventory.Inventory`</span>
+<span class="sd">        Path to a StationXML file or an</span>
+<span class="sd">        :class:`~obspy.core.inventory.inventory.Inventory` object.</span>
+
+<span class="sd">    mode : {&#39;displacement&#39; (default), &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, &#39;strains&#39;}</span>
+<span class="sd">        Mode of the recorded motions.</span>
+
+<span class="sd">    writeEvery : int</span>
+<span class="sd">        Cycle interval to write the data to disk.</span>
+
+<span class="sd">    nsew : int</span>
+<span class="sd">        The components of the station:</span>
+
+<span class="sd">        - 0 - x, y, z (default), or</span>
+<span class="sd">        - 1 - East, North, Vertical</span>
+
+<span class="sd">    fmt : str</span>
+<span class="sd">        Format of the coordinates, default is &#39;%.3f&#39;.</span>
+
+<span class="sd">    infile : str</span>
+<span class="sd">        Path (relative or absolute) to the SW4 inputfile. Stations are</span>
+<span class="sd">        added to a copy of the specified file and saved with the string</span>
+<span class="sd">        `name` appended to the `infile` name.</span>
+<span class="sd">        (`name` is &#39;array&#39; by default).</span>
+
+<span class="sd">        If set to ``None``, a formated string is returned that can then</span>
+<span class="sd">        be copied manually to an input file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Filename of the newly saved inputfile or a formatted string that</span>
+<span class="sd">        can be copied manually to an SW4 inputfile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inv</span><span class="p">,</span> <span class="n">Inventory</span><span class="p">):</span>
+        <span class="n">inv</span> <span class="o">=</span> <span class="n">read_inventory</span><span class="p">(</span><span class="n">inv</span><span class="p">)</span>
+
+    <span class="n">sac_string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;rec lon=</span><span class="si">{0}</span><span class="s1"> lat=</span><span class="si">{0}</span><span class="s1"> depth=0 file=</span><span class="si">%s</span><span class="s1"> &#39;</span>
+                  <span class="s1">&#39;writeEvery=</span><span class="si">%d</span><span class="s1"> nsew=</span><span class="si">%d</span><span class="s1"> variables=</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+
+    <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1"># stations at locations:</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">inv</span><span class="o">.</span><span class="n">networks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">sta</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">stations</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span><span class="n">sac_string</span> <span class="o">%</span> <span class="p">(</span><span class="n">sta</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">sta</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                                     <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">net</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">sta</span><span class="o">.</span><span class="n">code</span><span class="p">)),</span>
+                                     <span class="n">writeEvery</span><span class="p">,</span> <span class="n">nsew</span><span class="p">,</span> <span class="n">mode</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">infile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">string</span>
     <span class="k">else</span><span class="p">:</span>
@@ -418,13 +492,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.utils.spectral &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.utils.spectral &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,8 +38,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -62,7 +63,7 @@
           <div class="body" role="main">
             
   <h1>Source code for pySW4.utils.spectral</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Python module for spectral analysis.</span>
 
 <span class="sd">.. module:: spectral</span>
@@ -215,10 +216,8 @@
 <span class="sd">    unwanted effects will be canceled out by one another or averaged by</span>
 <span class="sd">    several windows.</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    This function is a convinient wrapper for the :func:`numpy.fft`</span>
-<span class="sd">    function.</span>
+<span class="sd">    .. note:: This function is a convinient wrapper for the</span>
+<span class="sd">              :func:`~numpy.fft` function.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -234,17 +233,17 @@
 <span class="sd">        ``womean=True`` will result in a smaller DC.</span>
 
 <span class="sd">    winsize : int</span>
-<span class="sd">        By default ``winsize`` is None, taking the FFT of the entire</span>
-<span class="sd">        signal as-is. Otherwise, ``winsize`` sets the size of the</span>
-<span class="sd">        sliding window, taking ``winsize`` points of the signal at a</span>
-<span class="sd">        time. Works fastest when ``winsize`` is a whole power of 2,</span>
+<span class="sd">        By default `winsize` is None, taking the FFT of the entire</span>
+<span class="sd">        signal as-is. Otherwise, `winsize` sets the size of the</span>
+<span class="sd">        sliding window, taking `winsize` points of the signal at a</span>
+<span class="sd">        time. Works fastest when `winsize` is a whole power of 2,</span>
 <span class="sd">        i.e., 128, 512, 1024, 2048, 4096 etc.</span>
 
 <span class="sd">    stepsize : int</span>
 <span class="sd">        The number of points by which the window slides each time.</span>
-<span class="sd">        By default, ``stepsize`` is None, making it equal to</span>
-<span class="sd">        ``winsize``, no overlap. Setting ``stepsize`` to half</span>
-<span class="sd">        ``winsize`` is common practice and will cause a 50% overlap.</span>
+<span class="sd">        By default, `stepsize` is None, making it equal to</span>
+<span class="sd">        `winsize`, no overlap. Setting `stepsize` to half</span>
+<span class="sd">        `winsize` is common practice and will cause a 50% overlap.</span>
 
 <span class="sd">    delta : float</span>
 <span class="sd">        The dt from one sample to the next such that 1/delta is the</span>
@@ -364,13 +363,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

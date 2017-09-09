@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.plotting.png2mp4 module &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.plotting.png2mp4 module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../index.html" />
-    <link rel="up" title="pySW4.plotting package" href="pySW4.plotting.html" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.plotting.utils module" href="pySW4.plotting.utils.html" />
     <link rel="prev" title="pySW4.plotting.image module" href="pySW4.plotting.image.html" /> 
   </head>
@@ -45,9 +46,9 @@
         <li class="right" >
           <a href="pySW4.plotting.image.html" title="pySW4.plotting.image module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -61,7 +62,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/packages/pySW4.plotting.png2mp4.txt"
+      <li><a href="../_sources/packages/pySW4.plotting.png2mp4.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -109,29 +110,45 @@ sequential png images.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of the final .mp4 file.</li>
-<li><strong>inpath</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Path to where the sequential .png images are. Default is <cite>&#8216;./&#8217;</cite>.</li>
-<li><strong>crf</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Constant Rate Factor, ranges from 0 to 51: A lower value is a
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>outfile</strong> : str</p>
+<blockquote>
+<div><p>Name of the final .mp4 file.</p>
+</div></blockquote>
+<p><strong>inpath</strong> : str</p>
+<blockquote>
+<div><p>Path to where the sequential .png images are. Default is <cite>&#8216;./&#8217;</cite>.</p>
+</div></blockquote>
+<p><strong>crf</strong> : int</p>
+<blockquote>
+<div><p>Constant Rate Factor, ranges from 0 to 51: A lower value is a
 higher quality and vise versa. The range is exponential, so
 increasing the CRF value +6 is roughly half the bitrate while -6
 is roughly twice the bitrate. General usage is to choose the
 highest CRF value that still provides an acceptable quality. If
 the output looks good, then try a higher value and if it looks
 bad then choose a lower value. A subjectively sane range is 18
-to 28. Default is 23.</li>
-<li><strong>pts</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Presentation TimeStamp, pts &lt; 1 to speedup the video, pts &gt; 1 to
+to 28. Default is 23.</p>
+</div></blockquote>
+<p><strong>pts</strong> : int</p>
+<blockquote>
+<div><p>Presentation TimeStamp, pts &lt; 1 to speedup the video, pts &gt; 1 to
 slow down the video. For example, 0.5 will double the speed and
 cut the video duration in half whereas 2 will slow the video
-down and double its duration. Default is 1.</li>
-<li><strong>fps</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Frames Per Second of the output video. If you speed a video up
+down and double its duration. Default is 1.</p>
+</div></blockquote>
+<p><strong>fps</strong> : int</p>
+<blockquote>
+<div><p>Frames Per Second of the output video. If you speed a video up
 frames get dropped as ffmpeg is trying to fit more frames in
 less time. Try increasing the frame rate by the same factor used
 for pts. If you slow a video down, increasing the frame rate
-results in smoother video for some reason. Default is 30.</li>
-<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Print information about the process if True. Set to False to
-suppress any output.</li>
-</ul>
+results in smoother video for some reason. Default is 30.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote class="last">
+<div><p>Print information about the process if True. Set to False to
+suppress any output.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -161,14 +178,14 @@ suppress any output.</li>
         <li class="right" >
           <a href="pySW4.plotting.image.html" title="pySW4.plotting.image module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

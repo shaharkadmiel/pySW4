@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.prep.material_model &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.prep.material_model &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,8 +38,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -62,7 +63,7 @@
           <div class="body" role="main">
             
   <h1>Source code for pySW4.prep.material_model</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Python module to help specify the material properties and the grid</span>
 <span class="sd">parameters of the computational domain.</span>
@@ -91,6 +92,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate Shear-wave velocity based on Brocher (2008).</span>
 
+<span class="sd">    .. note:: Shear-wave velocity is forced to be greater than :math:`V_S&gt;V_P / \\sqrt{2}`.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    vp : float or sequence</span>
@@ -106,6 +109,14 @@
           <span class="o">+</span> <span class="mf">0.7949</span> <span class="o">*</span> <span class="n">vp</span><span class="o">**</span><span class="mi">2</span>
           <span class="o">-</span> <span class="mf">0.1238</span> <span class="o">*</span> <span class="n">vp</span><span class="o">**</span><span class="mi">3</span>
           <span class="o">+</span> <span class="mf">0.0064</span> <span class="o">*</span> <span class="n">vp</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">vs</span><span class="p">[</span><span class="n">vp</span> <span class="o">/</span> <span class="n">vs</span> <span class="o">&lt;</span> <span class="mf">1.42</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="p">[</span><span class="n">vp</span> <span class="o">/</span> <span class="n">vs</span> <span class="o">&lt;</span> <span class="mf">1.42</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1.4</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vp</span> <span class="o">/</span> <span class="n">vs</span> <span class="o">&lt;</span> <span class="mf">1.42</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+            <span class="n">vs</span> <span class="o">=</span> <span class="n">vp</span> <span class="o">/</span> <span class="mf">1.4</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">vs</span></div>
 
 
@@ -135,10 +146,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate Shear-wave Quality Factor based on Brocher (2008).</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    If Shear-wave velocity is less-than 0.3 km/s, Shear-wave Quality</span>
-<span class="sd">    Factor is set to 13.</span>
+<span class="sd">    .. note:: If Shear-wave velocity is less-than 0.3 km/s, Shear-wave</span>
+<span class="sd">              Quality Factor is set to 13.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -203,6 +212,7 @@
 
 <span class="sd">    **Example Vfile:**</span>
 <span class="sd">    ::</span>
+
 <span class="sd">        # Just a simple made up velocity model</span>
 <span class="sd">        # Shani-Kadmiel (2016)</span>
 <span class="sd">        # Depth| Vp    | Vs    | rho   | Qp    | Qs    | Grp/Form./Mbr.</span>
@@ -212,7 +222,6 @@
 <span class="sd">           5000,   2000,   1000,   1600,     70,     35, Lower made up</span>
 <span class="sd">        end</span>
 
-
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    filename : str</span>
@@ -220,12 +229,12 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    sequence</span>
+<span class="sd">    array-like</span>
 <span class="sd">        A list of header, depth, vp, vs, rho, qp, qs, gmf values.</span>
 
 <span class="sd">    See also</span>
 <span class="sd">    --------</span>
-<span class="sd">    :class:`~.V_model`</span>
+<span class="sd">    .V_model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="n">depth</span> <span class="o">=</span> <span class="p">[]</span>
@@ -313,17 +322,17 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">get_vs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="n">e3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+                <span class="n">get_vs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">get_rho</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="n">e3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+                <span class="n">get_rho</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">get_qs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+                <span class="n">get_qs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">)</span>
@@ -351,7 +360,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        vp, vs, rho, qp, qs</span>
+<span class="sd">        array-like</span>
+<span class="sd">            vp, vs, rho, qp, qs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">vp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qs</span><span class="p">]</span>
@@ -378,14 +388,8 @@
 <span class="sd">        values : sequence or int or float</span>
 <span class="sd">            The property for which to evaluate the depth of.</span>
 
-<span class="sd">        property : str</span>
-<span class="sd">            One of:</span>
-
-<span class="sd">            - ``&#39;vp&#39;`` (default)</span>
-<span class="sd">            - ``&#39;vs&#39;``</span>
-<span class="sd">            - ``&#39;rho&#39;``</span>
-<span class="sd">            - ``&#39;qp&#39;``</span>
-<span class="sd">            - ``&#39;qs&#39;``</span>
+<span class="sd">        property : {&#39;vp&#39; (default), &#39;vs&#39;, &#39;rho, &#39;qp&#39;, &#39;qs&#39;}</span>
+<span class="sd">            Property corresponding to `value`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -424,7 +428,7 @@
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;end</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div></div>
 
 
@@ -455,9 +459,9 @@
 
 <span class="sd">    See also</span>
 <span class="sd">    --------</span>
-<span class="sd">    :func:`~.vmin`,</span>
-<span class="sd">    :func:`~pySW4.prep.source.source_frequency`,</span>
-<span class="sd">    :func:`~pySW4.prep.source.f_max`,</span>
+<span class="sd">    .get_vmin</span>
+<span class="sd">    .source_frequency</span>
+<span class="sd">    .f_max</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">vmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">fmax</span> <span class="o">*</span> <span class="n">ppw</span><span class="p">)</span></div>
 
@@ -466,7 +470,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the minimum allowed velocity that meets the requirement</span>
 <span class="sd">    that the shortest wavelength (:math:`\\lambda=V_{min}/f_{max}`) be</span>
-<span class="sd">    sampled by a minimum points-per-wavelength (``ppw``).</span>
+<span class="sd">    sampled by a minimum points-per-wavelength (`ppw`).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -488,9 +492,9 @@
 
 <span class="sd">    See also</span>
 <span class="sd">    --------</span>
-<span class="sd">    :func:`~.grid_spacing`,</span>
-<span class="sd">    :func:`~pySW4.prep.source.source_frequency`,</span>
-<span class="sd">    :func:`~pySW4.prep.source.f_max`,</span>
+<span class="sd">    .grid_spacing</span>
+<span class="sd">    .source_frequency</span>
+<span class="sd">    .f_max</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">h</span> <span class="o">*</span> <span class="n">fmax</span> <span class="o">*</span> <span class="n">ppw</span></div>
 
@@ -513,13 +517,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

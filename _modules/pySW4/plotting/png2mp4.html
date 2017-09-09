@@ -6,9 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pySW4.plotting.png2mp4 &mdash; pySW4 &#39;0.3.0&#39; documentation</title>
+    <title>pySW4.plotting.png2mp4 &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -17,15 +17,16 @@
         VERSION:     '&#39;0.3.0&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pySW4 &#39;0.3.0&#39; documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -37,8 +38,8 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -62,7 +63,7 @@
           <div class="body" role="main">
             
   <h1>Source code for pySW4.plotting.png2mp4</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Convert a sequencial set of .png images to a .mp4 movies.</span>
 
@@ -139,16 +140,16 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
     <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ffmpeg -y -pattern_type glob -i {} &quot;</span>
-               <span class="s2">&quot;-vcodec libx264 -crf {} -pass 1 -vb 6M &quot;</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ffmpeg -y -pattern_type glob -i </span><span class="si">{}</span><span class="s2"> &quot;</span>
+               <span class="s2">&quot;-vcodec libx264 -crf </span><span class="si">{}</span><span class="s2"> -pass 1 -vb 6M &quot;</span>
                <span class="s2">&quot;-pix_fmt yuv420p &quot;</span>
-               <span class="s2">&quot;-vf scale=trunc(iw/2)*2:trunc(ih/2)*2,setpts={}*PTS &quot;</span>
-               <span class="s2">&quot;-r {} -an {}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fotmat</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">crf</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+               <span class="s2">&quot;-vf scale=trunc(iw/2)*2:trunc(ih/2)*2,setpts=</span><span class="si">{}</span><span class="s2">*PTS &quot;</span>
+               <span class="s2">&quot;-r </span><span class="si">{}</span><span class="s2"> -an </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">crf</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
 
     <span class="n">command</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;***</span><span class="se">\n</span><span class="s1">calling {} with the following arguments:</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;***</span><span class="se">\n</span><span class="s1">calling </span><span class="si">{}</span><span class="s1"> with the following arguments:</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -164,7 +165,7 @@
     <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">******</span><span class="se">\n</span><span class="s1">convertion took {} seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span><span class="p">))</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">******</span><span class="se">\n</span><span class="s1">convertion took </span><span class="si">{}</span><span class="s1"> seconds&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span><span class="p">))</span></div>
 </pre></div>
 
           </div>
@@ -181,13 +182,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.5.
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>
