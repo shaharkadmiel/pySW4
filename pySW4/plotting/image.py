@@ -28,9 +28,10 @@ from __future__ import absolute_import, print_function, division
 import glob
 import os
 import re
-import subprocess as sub
-from warnings import warn
-from io import StringIO
+
+import subprocess
+import warnings
+from io import BytesIO
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -110,7 +111,7 @@ def image_files_to_movie(
         '-vcodec', 'libx264', '-pass', '1', '-vb', '6M', '-pix_fmt', 'yuv420p',
         output_filename)
 
-    string_io = StringIO()
+    bytes_io = BytesIO()
     backend = plt.get_backend()
     try:
         plt.switch_backend('AGG')
@@ -122,13 +123,15 @@ def image_files_to_movie(
             patch = image.patches[patch_number]
             fig, _, _ = patch.plot(**plot_kwargs)
             fig.tight_layout()
-            fig.savefig(string_io, format='png')
+            fig.savefig(bytes_io, format='png')
             plt.close(fig)
-        string_io.seek(0)
-        png_data = string_io.read()
-        string_io.close()
-        sub = sub.Popen(cmdstring, stdin=sub.PIPE,
-                        stdout=sub.PIPE, stderr=sub.PIPE)
+
+        bytes_io.seek(0)
+        png_data = bytes_io.read()
+        bytes_io.close()
+        sub = subprocess.Popen(cmdstring, stdin=subprocess.PIPE,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
         stdout, stderr = sub.communicate(png_data)
         if debug:
             print("###### ffmpeg stdout")
