@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
 DOCSDIR=$(pwd)
 TMPDIR=~/tmp_docs
 DSTDIR=$(cd $DOCSDIR/.. && pwd)
@@ -39,11 +41,11 @@ rm -rfv docs pySW4
 echo
 echo "Adding new doc files to be commited, commiting changes"
 git add -A
-git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages
+git commit -m "Generated gh-pages for `git log $CURRENT_BRANCH -1 --pretty=short --abbrev-commit`" && git push origin gh-pages
 
 echo
-echo "Switching back to the master branch..."
-git checkout master
+echo "Switching back to the current branch : $CURRENT_BRANCH ..."
+git checkout $CURRENT_BRANCH
 
 echo
 echo "Putting the docs back in $DOCSDIR/build..."

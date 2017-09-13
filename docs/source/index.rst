@@ -7,6 +7,7 @@ pySW4  documentation
    :maxdepth: 1
 
    packages/index
+   packages/tutorials
 
 Indices and tables
 ==================

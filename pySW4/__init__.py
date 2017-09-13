@@ -2,33 +2,40 @@
 """
 pySW4: Python routines for interaction with SW4
 ===============================================
-                 ______       ____ __
-    ____  __  __/ ___/ |     / / // /
-   / __ \/ / / /\__ \| | /| / / // /_
-  / /_/ / /_/ /___/ /| |/ |/ /__  __/
- / .___/\__, //____/ |__/|__/  /_/
-/_/    /____/
 
-pySW4 is an open-source project dedicated to provide a Python framework
-for working with numerical simulations of seismic-wave propagation with
-SW4 in all phases of the task (preprocessing, post-processing and
-runtime visualization).
+**pySW4** is an open-source project dedicated to provide a Python
+framework for working with numerical simulations of seismic-wave
+propagation with SW4 in all phases of the task (preprocessing,
+post-processing and runtime visualization).
+
+:author:
+    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
+    Omry Volk (omryv@post.bgu.ac.il)
+
+    Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :copyright:
     Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+
     Omry Volk (omryv@post.bgu.ac.il)
+
     Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :license:
-    GNU GENERAL PUBLIC LICENSE Version 3
-    (http://www.gnu.org/copyleft/gpl.html)
-    See ./LICENSE.txt
+    This code is distributed under the terms of the
+    GNU Lesser General Public License, Version 3
+    (https://www.gnu.org/copyleft/lesser.html)
 """
 from __future__ import absolute_import, print_function, division
 
-__version__ = '0.0.0.dev'
+__version__ = '0.3.0'
 
-from .core.image import read_image
-from .plotting.drape import drape_plot
-from . import preprocess
+from .postp import read_image, read_stations
+from . import plotting
+from . import prep
 from . import utils
+from .sw4_metadata import Inputfile, Outputfile, read_metadata
+
+# from .plotting.utils import set_matplotlib_rc_params
+# set_matplotlib_rc_params()
