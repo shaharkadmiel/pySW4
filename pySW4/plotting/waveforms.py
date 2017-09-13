@@ -46,7 +46,10 @@ If the azimuth of the SW4 grid is ``0`` this translates to:
 """
 from __future__ import absolute_import, print_function, division
 
+import glob
 import os
+import warnings
+
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 from matplotlib.gridspec import GridSpec
@@ -183,8 +186,9 @@ def plot_traces(traces, mode='', yscale='auto', hspace=0.2, wspace=0.05,
 def create_seismogram_plots(
         input_file, folder=None, stream_observed=None, inventory=None,
         water_level=None, pre_filt=None, filter_kwargs=None,
-        channel_map={"-Vz": "Z", "Vx": "N", "Vy": "E"}, used_stations=None,
-        synthetic_starttime=None):
+        channel_map=None, used_stations=None, synthetic_starttime=None,
+        synthetic_data_glob='*.?v', t0_correction_fraction=0.0,
+        synthetic_scaling=False, verbose=False):
     """
     Create all waveform plots, comparing synthetic and observed data.
 
@@ -233,10 +237,29 @@ def create_seismogram_plots(
         Station codes to consider in plot output. Use all stations if
         left ``None``.
 
-    synthetic_starttime: :class:`obspy.core.utcdatetime.UTCDateTime`
+    synthetic_starttime : :class:`obspy.core.utcdatetime.UTCDateTime`
         Start time of synthetic data, only needed if no input file is
         specified or if input file did not set the correct origin time
         of the event.
+        
+    synthetic_data_glob : str
+        Glob pattern to lookup synthetic data. Use e.g.
+        '*.[xyz]' or '*.?' for synthetic data saved as "displacement" (the
+        solution of the forward solver), or '*.?v' for synthetic data saved as
+        "velocity" (the differentiated solution of the forward solver).
+        
+    t0_correction_fraction : float
+        Fraction of t0 used in SW4 simulation
+        (offset of source time function to prevent solver artifacts) to account
+        for (i.e. shift synthetics left to earlier absolute time). '0.0' means
+        no correction of synthetics time is done, '1.0' means that synthetic
+        trace is shifted left in time by ``t0`` of SW4 run.
+        
+    ynthetic_scaling : bool or float
+        Scaling to apply to synthetic seismograms. If
+        ``False``, no scaling is applied. If a float is provided, all
+        synthetics' will be scaled with the given factor (e.g. using ``2.0``
+        will scale up synthetics by a factor of 2).
     """
     input_, folder = _parse_input_file_and_folder(input_file, folder)
 
@@ -250,7 +273,41 @@ def create_seismogram_plots(
     else:
         raise NotImplementedError()
 
-    st_synth = obspy.read(os.path.join(folder, "*.?v"))
+    if verbose:
+        print('Correcting observed seismograms to output "{}" using '
+              'evalresp.'.format(evalresp_output))
+
+    if channel_map is None:
+        channel_map = {
+            "-Vz": "Z", "Vx": "N", "Vy": "E",
+            "-Z": "Z", "X": "N", "Y": "E"}
+
+    info_text = ''
+
+    files_synth = glob.glob(os.path.join(folder, synthetic_data_glob))
+    st_synth = obspy.Stream()
+    for file_ in files_synth:
+        st_synth += obspy.read(file_)
+    if t0_correction_fraction:
+        if len(config.source) > 1:
+            msg = ('t0_correction_fraction is not implemented for SW4 run '
+                   'with multiple sources.')
+            raise NotImplementedError(msg)
+        t0 = config.source[0].t0
+        t0_correction = t0 * t0_correction_fraction
+        info_text += (
+            ' Synthetics start time corrected by {}*t0 '
+            '(-{}s).').format(t0_correction_fraction, t0_correction)
+        for tr in st_synth:
+            tr.stats.starttime -= t0_correction
+    if synthetic_scaling is not False:
+        info_text += (' Synthetics scaled with a factor of {}.').format(
+            synthetic_scaling)
+        for tr in st_synth:
+            tr.data *= synthetic_scaling
+        if verbose:
+            print('Scaling synthetics by {}'.format(synthetic_scaling))
+
     st_real = stream_observed or obspy.Stream()
     if used_stations is not None:
         st_synth.traces = [tr for tr in st_synth
@@ -265,6 +322,9 @@ def create_seismogram_plots(
         if tr.stats.channel == "Vz":
             tr.stats.channel = "-Vz"
             tr.data *= -1
+        elif tr.stats.channel == "Z":
+            tr.stats.channel = "-Z"
+            tr.data *= -1
     t_min = min([tr.stats.starttime for tr in st_synth])
     t_max = min([tr.stats.endtime for tr in st_synth])
     st_real.attach_response(inventory)
@@ -275,18 +335,20 @@ def create_seismogram_plots(
     st_real.trim(t_min, t_max)
 
     outfile = os.path.join(folder, "seismograms.png")
-    _plot_seismograms(st_synth, st_real, channel_map, unit_label, outfile)
+    _plot_seismograms(st_synth, st_real, channel_map, unit_label, outfile,
+                      info_text=info_text)
     for station in stations:
         outfile = os.path.join(folder, "seismograms.{}.png".format(station))
         st_synth_ = st_synth.select(station=station)
         st_real_ = st_real.select(station=station)
         _plot_seismograms(
             st_synth_, st_real_, channel_map, unit_label, outfile,
-            figsize=(10, 8))
+            figsize=(10, 8), info_text=info_text)
 
 
-def _plot_seismograms(st_synth_, st_real_, channel_map, unit_label,
-                      outfile, figsize=None):
+def _plot_seismograms(
+        st_synth_, st_real_, channel_map, unit_label, outfile, figsize=None,
+        info_text=None):
     """
     Helper function that plots synthetic vs. real data to an image file.
 
@@ -321,7 +383,15 @@ def _plot_seismograms(st_synth_, st_real_, channel_map, unit_label,
     for ax in fig.axes:
         id = ax.texts[0].get_text()
         _, sta, _, cha = id.split(".")
-        real_component = channel_map[cha]
+        real_component = channel_map.get(cha)
+        if real_component is None:
+            real_component = cha[-1]
+            msg = ('Synthetic channel could not be mapped to component code '
+                   'of observed data. Using last character of synthetic data '
+                   '("{}") to match observed data component code. Are data '
+                   'already rotated by SW4 through config '
+                   'file settings?').format(real_component)
+            warnings.warn(msg)
         # find appropriate synthetic trace
         for tr_real in st_real_:
             if tr_real.stats.station != sta:
@@ -334,10 +404,13 @@ def _plot_seismograms(st_synth_, st_real_, channel_map, unit_label,
             continue
         ax.text(0.95, 0.9, tr_real.id, ha="right", va="top", color="r",
                 transform=ax.transAxes)
-        t = date2num([tr_real.stats.starttime + t_ for
-                      t_ in tr_real.times()])
+        t = date2num([(tr_real.stats.starttime + t_).datetime
+                      for t_ in tr_real.times()])
         ax.plot(t, tr_real.data, "r-")
         ax.set_ylabel(unit_label)
+    if info_text:
+        ax.text(0.95, 0.02, info_text, ha="right", va="bottom", color="b",
+                transform=ax.transAxes)
     fig.tight_layout()
     fig.subplots_adjust(left=0.15, hspace=0.0, wspace=0.0)
     fig.savefig(outfile)
