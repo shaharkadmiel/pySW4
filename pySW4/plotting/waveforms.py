@@ -241,25 +241,27 @@ def create_seismogram_plots(
         Start time of synthetic data, only needed if no input file is
         specified or if input file did not set the correct origin time
         of the event.
-        
+
     synthetic_data_glob : str
         Glob pattern to lookup synthetic data. Use e.g.
-        '*.[xyz]' or '*.?' for synthetic data saved as "displacement" (the
-        solution of the forward solver), or '*.?v' for synthetic data saved as
-        "velocity" (the differentiated solution of the forward solver).
-        
+        '\*.[xyz]' or '\*.?' for synthetic data saved as "displacement"
+        (the solution of the forward solver), or '\*.?v' for synthetic
+        data saved as "velocity" (the differentiated solution of the
+        forward solver).
+
     t0_correction_fraction : float
         Fraction of t0 used in SW4 simulation
-        (offset of source time function to prevent solver artifacts) to account
-        for (i.e. shift synthetics left to earlier absolute time). '0.0' means
-        no correction of synthetics time is done, '1.0' means that synthetic
-        trace is shifted left in time by ``t0`` of SW4 run.
-        
-    ynthetic_scaling : bool or float
+        (offset of source time function to prevent solver artifacts) to
+        account for (i.e. shift synthetics left to earlier absolute
+        time). '0.0' means no correction of synthetics time is done,
+        '1.0' means that synthetic trace is shifted left in time by
+        ``t0`` of SW4 run.
+
+    synthetic_scaling : bool or float
         Scaling to apply to synthetic seismograms. If
         ``False``, no scaling is applied. If a float is provided, all
-        synthetics' will be scaled with the given factor (e.g. using ``2.0``
-        will scale up synthetics by a factor of 2).
+        synthetics' will be scaled with the given factor (e.g. using
+        ``2.0`` will scale up synthetics by a factor of 2).
     """
     input_, folder = _parse_input_file_and_folder(input_file, folder)
 

@@ -30,7 +30,7 @@ extensions = [
     'sphinx.ext.githubpages',
     # 'sphinx.ext.napoleon',
     'numpydoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
 ]
 
 # numpydoc settings
