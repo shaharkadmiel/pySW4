@@ -25,6 +25,22 @@ visualization of the results.
 
 Installation
 ------------
+**pip**
+
+Currently ``pySW4`` does not work via the ``conda install`` (we are
+working on that...). So for now you can install the repository directly
+from GitHub. Use this command to install from ``master``::
+
+    pip install https://github.com/shaharkadmiel/pySW4/archive/master.zip
+
+To get the latest release version do::
+
+    pip install https://github.com/shaharkadmiel/pySW4/archive/v0.3.0.zip
+
+Add the ``--no-deps`` to forgo dependency upgrade ot downgrade.
+
+**conda** (coming up...)
+
 Installing ``pySW4`` from the conda-forge channel can be achieved by
 adding conda-forge to your channels with::
 
@@ -54,4 +70,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
