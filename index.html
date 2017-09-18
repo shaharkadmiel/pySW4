@@ -42,15 +42,25 @@
         <li class="right" >
           <a href="packages/index.html" title="pySW4 Library Reference"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li> 
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+    
+        <li class="nav-item nav-item-0"><a href="#">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+ 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">pySW4  documentation</a></li>
+<li><a class="reference internal" href="#">pySW4 documentation</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#documentation-and-tutorials">Documentation and tutorials</a><ul>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
   <h4>Next topic</h4>
@@ -82,21 +92,72 @@
           <div class="body" role="main">
             
   <div class="section" id="pysw4-documentation">
-<span id="index"></span><h1>pySW4  documentation<a class="headerlink" href="#pysw4-documentation" title="Permalink to this headline">¶</a></h1>
+<span id="index"></span><h1>pySW4 documentation<a class="headerlink" href="#pysw4-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>pySW4 is an open-source project dedicated to provide a Python framewor
+for working with numerical simulations of seismic-wave propagation with
+SW4 in all phases of the task (preprocessing, post-processing and
+runtime visualization). The functionality is provided through 5
+sub-packages which include pre- and post-processing routines including
+the <a class="reference internal" href="packages/pySW4.prep.rfileIO.html#module-pySW4.prep.rfileIO" title="pySW4.prep.rfileIO"><code class="xref py py-mod docutils literal"><span class="pre">rfileIO</span></code></a> library for interaction, reading and
+writing seismic models in the rfile format.</p>
+<p>There are some usefull utilities for geodesic projections of data and
+for reading and writing GeoTIFF files.</p>
+<p>In the command line interface scrips, there are some quick
+and dirty plotting routines which can be run from the command
+line. It may be usefull to run these scrips on the server-end while the
+computation is running in order to generate <em>pseudo-RunTime</em>
+visualization of the results.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p><strong>pip</strong></p>
+<p>Currently <code class="docutils literal"><span class="pre">pySW4</span></code> does not work via the <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span></code> (we are
+working on that...). So for now you can install the repository directly
+from GitHub. Use this command to install from <code class="docutils literal"><span class="pre">master</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">shaharkadmiel</span><span class="o">/</span><span class="n">pySW4</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+<p>To get the latest release version do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">shaharkadmiel</span><span class="o">/</span><span class="n">pySW4</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">v0</span><span class="o">.</span><span class="mf">3.0</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+<p>Add the <code class="docutils literal"><span class="pre">--no-deps</span></code> to forgo dependency upgrade ot downgrade.</p>
+<p><strong>conda</strong> (coming up...)</p>
+<p>Installing <code class="docutils literal"><span class="pre">pySW4</span></code> from the conda-forge channel can be achieved by
+adding conda-forge to your channels with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">add</span> <span class="n">channels</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
+</pre></div>
+</div>
+<p>Once the conda-forge channel has been enabled, <code class="docutils literal"><span class="pre">pySW4</span></code> can be
+installed with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">pysw4</span>
+</pre></div>
+</div>
+<p>It is possible to list all of the versions of <code class="docutils literal"><span class="pre">pySW4</span></code> available on
+your platform with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">search</span> <span class="n">pysw4</span> <span class="o">--</span><span class="n">channel</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation-and-tutorials">
+<h2>Documentation and tutorials<a class="headerlink" href="#documentation-and-tutorials" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="packages/index.html">pySW4 Library Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="packages/tutorials.html">pySW4 Tutorials</a></li>
 </ul>
 </div>
-</div>
 <div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<h3>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
 <li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
 <li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
+</div>
+</div>
 </div>
 
 
@@ -117,7 +178,10 @@
         <li class="right" >
           <a href="packages/index.html" title="pySW4 Library Reference"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li> 
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+    
+        <li class="nav-item nav-item-0"><a href="#">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+ 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

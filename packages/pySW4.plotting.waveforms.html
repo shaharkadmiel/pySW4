@@ -46,7 +46,10 @@
         <li class="right" >
           <a href="pySW4.plotting.utils.html" title="pySW4.plotting.utils module"
              accesskey="P">previous</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+    
         <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" accesskey="U">pySW4.plotting package</a> &#187;</li> 
       </ul>
@@ -127,7 +130,7 @@ Z
 </ul>
 <dl class="function">
 <dt id="pySW4.plotting.waveforms._plot_seismograms">
-<code class="descname">_plot_seismograms</code><span class="sig-paren">(</span><em>st_synth_</em>, <em>st_real_</em>, <em>channel_map</em>, <em>unit_label</em>, <em>outfile</em>, <em>figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#_plot_seismograms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms._plot_seismograms" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_plot_seismograms</code><span class="sig-paren">(</span><em>st_synth_</em>, <em>st_real_</em>, <em>channel_map</em>, <em>unit_label</em>, <em>outfile</em>, <em>figsize=None</em>, <em>info_text=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#_plot_seismograms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms._plot_seismograms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function that plots synthetic vs. real data to an image file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -167,7 +170,7 @@ suffix (e.g. png).</p>
 
 <dl class="function">
 <dt id="pySW4.plotting.waveforms.create_seismogram_plots">
-<code class="descname">create_seismogram_plots</code><span class="sig-paren">(</span><em>input_file</em>, <em>folder=None</em>, <em>stream_observed=None</em>, <em>inventory=None</em>, <em>water_level=None</em>, <em>pre_filt=None</em>, <em>filter_kwargs=None</em>, <em>channel_map={'Vx': 'N'</em>, <em>'Vy': 'E'</em>, <em>'-Vz': 'Z'}</em>, <em>used_stations=None</em>, <em>synthetic_starttime=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#create_seismogram_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms.create_seismogram_plots" title="Permalink to this definition">¶</a></dt>
+<code class="descname">create_seismogram_plots</code><span class="sig-paren">(</span><em>input_file</em>, <em>folder=None</em>, <em>stream_observed=None</em>, <em>inventory=None</em>, <em>water_level=None</em>, <em>pre_filt=None</em>, <em>filter_kwargs=None</em>, <em>channel_map=None</em>, <em>used_stations=None</em>, <em>synthetic_starttime=None</em>, <em>synthetic_data_glob='*.?v'</em>, <em>t0_correction_fraction=0.0</em>, <em>synthetic_scaling=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/waveforms.html#create_seismogram_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.waveforms.create_seismogram_plots" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create all waveform plots, comparing synthetic and observed data.</p>
 <p>Ideally works on a SW4 input file, or explicitely on an folder with
 SW4 output files. Assumes output in SAC format. Observed/real data
@@ -224,11 +227,35 @@ observed data.</p>
 <div><p>Station codes to consider in plot output. Use all stations if
 left <code class="docutils literal"><span class="pre">None</span></code>.</p>
 </div></blockquote>
-<p><strong>synthetic_starttime: :class:`obspy.core.utcdatetime.UTCDateTime`</strong></p>
-<blockquote class="last">
+<p><strong>synthetic_starttime</strong> : <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.utcdatetime.UTCDateTime.html#obspy.core.utcdatetime.UTCDateTime" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.utcdatetime.UTCDateTime</span></code></a></p>
+<blockquote>
 <div><p>Start time of synthetic data, only needed if no input file is
 specified or if input file did not set the correct origin time
 of the event.</p>
+</div></blockquote>
+<p><strong>synthetic_data_glob</strong> : str</p>
+<blockquote>
+<div><p>Glob pattern to lookup synthetic data. Use e.g.
+&#8216;*.[xyz]&#8217; or &#8216;*.?&#8217; for synthetic data saved as &#8220;displacement&#8221;
+(the solution of the forward solver), or &#8216;*.?v&#8217; for synthetic
+data saved as &#8220;velocity&#8221; (the differentiated solution of the
+forward solver).</p>
+</div></blockquote>
+<p><strong>t0_correction_fraction</strong> : float</p>
+<blockquote>
+<div><p>Fraction of t0 used in SW4 simulation
+(offset of source time function to prevent solver artifacts) to
+account for (i.e. shift synthetics left to earlier absolute
+time). &#8216;0.0&#8217; means no correction of synthetics time is done,
+&#8216;1.0&#8217; means that synthetic trace is shifted left in time by
+<code class="docutils literal"><span class="pre">t0</span></code> of SW4 run.</p>
+</div></blockquote>
+<p><strong>synthetic_scaling</strong> : bool or float</p>
+<blockquote class="last">
+<div><p>Scaling to apply to synthetic seismograms. If
+<code class="docutils literal"><span class="pre">False</span></code>, no scaling is applied. If a float is provided, all
+synthetics&#8217; will be scaled with the given factor (e.g. using
+<code class="docutils literal"><span class="pre">2.0</span></code> will scale up synthetics by a factor of 2).</p>
 </div></blockquote>
 </td>
 </tr>
@@ -317,7 +344,10 @@ which are the -|max| and |max| of all traces.</li>
         <li class="right" >
           <a href="pySW4.plotting.utils.html" title="pySW4.plotting.utils module"
              >previous</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+    
         <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.plotting.html" >pySW4.plotting package</a> &#187;</li> 
       </ul>

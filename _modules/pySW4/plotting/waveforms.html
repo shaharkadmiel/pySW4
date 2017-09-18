@@ -38,7 +38,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+    
         <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -111,7 +114,10 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
+<span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.dates</span> <span class="k">import</span> <span class="n">date2num</span>
 <span class="kn">from</span> <span class="nn">matplotlib.gridspec</span> <span class="k">import</span> <span class="n">GridSpec</span>
@@ -248,8 +254,9 @@
 <div class="viewcode-block" id="create_seismogram_plots"><a class="viewcode-back" href="../../../packages/pySW4.plotting.waveforms.html#pySW4.plotting.waveforms.create_seismogram_plots">[docs]</a><span class="k">def</span> <span class="nf">create_seismogram_plots</span><span class="p">(</span>
         <span class="n">input_file</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream_observed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inventory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">water_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_filt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">channel_map</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;-Vz&quot;</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Vx&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;Vy&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">},</span> <span class="n">used_stations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">synthetic_starttime</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">channel_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">used_stations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">synthetic_starttime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">synthetic_data_glob</span><span class="o">=</span><span class="s1">&#39;*.?v&#39;</span><span class="p">,</span> <span class="n">t0_correction_fraction</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">synthetic_scaling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create all waveform plots, comparing synthetic and observed data.</span>
 
@@ -298,10 +305,31 @@
 <span class="sd">        Station codes to consider in plot output. Use all stations if</span>
 <span class="sd">        left ``None``.</span>
 
-<span class="sd">    synthetic_starttime: :class:`obspy.core.utcdatetime.UTCDateTime`</span>
+<span class="sd">    synthetic_starttime : :class:`obspy.core.utcdatetime.UTCDateTime`</span>
 <span class="sd">        Start time of synthetic data, only needed if no input file is</span>
 <span class="sd">        specified or if input file did not set the correct origin time</span>
 <span class="sd">        of the event.</span>
+
+<span class="sd">    synthetic_data_glob : str</span>
+<span class="sd">        Glob pattern to lookup synthetic data. Use e.g.</span>
+<span class="sd">        &#39;\*.[xyz]&#39; or &#39;\*.?&#39; for synthetic data saved as &quot;displacement&quot;</span>
+<span class="sd">        (the solution of the forward solver), or &#39;\*.?v&#39; for synthetic</span>
+<span class="sd">        data saved as &quot;velocity&quot; (the differentiated solution of the</span>
+<span class="sd">        forward solver).</span>
+
+<span class="sd">    t0_correction_fraction : float</span>
+<span class="sd">        Fraction of t0 used in SW4 simulation</span>
+<span class="sd">        (offset of source time function to prevent solver artifacts) to</span>
+<span class="sd">        account for (i.e. shift synthetics left to earlier absolute</span>
+<span class="sd">        time). &#39;0.0&#39; means no correction of synthetics time is done,</span>
+<span class="sd">        &#39;1.0&#39; means that synthetic trace is shifted left in time by</span>
+<span class="sd">        ``t0`` of SW4 run.</span>
+
+<span class="sd">    synthetic_scaling : bool or float</span>
+<span class="sd">        Scaling to apply to synthetic seismograms. If</span>
+<span class="sd">        ``False``, no scaling is applied. If a float is provided, all</span>
+<span class="sd">        synthetics&#39; will be scaled with the given factor (e.g. using</span>
+<span class="sd">        ``2.0`` will scale up synthetics by a factor of 2).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">input_</span><span class="p">,</span> <span class="n">folder</span> <span class="o">=</span> <span class="n">_parse_input_file_and_folder</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
 
@@ -315,7 +343,41 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="n">st_synth</span> <span class="o">=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;*.?v&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Correcting observed seismograms to output &quot;</span><span class="si">{}</span><span class="s1">&quot; using &#39;</span>
+              <span class="s1">&#39;evalresp.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">evalresp_output</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">channel_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">channel_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;-Vz&quot;</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Vx&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;Vy&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-Z&quot;</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">}</span>
+
+    <span class="n">info_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="n">files_synth</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">synthetic_data_glob</span><span class="p">))</span>
+    <span class="n">st_synth</span> <span class="o">=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">Stream</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">files_synth</span><span class="p">:</span>
+        <span class="n">st_synth</span> <span class="o">+=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t0_correction_fraction</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">source</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;t0_correction_fraction is not implemented for SW4 run &#39;</span>
+                   <span class="s1">&#39;with multiple sources.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">t0</span>
+        <span class="n">t0_correction</span> <span class="o">=</span> <span class="n">t0</span> <span class="o">*</span> <span class="n">t0_correction_fraction</span>
+        <span class="n">info_text</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s1">&#39; Synthetics start time corrected by </span><span class="si">{}</span><span class="s1">*t0 &#39;</span>
+            <span class="s1">&#39;(-</span><span class="si">{}</span><span class="s1">s).&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t0_correction_fraction</span><span class="p">,</span> <span class="n">t0_correction</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">-=</span> <span class="n">t0_correction</span>
+    <span class="k">if</span> <span class="n">synthetic_scaling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">info_text</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39; Synthetics scaled with a factor of </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">synthetic_scaling</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">synthetic_scaling</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Scaling synthetics by </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">synthetic_scaling</span><span class="p">))</span>
+
     <span class="n">st_real</span> <span class="o">=</span> <span class="n">stream_observed</span> <span class="ow">or</span> <span class="n">obspy</span><span class="o">.</span><span class="n">Stream</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">used_stations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">st_synth</span><span class="o">.</span><span class="n">traces</span> <span class="o">=</span> <span class="p">[</span><span class="n">tr</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span>
@@ -330,6 +392,9 @@
         <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;Vz&quot;</span><span class="p">:</span>
             <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="s2">&quot;-Vz&quot;</span>
             <span class="n">tr</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="s2">&quot;-Z&quot;</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">t_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">])</span>
     <span class="n">t_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">endtime</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">])</span>
     <span class="n">st_real</span><span class="o">.</span><span class="n">attach_response</span><span class="p">(</span><span class="n">inventory</span><span class="p">)</span>
@@ -340,18 +405,20 @@
     <span class="n">st_real</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">t_min</span><span class="p">,</span> <span class="n">t_max</span><span class="p">)</span>
 
     <span class="n">outfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;seismograms.png&quot;</span><span class="p">)</span>
-    <span class="n">_plot_seismograms</span><span class="p">(</span><span class="n">st_synth</span><span class="p">,</span> <span class="n">st_real</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+    <span class="n">_plot_seismograms</span><span class="p">(</span><span class="n">st_synth</span><span class="p">,</span> <span class="n">st_real</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span>
+                      <span class="n">info_text</span><span class="o">=</span><span class="n">info_text</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">station</span> <span class="ow">in</span> <span class="n">stations</span><span class="p">:</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;seismograms.</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">station</span><span class="p">))</span>
         <span class="n">st_synth_</span> <span class="o">=</span> <span class="n">st_synth</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">station</span><span class="o">=</span><span class="n">station</span><span class="p">)</span>
         <span class="n">st_real_</span> <span class="o">=</span> <span class="n">st_real</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">station</span><span class="o">=</span><span class="n">station</span><span class="p">)</span>
         <span class="n">_plot_seismograms</span><span class="p">(</span>
             <span class="n">st_synth_</span><span class="p">,</span> <span class="n">st_real_</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span>
-            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span></div>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">info_text</span><span class="o">=</span><span class="n">info_text</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="_plot_seismograms"><a class="viewcode-back" href="../../../packages/pySW4.plotting.waveforms.html#pySW4.plotting.waveforms._plot_seismograms">[docs]</a><span class="k">def</span> <span class="nf">_plot_seismograms</span><span class="p">(</span><span class="n">st_synth_</span><span class="p">,</span> <span class="n">st_real_</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span>
-                      <span class="n">outfile</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="_plot_seismograms"><a class="viewcode-back" href="../../../packages/pySW4.plotting.waveforms.html#pySW4.plotting.waveforms._plot_seismograms">[docs]</a><span class="k">def</span> <span class="nf">_plot_seismograms</span><span class="p">(</span>
+        <span class="n">st_synth_</span><span class="p">,</span> <span class="n">st_real_</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">info_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper function that plots synthetic vs. real data to an image file.</span>
 
@@ -386,7 +453,15 @@
     <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">texts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">sta</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">cha</span> <span class="o">=</span> <span class="nb">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-        <span class="n">real_component</span> <span class="o">=</span> <span class="n">channel_map</span><span class="p">[</span><span class="n">cha</span><span class="p">]</span>
+        <span class="n">real_component</span> <span class="o">=</span> <span class="n">channel_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cha</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">real_component</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">real_component</span> <span class="o">=</span> <span class="n">cha</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Synthetic channel could not be mapped to component code &#39;</span>
+                   <span class="s1">&#39;of observed data. Using last character of synthetic data &#39;</span>
+                   <span class="s1">&#39;(&quot;</span><span class="si">{}</span><span class="s1">&quot;) to match observed data component code. Are data &#39;</span>
+                   <span class="s1">&#39;already rotated by SW4 through config &#39;</span>
+                   <span class="s1">&#39;file settings?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">real_component</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="c1"># find appropriate synthetic trace</span>
         <span class="k">for</span> <span class="n">tr_real</span> <span class="ow">in</span> <span class="n">st_real_</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">station</span> <span class="o">!=</span> <span class="n">sta</span><span class="p">:</span>
@@ -399,10 +474,13 @@
             <span class="k">continue</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
                 <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">date2num</span><span class="p">([</span><span class="n">tr_real</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">+</span> <span class="n">t_</span> <span class="k">for</span>
-                      <span class="n">t_</span> <span class="ow">in</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">times</span><span class="p">()])</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">date2num</span><span class="p">([(</span><span class="n">tr_real</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">+</span> <span class="n">t_</span><span class="p">)</span><span class="o">.</span><span class="n">datetime</span>
+                      <span class="k">for</span> <span class="n">t_</span> <span class="ow">in</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">times</span><span class="p">()])</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">unit_label</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">info_text</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">info_text</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
@@ -423,7 +501,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+    
         <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
