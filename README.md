@@ -10,34 +10,46 @@
 pySW4: Python routines for interaction with SW4
 ===============================================
 
-pySW4 is an open-source project dedicated to provide a Python framework for
-working with numerical simulations of seismic-wave propagation with SW4 in all
-phases of the task (preprocessing, post-processing and runtime visualization).
+pySW4 is an open-source project dedicated to provide a Python framework for working with numerical simulations of seismic-wave propagation with [SW4](https://geodynamics.org/cig/software/sw4/) in all phases of the task. Preprocessing, post-processing and runtime visualization. It also provides several other tools for handling GeoTIFF files such as ASTER-GDEM tiles and others, plotting shaded-relief DEM maps and draping data over them, creating movies from image sequences, etc.
+
+The functionality is provided through 5 sub-packages which include pre- and post-processing routines including the [rfileIO](http://shaharkadmiel.github.io/pySW4/packages/pySW4.prep.rfileIO.html) library for interaction, reading and writing seismic models in the rfile format.
+
+There are some useful utilities for geodesic projections of data and for reading and writing GeoTIFF files.
+
+In the command line interface [scripts](http://shaharkadmiel.github.io/pySW4/packages/pySW4.cli.html), there are some quick and dirty plotting routines which can be run from the command line. It may be useful to run these scripts on the server-end while the computation is running in order to generate *pseudo-RunTime* visualization of the results.
 
 Installation
 ------------
+**pip**
 
-```bash
-$ pip install https://github.com/shaharkadmiel/pySW4/archive/master.zip
-```
+Currently ``pySW4`` does not work via the ``conda install`` (we are
+working on that...). So for now you can install the repository directly
+from GitHub. Use this command to install from ``master``:
 
-Updating a previoius install:
+    $ pip install https://github.com/shaharkadmiel/pySW4/archive/master.zip
 
-```bash
-$ pip install -U https://github.com/shaharkadmiel/pySW4/archive/master.zip
-```
+To get the latest release version do::
 
-or without updating dependencies:
+    $ pip install https://github.com/shaharkadmiel/pySW4/archive/v0.3.0.zip
 
-```bash
-$ pip install -U --no-deps https://github.com/shaharkadmiel/pySW4/archive/master.zip
-```
+Add the ``--no-deps`` to forgo dependency upgrade ot downgrade.
 
-or a specific branch:
+**conda** (coming up...)
 
-```bash
-$ pip install -U --no-deps https://github.com/shaharkadmiel/pySW4/archive/0.3.0.zip
-```
+Installing ``pySW4`` from the conda-forge channel can be achieved by
+adding conda-forge to your channels with:
+
+    $ conda config --add channels conda-forge
+
+Once the conda-forge channel has been enabled, ``pySW4`` can be
+installed with:
+
+    $ conda install pysw4
+
+It is possible to list all of the versions of ``pySW4`` available on
+your platform with:
+
+    $ conda search pysw4 --channel conda-forge
 
 Quick and dirty plotting from the command line
 ----------------------------------------------
