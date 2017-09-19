@@ -18,6 +18,8 @@ There are some useful utilities for geodesic projections of data and for reading
 
 In the command line interface [scripts](http://shaharkadmiel.github.io/pySW4/packages/pySW4.cli.html), there are some quick and dirty plotting routines which can be run from the command line. It may be useful to run these scripts on the server-end while the computation is running in order to generate *pseudo-RunTime* visualization of the results.
 
+See the full [API documentation]((http://shaharkadmiel.github.io/pySW4/) page and [Tutorial examples](http://shaharkadmiel.github.io/pySW4/packages/tutorials.html).
+
 Installation
 ------------
 **pip**
