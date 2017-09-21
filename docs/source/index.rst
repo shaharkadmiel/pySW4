@@ -6,7 +6,7 @@ pySW4 documentation
 
 Introduction
 ------------
-pySW4 is an open-source project dedicated to provide a Python framewor
+pySW4 is an open-source project dedicated to provide a Python framework
 for working with numerical simulations of seismic-wave propagation with
 SW4 in all phases of the task (preprocessing, post-processing and
 runtime visualization). The functionality is provided through 5
@@ -14,12 +14,12 @@ sub-packages which include pre- and post-processing routines including
 the :mod:`~pySW4.prep.rfileIO` library for interaction, reading and
 writing seismic models in the rfile format.
 
-There are some usefull utilities for geodesic projections of data and
+There are some useful utilities for geodesic projections of data and
 for reading and writing GeoTIFF files.
 
 In the command line interface scrips, there are some quick
 and dirty plotting routines which can be run from the command
-line. It may be usefull to run these scrips on the server-end while the
+line. It may be useful to run these scrips on the server-end while the
 computation is running in order to generate *pseudo-RunTime*
 visualization of the results.
 
