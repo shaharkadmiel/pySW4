@@ -95,36 +95,24 @@
 <span id="index"></span><h1>pySW4 documentation<a class="headerlink" href="#pysw4-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>pySW4 is an open-source project dedicated to provide a Python framewor
+<p>pySW4 is an open-source project dedicated to provide a Python framework
 for working with numerical simulations of seismic-wave propagation with
 SW4 in all phases of the task (preprocessing, post-processing and
 runtime visualization). The functionality is provided through 5
 sub-packages which include pre- and post-processing routines including
 the <a class="reference internal" href="packages/pySW4.prep.rfileIO.html#module-pySW4.prep.rfileIO" title="pySW4.prep.rfileIO"><code class="xref py py-mod docutils literal"><span class="pre">rfileIO</span></code></a> library for interaction, reading and
 writing seismic models in the rfile format.</p>
-<p>There are some usefull utilities for geodesic projections of data and
+<p>There are some useful utilities for geodesic projections of data and
 for reading and writing GeoTIFF files.</p>
 <p>In the command line interface scrips, there are some quick
 and dirty plotting routines which can be run from the command
-line. It may be usefull to run these scrips on the server-end while the
+line. It may be useful to run these scrips on the server-end while the
 computation is running in order to generate <em>pseudo-RunTime</em>
 visualization of the results.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p><strong>pip</strong></p>
-<p>Currently <code class="docutils literal"><span class="pre">pySW4</span></code> does not work via the <code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span></code> (we are
-working on that...). So for now you can install the repository directly
-from GitHub. Use this command to install from <code class="docutils literal"><span class="pre">master</span></code>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">shaharkadmiel</span><span class="o">/</span><span class="n">pySW4</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
-</pre></div>
-</div>
-<p>To get the latest release version do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">shaharkadmiel</span><span class="o">/</span><span class="n">pySW4</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">v0</span><span class="o">.</span><span class="mf">3.0</span><span class="o">.</span><span class="n">zip</span>
-</pre></div>
-</div>
-<p>Add the <code class="docutils literal"><span class="pre">--no-deps</span></code> to forgo dependency upgrade ot downgrade.</p>
-<p><strong>conda</strong> (coming up...)</p>
+<p><strong>conda</strong></p>
 <p>Installing <code class="docutils literal"><span class="pre">pySW4</span></code> from the conda-forge channel can be achieved by
 adding conda-forge to your channels with:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">add</span> <span class="n">channels</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
@@ -140,6 +128,16 @@ your platform with:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">search</span> <span class="n">pysw4</span> <span class="o">--</span><span class="n">channel</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
 </pre></div>
 </div>
+<p><strong>pip</strong></p>
+<p>You can install the repository directly from GitHub. Use this command to install from <code class="docutils literal"><span class="pre">master</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">shaharkadmiel</span><span class="o">/</span><span class="n">pySW4</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+<p>To get the latest release version do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">shaharkadmiel</span><span class="o">/</span><span class="n">pySW4</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">v0</span><span class="o">.</span><span class="mf">3.0</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+<p>Add the <code class="docutils literal"><span class="pre">--no-deps</span></code> to forgo dependency upgrade ot downgrade.</p>
 </div>
 <div class="section" id="documentation-and-tutorials">
 <h2>Documentation and tutorials<a class="headerlink" href="#documentation-and-tutorials" title="Permalink to this headline">¶</a></h2>
