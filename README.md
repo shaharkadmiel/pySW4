@@ -22,7 +22,7 @@ See the full [API documentation](http://shaharkadmiel.github.io/pySW4/) page and
 
 Installation
 ------------
-**conda** (coming up...)
+**conda**
 
 Installing ``pySW4`` from the conda-forge channel can be achieved by
 adding conda-forge to your channels with:
