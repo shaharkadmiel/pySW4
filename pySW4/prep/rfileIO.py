@@ -24,6 +24,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from warnings import warn
 
+from . import material_model as mm
+
 flush = sys.stdout.flush()
 
 RFILE_HEADER_DTYPE = np.dtype([
@@ -254,6 +256,94 @@ def write_block_hdr(f, hh, hv, z0, nc, ni, nj, nk):
     f.write(np.int32(nk))
 
 
+def write_topo_block(f, data, precision=4):
+    """
+    Parameters
+    ----------
+    f : file or str
+        Open file handle in ``'wa'`` mode or path to an rfile for
+        appending data to the end.
+
+    data : :class:`~numpy.ndarray`
+        Elevation data in meters below sea level (z positive down).
+
+    precision : {4 (default), 8}
+        The number of bytes per entry in the data section.
+
+        4 - single precision
+
+        8 - double precision
+    """
+
+    try:
+        with open(f, 'wa') as f:
+            data.astype(np.float32).tofile(f)
+    except TypeError:
+        data.astype(np.float32).tofile(f)
+
+
+def write_properties(f, vp, nc, vs=None, rho=None, qp=None, qs=None):
+    """
+    Write material properties at a point `i`, `j` in block `b`.
+
+    This is a convinient function to use while looping over `i`, `j` in
+    a specific block `b` for writing out material properties at each
+    index `k`. At the very least `vp` should be provided. If only `vp`
+    is provided, the other properties are calculated using the
+    :mod:`~..material_model` module.
+
+    Parameters
+    ----------
+    f : file
+        Open file handle in ``'wa'`` mode for appending data to the end
+        of a file in construction ot in ``'r+b'`` mode for overwriting
+        existing data.
+
+        When overwriting existing data, the user must take care to place
+        the cursor in the right place in the file.
+
+    vp : array-like
+        P wave velocity at indicies of `k` in m/s.
+
+    nc : int
+        Number of components to write out. Either 3 (`rho`, `vp`, and
+        `vs` if ``attenuation=0``) or 5 (also `qp` and `qs` if
+        ``attenuation=1``).
+
+    vs : array-like, optional
+        S wave velocity at indicies of `k` in m/s. If not given, `vs` is
+        calculated from :func:`~..material_model.get_vs`.
+
+    rho : array-like, optional
+        Density at indicies of `k` in kg/m^3. If not given, `rho` is
+        calculated from :func:`~..material_model.get_rho`.
+
+    qp : array-like, optional
+        P quality factor at indicies of `k`. If not given, `qp` is
+        calculated from :func:`~..material_model.get_qp`.
+
+    qs : array-like, optional
+        S quality factor at indicies of `k`. If not given, `qs` is
+        calculated from :func:`~..material_model.get_qs`.
+    """
+
+    vp = vp * 1e-3
+
+    k_array = np.empty((vp.size, nc), np.float32)
+    vs = vs or mm.get_vs(vp)
+    rho = rho or mm.get_rho(vp)
+    qs = qs or mm.get_qs(vs)
+    qp = qp or mm.get_qp(qs)
+
+    k_array[:, 0] = rho * 1e3
+    k_array[:, 1] = vp * 1e3
+    k_array[:, 2] = vs * 1e3
+    k_array[:, 3] = qp
+    k_array[:, 4] = qs
+
+    k_array.tofile(f)
+
+
 def read_block_hdr(f):
     """
     Read rfile block header.
@@ -282,7 +372,7 @@ def read_block_hdr(f):
 
         The first block holds the elevation of the topography/
         bathymetry, so ``nc=1``.
-        The following blocks must have either 3 if only rho, vp, and vs
+        The following blocks have either 3 if only rho, vp, and vs
         are present (``attenuation=0``) or 5 if qp and qs are pressent
         (``attenuation=1``).
 
@@ -513,10 +603,17 @@ class Model():
                 properties = np.vstack((properties,
                                         np.ones((block.z().shape[0],
                                                  5)) * -999.))
+
+        z = self.z()
+        if properties.shape[0] < z.size:
+            z = z[1:]
+        elif z.size < properties.shape[0]:
+            properties = properties[1:]
+
         try:
-            return self.z(), properties[1:, COMPONENTS[property]]
+            return z, properties[:, COMPONENTS[property]]
         except KeyError:
-            return self.z(), properties[1:]
+            return z, properties[:]
 
     def get_cross_section(self, x1=None, x2=None, y1=None, y2=None):
         """
@@ -569,7 +666,7 @@ class Model():
                   :meth:`~.Model.plot_topography` for plotting.
         """
 
-        return model.blocks[0].data
+        return self.blocks[0].data
 
     def plot_topography(self, ax=None, **kwargs):
         """

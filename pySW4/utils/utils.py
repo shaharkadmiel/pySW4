@@ -25,8 +25,8 @@ from pyproj import Proj, transform
 try:
     import cv2
 except ImportError:
-    warn('OpenCV not found, you will not be able to use '
-         '`pySW4.utils.resample` in `draft` mode.')
+    warn("OpenCV not found. Don't worry about this unless you want to use "
+         "`pySW4.utils.resample` in `draft` mode.")
 from matplotlib.colors import LinearSegmentedColormap, ColorConverter
 
 

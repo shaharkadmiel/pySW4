@@ -39,19 +39,23 @@ def get_vs(vp):
     float or sequence
         Shear-wave velocity in km/s.
     """
-    vs = (0.7858
-          - 1.2344 * vp
-          + 0.7949 * vp**2
-          - 0.1238 * vp**3
-          + 0.0064 * vp**4)
+    # vs = (0.7858
+    #       - 1.2344 * vp
+    #       + 0.7949 * vp**2
+    #       - 0.1238 * vp**3
+    #       + 0.0064 * vp**4)
 
-    try:
-        vs[vp / vs < 1.42] = vp[vp / vs < 1.42] / 1.4
-    except TypeError:
-        if vp / vs < 1.42:
-            print(vs)
-            vs = vp / 1.4
-            print(vs)
+    # vs[vp <= 2] = vp[vp <= 2] / 1.73
+
+    vs = vp / 1.73
+
+    # try:
+    #     vs[vp / vs < 1.42] = vp[vp / vs < 1.42] / 1.4
+    # except TypeError:
+    #     if vp / vs < 1.42:
+    #         print(vs)
+    #         vs = vp / 1.4
+    #         print(vs)
     return vs
 
 

@@ -33,6 +33,11 @@ except ImportError:
     warn('gdal not found, you will not be able to use the geo tools '
          ' in `pySW4.utils.geo` unless you install gdal.')
 
+GDAL_INTERPOLATION = {'nearest' : gdal.GRA_NearestNeighbour,
+                      'bilinear': gdal.GRA_Bilinear,
+                      'cubic'   : gdal.GRA_Cubic,
+                      'lanczos' : gdal.GRA_Lanczos}
+
 
 class GeoTIFF():
     """
@@ -65,13 +70,19 @@ class GeoTIFF():
         """
         Private method for reading a GeoTIFF file.
         """
-        self.path, self.name = os.path.split(filename)
+        try:
+            self.path, self.name = os.path.split(filename)
 
-        if verbose:
-            print('Reading GeoTIFF file: %s' % filename)
-            sys.stdout.flush()
+            if verbose:
+                print('Reading GeoTIFF file: %s' % filename)
+                sys.stdout.flush()
 
-        src_ds = gdal.Open(filename)
+            src_ds = gdal.Open(filename)
+        except AttributeError:
+            if verbose:
+                print('Updating GeoTIFF file...')
+                sys.stdout.flush()
+            src_ds = filename
 
         self._src_ds = src_ds
         band = src_ds.GetRasterBand(rasterBand)
@@ -85,14 +96,20 @@ class GeoTIFF():
         self.nx = band.XSize
         self.ny = band.YSize
 
-        self.e = self.w + (self.nx) * self.dx
-        self.s = self.n + (self.ny) * self.dy
+        self.e = self.w + self.nx * self.dx
+        self.s = self.n + self.ny * self.dy
 
         self.extent = (self.w, self.e, self.s, self.n)
         self.proj4 = osr.SpatialReference(self._src_ds.GetProjection())\
                         .ExportToProj4()
 
         self.elev = band.ReadAsArray()
+
+    def _update(self):
+        """
+        Update GeoTIFF object by closing and reopening the dataset
+        """
+        pass
 
     def __str__(self):
         string = '\nGeoTIFF info:\n'
@@ -147,7 +164,7 @@ class GeoTIFF():
         """
         return np.meshgrid(self.x, self.y)
 
-    def resample(self, by=None, to=None, order=0):
+    def resample(self, by=None, to=None, order=0, keep_extent=False):
         """
         Method to resample the data either `by` a factor or `to`
         the specified spacing.
@@ -180,6 +197,16 @@ class GeoTIFF():
             - 3 - cubic (slower)
             - ...
 
+        keep_extent : bool
+            Resampling interpolates the data onto a new grid with the
+            desired spacing. This may result in a change of the extent
+            of the data. To keep the extent, set `keep_extent` to
+            ``True``.
+
+            **Note** that this may result in slightly different
+            spacing than desired and more importantly, may cause a
+            **discrepency** between `x` and `y` spacing.
+
         """
 
         if by and to:
@@ -189,17 +216,33 @@ class GeoTIFF():
         if to:
             by = abs(self.dx / to)
 
+        if by:
+            to = abs(self.dx / by)
+
         self.elev = ndimage.zoom(self.elev, by, order=order)
         self.ny, self.nx = self.elev.shape
-        self.dy, self.dx = ((self.s - self.n) / (self.ny - 1),
-                            (self.e - self.w) / (self.nx - 1))
+        if keep_extent:
+            self.dy, self.dx = ((self.s - self.n) / (self.ny - 1),
+                                (self.e - self.w) / (self.nx - 1))
+        else:
+            self.dy, self.dx = -to, to
+            self.e = self.w + self.nx * self.dx
+            self.s = self.n + self.ny * self.dy
 
-    def reproject(self, epsg=None, proj4=None, match=None,
-                  error_threshold=0.125, target_filename=None):
+            self.extent = (self.w, self.e, self.s, self.n)
+
+    def reproject(self, epsg=None, proj4=None, match=None, spacing=None,
+                  interpolation='nearest', error_threshold=0.125,
+                  target_filename=None, verbose=False):
         """
         Reproject the data from the current projection to the specified
         target projection `epsg` or `proj4` or to `match` an
-        existing GeoTIFF file.
+        existing GeoTIFF file. Optionally, the grid spacing can be
+        changed as well.
+
+        To keep the same projection and only resample the data leave
+        `epsg`, `proj4`, and `match` to be ``None`` and specify
+        `spacing`.
 
         .. warning:: **Watch Out!** This operation is performed in place
                      on the actual data. The raw data will no longer be
@@ -228,6 +271,17 @@ class GeoTIFF():
             existing GeoTIFF file or object.
             It is assumed that both GeoTIFF objects cover the same
             extent.
+
+        spacing : int or float
+            Target spacing in the units of ther target projection.
+
+        interpolation : {'nearest', 'bilinear', 'cubic', 'lanczos'}
+            Resampling algorithm:
+
+            - 'nearest' : Nearest neighbour
+            - 'bilinear' : Bilinear (2x2 kernel)
+            - 'cubic' : Cubic Convolution Approximation (4x4 kernel)
+            - 'lanczos' : Lanczos windowed sinc interpolation (6x6 kernel)
 
         error_threshold : float
             Error threshold for transformation approximation in pixel
@@ -261,61 +315,200 @@ class GeoTIFF():
         if epsg and proj4 and match:
             msg = 'Only `epsg`, `proj4`, or `match` should be specified.'
             raise ValueError(msg)
-        elif not epsg and not proj4 and not match:
-            msg = '`epsg`, `proj4`, or `match` MUST be specified.'
+        elif not epsg and not proj4 and not match and not spacing:
+            msg = '`epsg`, `proj4`, `spacing` or `match` MUST be specified.'
             raise ValueError(msg)
 
-        if not target_filename:
-            target_filename = 'dst_temp.tif'
+        # Set up the two Spatial Reference systems
+        srcSRS = osr.SpatialReference()
+        srcSRS.ImportFromProj4(self.proj4)
 
         dstSRS = osr.SpatialReference()
 
-        if epsg or proj4:
+        interpolation = GDAL_INTERPOLATION[interpolation]
+
+        if epsg or proj4 or spacing:
             try:
                 dstSRS.ImportFromEPSG(epsg)
             except TypeError:
+                # Default to the same projection as the source
+                if not proj4:
+                    proj4 = self.proj4
                 dstSRS.ImportFromProj4(proj4)
 
-            temp_ds = gdal.AutoCreateWarpedVRT(self._src_ds,
-                                               None,
-                                               dstSRS.ExportToWkt(),
-                                               gdal.GRA_NearestNeighbour,
-                                               error_threshold)
-            dst_ds = gdal.GetDriverByName('GTiff').CreateCopy(target_filename,
-                                                              temp_ds)
+            # Default to same spacing
+            spacing = float(spacing) or self.dx
 
-        # isinstance(match, GeoTIFF)
-        elif match:
-            self.write_GeoTIFF('src_temp.tif')
-            src_ds = gdal.Open('src_temp.tif')
-            src_proj = src_ds.GetProjection()
-            src_geotrans = src_ds.GetGeoTransform()
+            # Work out the boundaries of the target dataset
+            tx = osr.CoordinateTransformation(srcSRS, dstSRS)
 
-            if type(match) is str:
-                match = read_GeoTIFF(match, 1)
+            (ulx, uly, ulz) = tx.TransformPoint(self.w, self.n)
+            (lrx, lry, lrz) = tx.TransformPoint(
+                                self.w + self.dx * self.nx,
+                                self.n + self.dy * self.ny)
 
             gdal_dtype = gdal_array.NumericTypeCodeToGDALTypeCode(self.dtype)
-            dstSRS.ImportFromProj4(match.proj4)
-            dst_ds = gdal.GetDriverByName('GTiff').Create(target_filename,
-                                                          match.nx,
-                                                          match.ny,
-                                                          1,
-                                                          gdal_dtype)
-            dst_ds.SetGeoTransform(match.geotransform)
+
+            if not target_filename:
+                # Create an in-memory raster
+                drv = gdal.GetDriverByName('MEM')
+                dst_ds = drv.Create('',
+                                    int((lrx - ulx) / spacing),
+                                    int((uly - lry) / spacing), 1,
+                                    gdal_dtype)
+            else:
+                # Create an raster file
+                drv = gdal.GetDriverByName('GTiff')
+                dst_ds = drv.Create(target_filename,
+                                    int((lrx - ulx) / spacing),
+                                    int((uly - lry) / spacing), 1,
+                                    gdal_dtype)
+
+            # Calculate the new geotransform
+            dstGT = (ulx, spacing, 0, uly, 0, -spacing)
+
+            # Set the geotransform
+            dst_ds.SetGeoTransform(dstGT)
             dst_ds.SetProjection(dstSRS.ExportToWkt())
 
-            gdal.ReprojectImage(src_ds, dst_ds,
-                                src_proj, dstSRS.ExportToWkt(),
-                                gdal.GRA_NearestNeighbour,
-                                error_threshold)
-            os.remove('src_temp.tif')
+            # keep nodata value
+            band = dst_ds.GetRasterBand(1)
+            band.Fill(self.nodata)
+            band.SetNoDataValue(self.nodata)
+            band.FlushCache()
 
-        dst_ds = None
-        self._read(target_filename, 1)
-        try:
-            os.remove('dst_temp.tif')
-        except OSError:
-            pass
+            # Perform the projection/resampling
+            src_proj = self._src_ds.GetProjection()
+            res = gdal.ReprojectImage(self._src_ds, dst_ds,
+                                      src_proj, dstSRS.ExportToWkt(),
+                                      interpolation,
+                                      error_threshold)
+
+            assert res == 0
+            self._read(dst_ds, 1, verbose)
+
+    # def reproject(self, epsg=None, proj4=None, match=None,
+    #               error_threshold=0.125, target_filename=None):
+    #     """
+    #     Reproject the data from the current projection to the specified
+    #     target projection `epsg` or `proj4` or to `match` an
+    #     existing GeoTIFF file.
+
+    #     .. warning:: **Watch Out!** This operation is performed in place
+    #                  on the actual data. The raw data will no longer be
+    #                  accessible afterwards. To keep the original data,
+    #                  use the :meth:`~pySW4.utils.geo.GeoTIFF.copy`
+    #                  method to create a copy of the current object.
+
+    #     Parameters
+    #     ----------
+    #     epsg : int
+    #         The target projection EPSG code. See the
+    #         `Geodetic Parameter Dataset Registry
+    #         <http://www.epsg-registry.org/>`_ for more information.
+
+    #     proj4 : str
+    #         The target Proj4 string. If the EPSG code is unknown or a
+    #         custom projection is required, a Proj4 string can be passed.
+    #         See the `Proj4 <https://trac.osgeo.org/proj/wiki/GenParms>`_
+    #         documentation for a list of general Proj4 parameters.
+
+    #     match : str or :class:`~pySW4.utils.geo.GeoTIFF` instance
+    #         Path (relative or absolute) to an existing GeoTIFF file or
+    #         :class:`~pySW4.utils.geo.GeoTIFF` instance (already in
+    #         memory) to match size and projection of. Current data is
+    #         resampled to match the shape and number of pixels of the
+    #         existing GeoTIFF file or object.
+    #         It is assumed that both GeoTIFF objects cover the same
+    #         extent.
+
+    #     error_threshold : float
+    #         Error threshold for transformation approximation in pixel
+    #         units. (default is 0.125 for compatibility with  gdalwarp)
+
+    #     target_filename : str
+    #         If a target filename is given then the reprojected data is
+    #         saved as target_filename and read into memory replacing
+    #         the current data. This is faster than reprojecting and then
+    #         saving. Otherwise the
+    #         :meth:`~pySW4.utils.geo.GeoTIFF.write_GeoTIFF` method can be
+    #         used to save the data at a later point if further
+    #         manipulations are needed.
+
+    #     Notes
+    #     -----
+    #     Examples of some EPSG codes and their equivalent Proj4 strings
+    #     are::
+
+    #         4326   -> '+proj=longlat +datum=WGS84 +no_defs'
+
+    #         32636  -> '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
+
+    #         102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40
+    #                    +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m
+    #                    +no_defs'
+
+    #     and so on ... See the `Geodetic Parameter Dataset Registry
+    #     <http://www.epsg-registry.org/>`_ for more information.
+    #     """
+    #     if epsg and proj4 and match:
+    #         msg = 'Only `epsg`, `proj4`, or `match` should be specified.'
+    #         raise ValueError(msg)
+    #     elif not epsg and not proj4 and not match:
+    #         msg = '`epsg`, `proj4`, or `match` MUST be specified.'
+    #         raise ValueError(msg)
+
+    #     if not target_filename:
+    #         target_filename = 'dst_temp.tif'
+
+    #     dstSRS = osr.SpatialReference()
+
+    #     if epsg or proj4:
+    #         try:
+    #             dstSRS.ImportFromEPSG(epsg)
+    #         except TypeError:
+    #             dstSRS.ImportFromProj4(proj4)
+
+    #         temp_ds = gdal.AutoCreateWarpedVRT(self._src_ds,
+    #                                            None,
+    #                                            dstSRS.ExportToWkt(),
+    #                                            gdal.GRA_NearestNeighbour,
+    #                                            error_threshold)
+    #         dst_ds = gdal.GetDriverByName('GTiff').CreateCopy(target_filename,
+    #                                                           temp_ds)
+
+    #     # isinstance(match, GeoTIFF)
+    #     elif match:
+    #         self.write_GeoTIFF('src_temp.tif')
+    #         src_ds = gdal.Open('src_temp.tif')
+    #         src_proj = src_ds.GetProjection()
+    #         src_geotrans = src_ds.GetGeoTransform()
+
+    #         if type(match) is str:
+    #             match = read_GeoTIFF(match, 1)
+
+    #         gdal_dtype = gdal_array.NumericTypeCodeToGDALTypeCode(self.dtype)
+    #         dstSRS.ImportFromProj4(match.proj4)
+    #         dst_ds = gdal.GetDriverByName('GTiff').Create(target_filename,
+    #                                                       match.nx,
+    #                                                       match.ny,
+    #                                                       1,
+    #                                                       gdal_dtype)
+    #         dst_ds.SetGeoTransform(match.geotransform)
+    #         dst_ds.SetProjection(dstSRS.ExportToWkt())
+
+    #         gdal.ReprojectImage(src_ds, dst_ds,
+    #                             src_proj, dstSRS.ExportToWkt(),
+    #                             gdal.GRA_NearestNeighbour,
+    #                             error_threshold)
+    #         os.remove('src_temp.tif')
+
+    #     dst_ds = None
+    #     self._read(target_filename, 1)
+    #     try:
+    #         os.remove('dst_temp.tif')
+    #     except OSError:
+    #         pass
 
     def keep(self, w, e, s, n):
         """
@@ -485,6 +678,10 @@ class GeoTIFF():
         new.nx = copy.deepcopy(self.nx)
         new.ny = copy.deepcopy(self.ny)
         new.elev = copy.deepcopy(self.elev)
+        try:
+            new._src_ds = gdal.Open(os.path.join(self.path, self.name))
+        except AttributeError:
+            new._src_ds = None
         return new
 
 
