@@ -2,3 +2,4 @@
 .DS_Store
 docs/build
 .ipynb_checkpoints
+pysw4.docset*
