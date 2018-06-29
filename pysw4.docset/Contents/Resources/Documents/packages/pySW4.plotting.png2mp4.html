@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pySW4.plotting.png2mp4 module — pySW4 '0.3.0' documentation</title>
+<link href="../_static/style.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="pySW4.plotting.utils.html" rel="next" title="pySW4.plotting.utils module"/>
+<link href="pySW4.plotting.image.html" rel="prev" title="pySW4.plotting.image module"/>
+</head>
+<body role="document">
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pySW4.plotting.utils.html" title="pySW4.plotting.utils module">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pySW4.plotting.image.html" title="pySW4.plotting.image module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a accesskey="U" href="pySW4.plotting.html">pySW4.plotting package</a> »</li>
+</ul>
+</div>
+<div aria-label="main navigation" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="pySW4.plotting.image.html" title="previous chapter">pySW4.plotting.image module</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="pySW4.plotting.utils.html" title="next chapter">pySW4.plotting.utils module</a></p>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/packages/pySW4.plotting.png2mp4.rst.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<div id="searchbox" role="search" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<div><input name="q" type="text"/></div>
+<div><input type="submit" value="Go"/></div>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="section" id="module-pySW4.plotting.png2mp4"><a name="//apple_ref/cpp/Module/png2mp4"></a>
+<span id="pysw4-plotting-png2mp4-module"></span><h1><a name="//apple_ref/cpp/Module/pySW4.plotting.png2mp4"></a>pySW4.plotting.png2mp4 module<a class="headerlink" href="#module-pySW4.plotting.png2mp4" title="Permalink to this headline">¶</a></h1>
+<p>Convert a sequencial set of .png images to a .mp4 movies.</p>
+<span class="target" id="module-png2mp4"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pySW4.plotting.png2mp4.png2mp4"><a name="//apple_ref/cpp/Function/pySW4.plotting.png2mp4.png2mp4"></a>
+<code class="descname">png2mp4</code><span class="sig-paren">(</span><em>outfile</em>, <em>inpath='./'</em>, <em>crf=23</em>, <em>pts=1</em>, <em>fps=30</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/plotting/png2mp4.html#png2mp4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.plotting.png2mp4.png2mp4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python module for creating mp4 annimations from a set of
+sequential png images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>outfile</strong> : str</p>
+<blockquote>
+<div><p>Name of the final .mp4 file.</p>
+</div></blockquote>
+<p><strong>inpath</strong> : str</p>
+<blockquote>
+<div><p>Path to where the sequential .png images are. Default is <cite>‘./’</cite>.</p>
+</div></blockquote>
+<p><strong>crf</strong> : int</p>
+<blockquote>
+<div><p>Constant Rate Factor, ranges from 0 to 51: A lower value is a
+higher quality and vise versa. The range is exponential, so
+increasing the CRF value +6 is roughly half the bitrate while -6
+is roughly twice the bitrate. General usage is to choose the
+highest CRF value that still provides an acceptable quality. If
+the output looks good, then try a higher value and if it looks
+bad then choose a lower value. A subjectively sane range is 18
+to 28. Default is 23.</p>
+</div></blockquote>
+<p><strong>pts</strong> : int</p>
+<blockquote>
+<div><p>Presentation TimeStamp, pts &lt; 1 to speedup the video, pts &gt; 1 to
+slow down the video. For example, 0.5 will double the speed and
+cut the video duration in half whereas 2 will slow the video
+down and double its duration. Default is 1.</p>
+</div></blockquote>
+<p><strong>fps</strong> : int</p>
+<blockquote>
+<div><p>Frames Per Second of the output video. If you speed a video up
+frames get dropped as ffmpeg is trying to fit more frames in
+less time. Try increasing the frame rate by the same factor used
+for pts. If you slow a video down, increasing the frame rate
+results in smoother video for some reason. Default is 30.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote class="last">
+<div><p>Print information about the process if True. Set to False to
+suppress any output.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pySW4.plotting.utils.html" title="pySW4.plotting.utils module">next</a> |</li>
+<li class="right">
+<a href="pySW4.plotting.image.html" title="pySW4.plotting.image module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a href="pySW4.plotting.html">pySW4.plotting package</a> »</li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+        © Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+</body>
+</html>

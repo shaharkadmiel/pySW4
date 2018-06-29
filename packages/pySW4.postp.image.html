@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.postp.image module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.postp.image module &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,13 +21,13 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.postp.waveforms module" href="pySW4.postp.waveforms.html" />
     <link rel="prev" title="pySW4.postp package" href="pySW4.postp.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -48,7 +45,7 @@
              accesskey="P">previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.postp.html" accesskey="U">pySW4.postp package</a> &#187;</li> 
@@ -94,12 +91,12 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:s&#46;shanikadmiel&#37;&#52;&#48;tudelft&#46;nl">s<span>&#46;</span>shanikadmiel<span>&#64;</span>tudelft<span>&#46;</span>nl</a>)</p>
 <p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
 <p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:s&#46;shanikadmiel&#37;&#52;&#48;tudelft&#46;nl">s<span>&#46;</span>shanikadmiel<span>&#64;</span>tudelft<span>&#46;</span>nl</a>)</p>
 <p>Omry Volk (<a class="reference external" href="mailto:omryv&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">omryv<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</p>
 <p>Tobias Megies (<a class="reference external" href="mailto:megies&#37;&#52;&#48;geophysik&#46;uni-muenchen&#46;de">megies<span>&#64;</span>geophysik<span>&#46;</span>uni-muenchen<span>&#46;</span>de</a>)</p>
 </td>
@@ -114,19 +111,20 @@ GNU Lesser General Public License, Version 3
 <dl class="class">
 <dt id="pySW4.postp.image.Image">
 <em class="property">class </em><code class="descname">Image</code><span class="sig-paren">(</span><em>input_file=None</em>, <em>stf=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to hold SW4 image files.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A class to hold SW4 image files.</p>
 <p>Initialize an empty Image object, preferentially specifying the
 input file used to run the simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>input_file</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">AttribDict</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>input_file</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.1.0) v1.1)"><code class="xref py py-class docutils literal"><span class="pre">AttribDict</span></code></a></p>
 <blockquote>
 <div><p>Input file (already parsed or filename) used to compute the
 image output.</p>
 </div></blockquote>
-<p><strong>stf</strong> : {&#8216;displacement&#8217;, &#8216;velocity&#8217;}</p>
+<p><strong>stf</strong> : {‘displacement’, ‘velocity’}</p>
 <blockquote class="last">
 <div><p>Only needed if no metadata from original input_file is used.</p>
 </div></blockquote>
@@ -218,7 +216,7 @@ objects under <code class="xref py py-obj docutils literal"><span class="pre">pa
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
 <blockquote>
 <div><p>Use existing axes.</p>
 </div></blockquote>
@@ -229,9 +227,9 @@ objects under <code class="xref py py-obj docutils literal"><span class="pre">pa
 <p><strong>vmax</strong> : str or float</p>
 <blockquote>
 <div><p>Used to clip the coloring of the data at the set value.
-Default is &#8216;max&#8217; which shows all the data. If  <code class="docutils literal"><span class="pre">float</span></code>,
+Default is ‘max’ which shows all the data. If  <code class="docutils literal"><span class="pre">float</span></code>,
 the colorscale saturates at the given value. Finally, if a
-string is passed (other than &#8216;max&#8217;), it is casted to float
+string is passed (other than ‘max’), it is casted to float
 and used as an <code class="docutils literal"><span class="pre">rms</span></code> multiplier. For instance, if
 <code class="docutils literal"><span class="pre">vmax='3'</span></code>, clipping is done at 3.0*rms of the data.</p>
 </div></blockquote>
@@ -241,21 +239,21 @@ and used as an <code class="docutils literal"><span class="pre">rms</span></code
 the automatic label chosen based on the image header. To
 Supress plotting of the colorbar set to <code class="docutils literal"><span class="pre">False</span></code>.</p>
 </div></blockquote>
-<p><strong>cmap</strong> : <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
+<p><strong>cmap</strong> : <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
 <blockquote>
 <div><p>Colormap for the plot</p>
 </div></blockquote>
 <p><strong>interpolation</strong> : str</p>
 <blockquote>
-<div><p>Acceptable values are &#8216;none&#8217;, &#8216;nearest&#8217;, &#8216;bilinear&#8217;,
-&#8216;bicubic&#8217;, &#8216;spline16&#8217;, &#8216;spline36&#8217;, &#8216;hanning&#8217;, &#8216;hamming&#8217;,
-&#8216;hermite&#8217;, &#8216;kaiser&#8217;, &#8216;quadric&#8217;, &#8216;catrom&#8217;, &#8216;gaussian&#8217;,
-&#8216;bessel&#8217;, &#8216;mitchell&#8217;, &#8216;sinc&#8217;, &#8216;lanczos&#8217;.</p>
+<div><p>Acceptable values are ‘none’, ‘nearest’, ‘bilinear’,
+‘bicubic’, ‘spline16’, ‘spline36’, ‘hanning’, ‘hamming’,
+‘hermite’, ‘kaiser’, ‘quadric’, ‘catrom’, ‘gaussian’,
+‘bessel’, ‘mitchell’, ‘sinc’, ‘lanczos’.</p>
 </div></blockquote>
 <p><strong>origin</strong> : str</p>
 <blockquote>
-<div><p>Places the origin at the &#8216;lower&#8217; (default)
-or &#8216;upper&#8217; left corner of the plot.</p>
+<div><p>Places the origin at the ‘lower’ (default)
+or ‘upper’ left corner of the plot.</p>
 </div></blockquote>
 <p><strong>projection_distance</strong> : float</p>
 <blockquote class="last">
@@ -281,7 +279,8 @@ plotted, obscuring the image.</p>
 <dl class="class">
 <dt id="pySW4.postp.image.Patch">
 <em class="property">class </em><code class="descname">Patch</code><span class="sig-paren">(</span><em>image=None</em>, <em>number=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Patch" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to hold SW4 patch data.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A class to hold SW4 patch data.</p>
 <p>Initialize an empty Patch object, preferentially specifying the
 parent <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -325,7 +324,7 @@ rather called by the <a class="reference internal" href="#pySW4.postp.image.Imag
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
 <blockquote>
 <div><p>Use existing axes.</p>
 </div></blockquote>
@@ -343,26 +342,26 @@ rather called by the <a class="reference internal" href="#pySW4.postp.image.Imag
 the automatic label chosen based on the image header. To
 Supress plotting of the colorbar set to <code class="docutils literal"><span class="pre">False</span></code>.</p>
 </div></blockquote>
-<p><strong>cmap</strong> : <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
+<p><strong>cmap</strong> : <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
 <blockquote>
 <div><p>Colormap for the plot</p>
 </div></blockquote>
 <p><strong>interpolation</strong> : str</p>
 <blockquote>
-<div><p>Acceptable values are &#8216;none&#8217;, &#8216;nearest&#8217;, &#8216;bilinear&#8217;,
-&#8216;bicubic&#8217;, &#8216;spline16&#8217;, &#8216;spline36&#8217;, &#8216;hanning&#8217;, &#8216;hamming&#8217;,
-&#8216;hermite&#8217;, &#8216;kaiser&#8217;, &#8216;quadric&#8217;, &#8216;catrom&#8217;, &#8216;gaussian&#8217;,
-&#8216;bessel&#8217;, &#8216;mitchell&#8217;, &#8216;sinc&#8217;, &#8216;lanczos&#8217;.</p>
+<div><p>Acceptable values are ‘none’, ‘nearest’, ‘bilinear’,
+‘bicubic’, ‘spline16’, ‘spline36’, ‘hanning’, ‘hamming’,
+‘hermite’, ‘kaiser’, ‘quadric’, ‘catrom’, ‘gaussian’,
+‘bessel’, ‘mitchell’, ‘sinc’, ‘lanczos’.</p>
 </div></blockquote>
 <p><strong>origin</strong> : str</p>
 <blockquote>
-<div><p>Places the origin at the &#8216;lower&#8217; (default)
-or &#8216;upper&#8217; left corner of the plot.</p>
+<div><p>Places the origin at the ‘lower’ (default)
+or ‘upper’ left corner of the plot.</p>
 </div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last"><strong>kwargs</strong> : <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a></p>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last"><strong>kwargs</strong> : <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.imshow.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -393,7 +392,7 @@ image output.</p>
 </div></blockquote>
 <p><strong>stf</strong> : str</p>
 <blockquote>
-<div><p><cite>&#8216;displacement&#8217;</cite> or <cite>&#8216;velocity&#8217;</cite>. Only needed if no metadata
+<div><p><cite>‘displacement’</cite> or <cite>‘velocity’</cite>. Only needed if no metadata
 from original input_file is used.</p>
 </div></blockquote>
 <p><strong>verbose</strong> : bool</p>
@@ -439,7 +438,7 @@ objects.</p>
              >previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.postp.html" >pySW4.postp package</a> &#187;</li> 
@@ -447,7 +446,7 @@ objects.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>pySW4.plotting.waveforms &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
+
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <h1>Source code for pySW4.plotting.waveforms</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Plotting routines for observed and synthetic waveforms.</span>
+
+<span class="sd">.. module:: waveforms</span>
+
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)</span>
+
+<span class="sd">    Omry Volk (omryv@post.bgu.ac.il)</span>
+
+<span class="sd">    Tobias Megies (megies@geophysik.uni-muenchen.de)</span>
+
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)</span>
+
+<span class="sd">    Omry Volk (omryv@post.bgu.ac.il)</span>
+
+<span class="sd">    Tobias Megies (megies@geophysik.uni-muenchen.de)</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
+
+
+<span class="sd">.. rubric:: SW4 uses a right handed coordinate system</span>
+
+
+<span class="sd">::</span>
+
+<span class="sd">         X</span>
+<span class="sd">       ⋰</span>
+<span class="sd">     ⋰</span>
+<span class="sd">    o-------&gt;Y</span>
+<span class="sd">    |</span>
+<span class="sd">    |</span>
+<span class="sd">    V</span>
+<span class="sd">    Z</span>
+
+<span class="sd">If the azimuth of the SW4 grid is ``0`` this translates to:</span>
+
+<span class="sd">- X == Northing</span>
+<span class="sd">- Y == Easting</span>
+<span class="sd">- Z == Vertical (inverted!)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.dates</span> <span class="k">import</span> <span class="n">date2num</span>
+<span class="kn">from</span> <span class="nn">matplotlib.gridspec</span> <span class="k">import</span> <span class="n">GridSpec</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">obspy</span>
+<span class="kn">from</span> <span class="nn">..sw4_metadata</span> <span class="k">import</span> <span class="n">_parse_input_file_and_folder</span>
+<span class="kn">from</span> <span class="nn">..headers</span> <span class="k">import</span> <span class="n">STF</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">fourier_spectrum</span>
+
+<span class="n">MODE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;displacement&#39;</span> <span class="p">:</span> <span class="s1">&#39;displacement, m&#39;</span> <span class="p">,</span>
+        <span class="s1">&#39;velocity&#39;</span>     <span class="p">:</span> <span class="s1">&#39;velocity, m/s&#39;</span>   <span class="p">,</span>
+        <span class="s1">&#39;div&#39;</span>          <span class="p">:</span> <span class="s1">&#39;div&#39;</span>             <span class="p">,</span>
+        <span class="s1">&#39;curl&#39;</span>         <span class="p">:</span> <span class="s1">&#39;curl&#39;</span>            <span class="p">,</span>
+        <span class="s1">&#39;strains&#39;</span>      <span class="p">:</span> <span class="s1">&#39;strain&#39;</span>          <span class="p">}</span>
+
+
+<div class="viewcode-block" id="plot_traces"><a class="viewcode-back" href="../../../packages/pySW4.plotting.waveforms.html#pySW4.plotting.waveforms.plot_traces">[docs]</a><span class="k">def</span> <span class="nf">plot_traces</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot all traces and their Fourier specra side-by-side.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    traces : :class:`~obspy.Stream`</span>
+<span class="sd">        Traces to be plotted in an :class:`~obspy.Stream` object.</span>
+
+<span class="sd">    mode : {&#39;displacement&#39;, &#39;velocity&#39;, &#39;div&#39;, &#39;curl&#39;, &#39;strains&#39;}</span>
+<span class="sd">        Mode describes the type of data in traces.</span>
+
+<span class="sd">        Optionaly, an alternative string can be given that will be used</span>
+<span class="sd">        as the y-label of the time-histories.</span>
+
+<span class="sd">    yscale : {&#39;auto&#39;, &#39;all&#39;, &#39;normalize&#39;}</span>
+<span class="sd">        Set the scale of the vertical y-axis:</span>
+
+<span class="sd">        - ``auto`` - Vertical scale of each axes is automatically set to</span>
+<span class="sd">          the -\|max\| and \|max\| of each trace.</span>
+
+<span class="sd">        - ``all`` - Vertical scale of all axes is set to the same limits</span>
+<span class="sd">          which are the -\|max\| and \|max\| of all traces.</span>
+
+<span class="sd">        - ``normalize`` - Each trace is normalized and plotted</span>
+<span class="sd">          (``ylim=(-1, 1)``).</span>
+
+
+<span class="sd">    hspace : float</span>
+<span class="sd">        The hight space between axes. See</span>
+<span class="sd">        :class:`~matplotlib.gridspec.GridSpec` documentation.</span>
+
+<span class="sd">    wspace : float</span>
+<span class="sd">        The width space between axes. See</span>
+<span class="sd">        :class:`~matplotlib.gridspec.GridSpec` documentation.</span>
+
+<span class="sd">    figsize : 2-tuple</span>
+<span class="sd">        Size of the :class:`~matplotlib.figure.Figure`.</span>
+
+<span class="sd">    fig : :class:`~matplotlib.figure.Figure`</span>
+<span class="sd">        A :class:`~matplotlib.figure.Figure` instance.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    kwargs : :func:`~matplotlib.pyplot.plot` propeties.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">traces</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fig</span><span class="p">:</span>
+        <span class="n">set_title</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">figsize</span><span class="p">:</span>
+            <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+
+        <span class="n">gs</span> <span class="o">=</span> <span class="n">GridSpec</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                      <span class="n">hspace</span><span class="o">=</span><span class="n">hspace</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="n">wspace</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="p">[</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">gs</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()</span>
+        <span class="n">set_title</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">_min</span><span class="p">,</span> <span class="n">_max</span> <span class="o">=</span> <span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">traces</span><span class="o">.</span><span class="n">max</span><span class="p">())),</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">traces</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">traces</span><span class="o">.</span><span class="n">copy</span><span class="p">()):</span>
+        <span class="c1"># plot seismogram</span>
+        <span class="n">axi</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">yscale</span> <span class="ow">is</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="k">elif</span> <span class="n">yscale</span> <span class="ow">is</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">_min</span><span class="p">,</span> <span class="n">_max</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">yscale</span> <span class="ow">is</span> <span class="s1">&#39;normalize&#39;</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_left</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">set_title</span><span class="p">:</span>
+            <span class="n">location</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+                            <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="n">location</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.97</span><span class="p">,</span>
+                     <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">location</span><span class="p">),</span>
+                     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+                     <span class="n">transform</span><span class="o">=</span><span class="n">axi</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span>
+                     <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span>
+                     <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+                     <span class="n">transform</span><span class="o">=</span><span class="n">axi</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+                     <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">MODE</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">axi</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="n">axi</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">times</span><span class="p">(),</span> <span class="n">tr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tr</span><span class="o">.</span><span class="n">times</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># plot spectrum</span>
+        <span class="n">axi</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">freq</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">fourier_spectrum</span><span class="p">(</span><span class="n">tr</span><span class="p">)</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">amp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">freq</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">freq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">axi</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
+        <span class="n">axi</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+
+    <span class="n">axi</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">axi</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time, s&#39;</span><span class="p">)</span>
+    <span class="n">axi</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">axi</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;frequency, Hz&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="create_seismogram_plots"><a class="viewcode-back" href="../../../packages/pySW4.plotting.waveforms.html#pySW4.plotting.waveforms.create_seismogram_plots">[docs]</a><span class="k">def</span> <span class="nf">create_seismogram_plots</span><span class="p">(</span>
+        <span class="n">input_file</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream_observed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inventory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">water_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_filt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">used_stations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">synthetic_starttime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">synthetic_data_glob</span><span class="o">=</span><span class="s1">&#39;*.?v&#39;</span><span class="p">,</span> <span class="n">t0_correction_fraction</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">synthetic_scaling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create all waveform plots, comparing synthetic and observed data.</span>
+
+<span class="sd">    Ideally works on a SW4 input file, or explicitely on an folder with</span>
+<span class="sd">    SW4 output files. Assumes output in SAC format. Observed/real data</span>
+<span class="sd">    and station metadata can be specified, along with deconvolution</span>
+<span class="sd">    parameters to get to physical units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_file : str</span>
+<span class="sd">        Filename (potentially with absolute/relative path) of SW4 input</span>
+<span class="sd">        file used to control the simulation. Use ``None`` to work on</span>
+<span class="sd">        folder with SW4 output without using metadata from input file.</span>
+
+<span class="sd">    folder : str</span>
+<span class="sd">        Folder with SW4 output files or ``None`` if output folder</span>
+<span class="sd">        location can be used from input file. Only needed when no input</span>
+<span class="sd">        file is specified or if output folder was moved to a different</span>
+<span class="sd">        location after the simulation.</span>
+
+<span class="sd">    stream_observed : :class:`obspy.core.stream.Stream`</span>
+<span class="sd">        Observed/real data to compare with synthetics.</span>
+
+<span class="sd">    inventory : :class:`obspy.core.inventory.inventory.Inventory`</span>
+<span class="sd">        Station metadata for observed/real data.</span>
+
+<span class="sd">    water_level : float</span>
+<span class="sd">        Water level for instrument response removal (see</span>
+<span class="sd">        :meth:`obspy.core.trace.remove_response`).</span>
+
+<span class="sd">    pre_filt : 4-tuple of float</span>
+<span class="sd">        Frequency domain pre-filtering in response removal (see</span>
+<span class="sd">        :meth:`obspy.core.trace.Trace.remove_response`).</span>
+
+<span class="sd">    filter_kwargs : dict</span>
+<span class="sd">        Filter parameters for filtering applied to observed data after</span>
+<span class="sd">        response removal before comparison to synthetic data. ``kwargs``</span>
+<span class="sd">        are passed on to :meth:`obspy.core.stream.Stream.filter`.</span>
+
+<span class="sd">    channel_map : dict</span>
+<span class="sd">        Mapping dictionary to match synthetic channel to component in</span>
+<span class="sd">        observed data.</span>
+
+<span class="sd">    used_stations : list</span>
+<span class="sd">        Station codes to consider in plot output. Use all stations if</span>
+<span class="sd">        left ``None``.</span>
+
+<span class="sd">    synthetic_starttime : :class:`obspy.core.utcdatetime.UTCDateTime`</span>
+<span class="sd">        Start time of synthetic data, only needed if no input file is</span>
+<span class="sd">        specified or if input file did not set the correct origin time</span>
+<span class="sd">        of the event.</span>
+
+<span class="sd">    synthetic_data_glob : str</span>
+<span class="sd">        Glob pattern to lookup synthetic data. Use e.g.</span>
+<span class="sd">        &#39;\*.[xyz]&#39; or &#39;\*.?&#39; for synthetic data saved as &quot;displacement&quot;</span>
+<span class="sd">        (the solution of the forward solver), or &#39;\*.?v&#39; for synthetic</span>
+<span class="sd">        data saved as &quot;velocity&quot; (the differentiated solution of the</span>
+<span class="sd">        forward solver).</span>
+
+<span class="sd">    t0_correction_fraction : float</span>
+<span class="sd">        Fraction of t0 used in SW4 simulation</span>
+<span class="sd">        (offset of source time function to prevent solver artifacts) to</span>
+<span class="sd">        account for (i.e. shift synthetics left to earlier absolute</span>
+<span class="sd">        time). &#39;0.0&#39; means no correction of synthetics time is done,</span>
+<span class="sd">        &#39;1.0&#39; means that synthetic trace is shifted left in time by</span>
+<span class="sd">        ``t0`` of SW4 run.</span>
+
+<span class="sd">    synthetic_scaling : bool or float</span>
+<span class="sd">        Scaling to apply to synthetic seismograms. If</span>
+<span class="sd">        ``False``, no scaling is applied. If a float is provided, all</span>
+<span class="sd">        synthetics&#39; will be scaled with the given factor (e.g. using</span>
+<span class="sd">        ``2.0`` will scale up synthetics by a factor of 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_</span><span class="p">,</span> <span class="n">folder</span> <span class="o">=</span> <span class="n">_parse_input_file_and_folder</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+
+    <span class="n">stf_type</span> <span class="o">=</span> <span class="n">STF</span><span class="p">[</span><span class="n">input_</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
+    <span class="k">if</span> <span class="n">stf_type</span> <span class="o">==</span> <span class="s1">&#39;displacement&#39;</span><span class="p">:</span>
+        <span class="n">evalresp_output</span> <span class="o">=</span> <span class="s2">&quot;DISP&quot;</span>
+        <span class="n">unit_label</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+    <span class="k">elif</span> <span class="n">stf_type</span> <span class="o">==</span> <span class="s1">&#39;velocity&#39;</span><span class="p">:</span>
+        <span class="n">evalresp_output</span> <span class="o">=</span> <span class="s2">&quot;VEL&quot;</span>
+        <span class="n">unit_label</span> <span class="o">=</span> <span class="s2">&quot;m/s&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Correcting observed seismograms to output &quot;</span><span class="si">{}</span><span class="s1">&quot; using &#39;</span>
+              <span class="s1">&#39;evalresp.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">evalresp_output</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">channel_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">channel_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;-Vz&quot;</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Vx&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;Vy&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-Z&quot;</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">}</span>
+
+    <span class="n">info_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="n">files_synth</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">synthetic_data_glob</span><span class="p">))</span>
+    <span class="n">st_synth</span> <span class="o">=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">Stream</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">files_synth</span><span class="p">:</span>
+        <span class="n">st_synth</span> <span class="o">+=</span> <span class="n">obspy</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t0_correction_fraction</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">source</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;t0_correction_fraction is not implemented for SW4 run &#39;</span>
+                   <span class="s1">&#39;with multiple sources.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">t0</span>
+        <span class="n">t0_correction</span> <span class="o">=</span> <span class="n">t0</span> <span class="o">*</span> <span class="n">t0_correction_fraction</span>
+        <span class="n">info_text</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s1">&#39; Synthetics start time corrected by </span><span class="si">{}</span><span class="s1">*t0 &#39;</span>
+            <span class="s1">&#39;(-</span><span class="si">{}</span><span class="s1">s).&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t0_correction_fraction</span><span class="p">,</span> <span class="n">t0_correction</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">-=</span> <span class="n">t0_correction</span>
+    <span class="k">if</span> <span class="n">synthetic_scaling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">info_text</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39; Synthetics scaled with a factor of </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">synthetic_scaling</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">synthetic_scaling</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Scaling synthetics by </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">synthetic_scaling</span><span class="p">))</span>
+
+    <span class="n">st_real</span> <span class="o">=</span> <span class="n">stream_observed</span> <span class="ow">or</span> <span class="n">obspy</span><span class="o">.</span><span class="n">Stream</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">used_stations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">st_synth</span><span class="o">.</span><span class="n">traces</span> <span class="o">=</span> <span class="p">[</span><span class="n">tr</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span>
+                           <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">station</span> <span class="ow">in</span> <span class="n">used_stations</span><span class="p">]</span>
+    <span class="n">stations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">station</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">])</span>
+    <span class="n">st_real</span><span class="o">.</span><span class="n">traces</span> <span class="o">=</span> <span class="p">[</span><span class="n">tr</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_real</span>
+                      <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">station</span> <span class="ow">in</span> <span class="n">stations</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">:</span>
+        <span class="c1"># SW4 vertical channel is positive in coordinate direction, which</span>
+        <span class="c1"># is depth positive down. So we have to invert it to get the normal</span>
+        <span class="c1"># seismometer vertical up trace.</span>
+        <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;Vz&quot;</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="s2">&quot;-Vz&quot;</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="s2">&quot;-Z&quot;</span>
+            <span class="n">tr</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">t_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">])</span>
+    <span class="n">t_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">tr</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">endtime</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">st_synth</span><span class="p">])</span>
+    <span class="n">st_real</span><span class="o">.</span><span class="n">attach_response</span><span class="p">(</span><span class="n">inventory</span><span class="p">)</span>
+    <span class="n">st_real</span><span class="o">.</span><span class="n">remove_response</span><span class="p">(</span>
+        <span class="n">output</span><span class="o">=</span><span class="n">evalresp_output</span><span class="p">,</span> <span class="n">water_level</span><span class="o">=</span><span class="n">water_level</span><span class="p">,</span> <span class="n">pre_filt</span><span class="o">=</span><span class="n">pre_filt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">filter_kwargs</span><span class="p">:</span>
+        <span class="n">st_real</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="n">filter_kwargs</span><span class="p">)</span>
+    <span class="n">st_real</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">t_min</span><span class="p">,</span> <span class="n">t_max</span><span class="p">)</span>
+
+    <span class="n">outfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;seismograms.png&quot;</span><span class="p">)</span>
+    <span class="n">_plot_seismograms</span><span class="p">(</span><span class="n">st_synth</span><span class="p">,</span> <span class="n">st_real</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span>
+                      <span class="n">info_text</span><span class="o">=</span><span class="n">info_text</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">station</span> <span class="ow">in</span> <span class="n">stations</span><span class="p">:</span>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;seismograms.</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">station</span><span class="p">))</span>
+        <span class="n">st_synth_</span> <span class="o">=</span> <span class="n">st_synth</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">station</span><span class="o">=</span><span class="n">station</span><span class="p">)</span>
+        <span class="n">st_real_</span> <span class="o">=</span> <span class="n">st_real</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">station</span><span class="o">=</span><span class="n">station</span><span class="p">)</span>
+        <span class="n">_plot_seismograms</span><span class="p">(</span>
+            <span class="n">st_synth_</span><span class="p">,</span> <span class="n">st_real_</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">info_text</span><span class="o">=</span><span class="n">info_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_plot_seismograms"><a class="viewcode-back" href="../../../packages/pySW4.plotting.waveforms.html#pySW4.plotting.waveforms._plot_seismograms">[docs]</a><span class="k">def</span> <span class="nf">_plot_seismograms</span><span class="p">(</span>
+        <span class="n">st_synth_</span><span class="p">,</span> <span class="n">st_real_</span><span class="p">,</span> <span class="n">channel_map</span><span class="p">,</span> <span class="n">unit_label</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">info_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function that plots synthetic vs. real data to an image file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    st_synth : :class:`obspy.core.stream.Stream`</span>
+<span class="sd">        Synthetic waveform data.</span>
+
+<span class="sd">    st_real : :class:`obspy.core.stream.Stream`</span>
+<span class="sd">        Observed waveform data.</span>
+
+<span class="sd">    channel_map : dict</span>
+<span class="sd">        Mapping dictionary to match synthetic channel to component in</span>
+<span class="sd">        observed data.</span>
+
+<span class="sd">    unit_label : str</span>
+<span class="sd">        Label string for y-axis of waveforms.</span>
+
+<span class="sd">    outfile : str</span>
+<span class="sd">        Output filename (absolute or relative path) for image including</span>
+<span class="sd">        suffix (e.g. png).</span>
+
+<span class="sd">    figsize : 2-tuple of floats</span>
+<span class="sd">        Matplotlib figure size (inches x/y).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">figsize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">st_synth_</span><span class="p">))</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">st_synth_</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">texts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">sta</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">cha</span> <span class="o">=</span> <span class="nb">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">real_component</span> <span class="o">=</span> <span class="n">channel_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cha</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">real_component</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">real_component</span> <span class="o">=</span> <span class="n">cha</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Synthetic channel could not be mapped to component code &#39;</span>
+                   <span class="s1">&#39;of observed data. Using last character of synthetic data &#39;</span>
+                   <span class="s1">&#39;(&quot;</span><span class="si">{}</span><span class="s1">&quot;) to match observed data component code. Are data &#39;</span>
+                   <span class="s1">&#39;already rotated by SW4 through config &#39;</span>
+                   <span class="s1">&#39;file settings?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">real_component</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># find appropriate synthetic trace</span>
+        <span class="k">for</span> <span class="n">tr_real</span> <span class="ow">in</span> <span class="n">st_real_</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">station</span> <span class="o">!=</span> <span class="n">sta</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># SW4 synthetics channel codes (for velocity traces) are &quot;V[xyz]&quot;</span>
+            <span class="k">if</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">channel</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">real_component</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">date2num</span><span class="p">([(</span><span class="n">tr_real</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">starttime</span> <span class="o">+</span> <span class="n">t_</span><span class="p">)</span><span class="o">.</span><span class="n">datetime</span>
+                      <span class="k">for</span> <span class="n">t_</span> <span class="ow">in</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">times</span><span class="p">()])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">tr_real</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">unit_label</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">info_text</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">info_text</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

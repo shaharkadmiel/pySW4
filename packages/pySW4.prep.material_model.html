@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.prep.material_model module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.prep.material_model module &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,13 +21,13 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.prep.rfileIO module" href="pySW4.prep.rfileIO.html" />
     <link rel="prev" title="pySW4.prep package" href="pySW4.prep.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -48,7 +45,7 @@
              accesskey="P">previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &#187;</li> 
@@ -95,7 +92,7 @@ parameters of the computational domain.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:s&#46;shanikadmiel&#37;&#52;&#48;tudelft&#46;nl">s<span>&#46;</span>shanikadmiel<span>&#64;</span>tudelft<span>&#46;</span>nl</a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
 </tr>
@@ -108,7 +105,8 @@ GNU Lesser General Public License, Version 3
 <dl class="class">
 <dt id="pySW4.prep.material_model.V_model">
 <em class="property">class </em><code class="descname">V_model</code><span class="sig-paren">(</span><em>filename</em>, <em>calculate_missing_data=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/material_model.html#V_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.material_model.V_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to handle Velocity models.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Class to handle Velocity models.</p>
 <p>Uses <a class="reference internal" href="#pySW4.prep.material_model.read_Vfile" title="pySW4.prep.material_model.read_Vfile"><code class="xref py py-func docutils literal"><span class="pre">read_Vfile()</span></code></a> function to read Vfile format files.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -148,7 +146,7 @@ the requested property.</p>
 <blockquote>
 <div><p>The property for which to evaluate the depth of.</p>
 </div></blockquote>
-<p><strong>property</strong> : {&#8216;vp&#8217; (default), &#8216;vs&#8217;, &#8216;rho, &#8216;qp&#8217;, &#8216;qs&#8217;}</p>
+<p><strong>property</strong> : {‘vp’ (default), ‘vs’, ‘rho, ‘qp’, ‘qs’}</p>
 <blockquote>
 <div><p>Property corresponding to <cite>value</cite>.</p>
 </div></blockquote>
@@ -341,7 +339,8 @@ to 8 by default.</p>
 <dd><p>Calculate Shear-wave velocity based on Brocher (2008).</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Shear-wave velocity is forced to be greater than <span class="math">\(V_S&gt;V_P / \sqrt{2}\)</span>.</p>
+<p class="last">Shear-wave velocity is forced to be greater than
+<span class="math">\(V_P / \sqrt{2}\)</span>.</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -408,11 +407,11 @@ to 8 by default.</p>
 <dt id="pySW4.prep.material_model.read_Vfile">
 <code class="descname">read_Vfile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/material_model.html#read_Vfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.material_model.read_Vfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a Velocity Model file.</p>
-<p>Vfile format has a flexible header (line starting with a &#8216;#&#8217;
+<p>Vfile format has a flexible header (line starting with a ‘#’
 character) and a <em>comma separated values</em> data section where each
 line has <em>Depth</em>, <em>Vp</em>, <em>Vs</em>, <em>rho</em>, <em>Qp</em>, <em>Qs</em>, <em>Grp./Form./Mbr.</em>
-values and ends with a line containing one word &#8216;end&#8217;. The values
-in each line are &#8220;true&#8221; to that specific depth-point.</p>
+values and ends with a line containing one word ‘end’. The values
+in each line are “true” to that specific depth-point.</p>
 <p><strong>Example Vfile:</strong></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Just a simple made up velocity model</span>
 <span class="c1"># Shani-Kadmiel (2016)</span>
@@ -473,7 +472,7 @@ in each line are &#8220;true&#8221; to that specific depth-point.</p>
              >previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &#187;</li> 
@@ -481,7 +480,7 @@ in each line are &#8220;true&#8221; to that specific depth-point.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

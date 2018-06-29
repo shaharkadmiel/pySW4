@@ -1,0 +1,597 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pySW4.utils.utils module — pySW4 '0.3.0' documentation</title>
+<link href="../_static/style.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="pySW4.headers.html" rel="next" title="pySW4.headers module"/>
+<link href="pySW4.utils.spectral.html" rel="prev" title="pySW4.utils.spectral module"/>
+</head>
+<body role="document">
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pySW4.headers.html" title="pySW4.headers module">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pySW4.utils.spectral.html" title="pySW4.utils.spectral module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a accesskey="U" href="pySW4.utils.html">pySW4.utils package</a> »</li>
+</ul>
+</div>
+<div aria-label="main navigation" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="pySW4.utils.spectral.html" title="previous chapter">pySW4.utils.spectral module</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="pySW4.headers.html" title="next chapter">pySW4.headers module</a></p>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/packages/pySW4.utils.utils.rst.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<div id="searchbox" role="search" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<div><input name="q" type="text"/></div>
+<div><input type="submit" value="Go"/></div>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="section" id="module-pySW4.utils.utils"><a name="//apple_ref/cpp/Module/utils"></a>
+<span id="pysw4-utils-utils-module"></span><h1><a name="//apple_ref/cpp/Module/pySW4.utils.utils"></a>pySW4.utils.utils module<a class="headerlink" href="#module-pySW4.utils.utils" title="Permalink to this headline">¶</a></h1>
+<p>Python module with general utilities.</p>
+<span class="target" id="module-utils"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pySW4.utils.utils.close_polygon"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.close_polygon"></a>
+<code class="descname">close_polygon</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#close_polygon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.close_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of points with the first point added to the end.</p>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.flatten"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.flatten"></a>
+<code class="descname">flatten</code><span class="sig-paren">(</span><em>ndarray</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a flattened 1Darray from any multidimentional array. This
+function is recursive and may take a long time on large data.</p>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.geographic2cartesian"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.geographic2cartesian"></a>
+<code class="descname">geographic2cartesian</code><span class="sig-paren">(</span><em>proj4=None</em>, <em>sw4_default_proj='+proj=latlong +datum=NAD83'</em>, <em>lon0=0</em>, <em>lat0=0</em>, <em>az=0</em>, <em>m_per_lat=111319.5</em>, <em>m_per_lon=None</em>, <em>lon=None</em>, <em>lat=None</em>, <em>x=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#geographic2cartesian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.geographic2cartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate SW4 cartesian coordinats from geographic coordinates
+<cite>lon</cite>, <cite>lat</cite> in the <cite>proj4</cite> projection. If <cite>x</cite>, <cite>y</cite>
+coordinates are given (<cite>x</cite> and <cite>y</cite> are not <code class="docutils literal"><span class="pre">None</span></code>) the
+inverse transformation is performed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>proj4</strong> : str or dict or None</p>
+<blockquote>
+<div><p>EPSG or Proj4. If EPSG then string should be ‘epsg:number’
+where number is the EPSG code. See the <a class="reference external" href="http://www.epsg-registry.org/">Geodetic Parameter
+Dataset Registry</a> for more
+information. If Proj4 then either a dictionary:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">'proj'</span><span class="p">:</span> <span class="n">projection</span><span class="p">,</span> <span class="s1">'datum'</span><span class="p">:</span> <span class="s1">'datum'</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
+ <span class="s1">'lon_0'</span><span class="p">:</span> <span class="n">lon0</span><span class="p">,</span> <span class="s1">'lat_0'</span><span class="p">:</span> <span class="n">lat0</span><span class="p">,</span> <span class="s1">'scale'</span><span class="p">:</span> <span class="n">scale</span> <span class="o">...</span> <span class="n">etc</span><span class="o">.</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>or a string:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">'+proj=projection +datum=datum +units=units +lon_0=lon0 </span><span class="se">\</span>
+<span class="s1">    +lat_0=lat0 +scale=scale ... etc.'</span>
+</pre></div>
+</div>
+<p>should be given.</p>
+<p>See the <a class="reference external" href="https://trac.osgeo.org/proj/wiki/GenParms">Proj4</a>
+documentation for a list of general Proj4 parameters.</p>
+<p>In the context of SW4 this dictionary or string should be taken
+from the <code class="docutils literal"><span class="pre">grid</span></code> line in the SW4 input file.</p>
+</div></blockquote>
+<p><strong>sw4_default_proj</strong> : str</p>
+<blockquote>
+<div><p>SW4 uses ‘+proj=latlong +datum=NAD83’ as the default projection.
+Pass a different projection for other purposes. See <code class="docutils literal"><span class="pre">proj4</span></code>.</p>
+</div></blockquote>
+<p><strong>lon0</strong> : float</p>
+<blockquote>
+<div><p>Longitude of the grid origin in degrees.</p>
+<p>This is the <code class="docutils literal"><span class="pre">lon</span></code> keyword on the <code class="docutils literal"><span class="pre">grid</span></code> line in the SW4
+input file.</p>
+</div></blockquote>
+<p><strong>lat0</strong> : float</p>
+<blockquote>
+<div><p>Latitude of the grid origin in degrees.</p>
+<p>This is the <code class="docutils literal"><span class="pre">lat</span></code> keyword on the <code class="docutils literal"><span class="pre">grid</span></code> line in the SW4
+input file.</p>
+</div></blockquote>
+<p><strong>az</strong> : float</p>
+<blockquote>
+<div><p>Azimuth between North and the <code class="docutils literal"><span class="pre">x</span></code> axis of the SW4 grid.</p>
+<p>This is the <code class="docutils literal"><span class="pre">az</span></code> keyword on the <code class="docutils literal"><span class="pre">grid</span></code> line in the SW4 input
+file.</p>
+</div></blockquote>
+<p><strong>m_per_lat</strong> : float</p>
+<blockquote>
+<div><p>How many m to a degree latitude. (default: 111319.5 m)</p>
+<p>This is the <code class="docutils literal"><span class="pre">mlat</span></code> keyword on the <code class="docutils literal"><span class="pre">grid</span></code> line in the SW4
+input file.</p>
+</div></blockquote>
+<p><strong>m_per_lon</strong> : float</p>
+<blockquote>
+<div><p>How many m to a degree longitude. If <code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">m_per_lat</span></code> is
+used).</p>
+<p>This is the <code class="docutils literal"><span class="pre">mlon</span></code> keyword on the <code class="docutils literal"><span class="pre">grid</span></code> line in the SW4
+input file.</p>
+</div></blockquote>
+<p><strong>lon</strong> : float</p>
+<blockquote>
+<div><p>Longitude coordinates in degrees to convert (geo. ===&gt; cart.).</p>
+</div></blockquote>
+<p><strong>lat</strong> : float</p>
+<blockquote>
+<div><p>Latitude coordinates in degrees to convert (geo. ===&gt; cart.).</p>
+</div></blockquote>
+<p><strong>x</strong> : float</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">x</span></code> coordinates in meters to convert (cart. ===&gt; geo.).</p>
+</div></blockquote>
+<p><strong>y</strong> : float</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">y</span></code> coordinates in meters to convert (cart. ===&gt; geo.).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Converted coordinates:</p>
+<ul class="simple">
+<li>x, y if geo. ===&gt; cart. was invoked or</li>
+<li>lon, lat if cart. ===&gt; geo. was invoked.</li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span>     X
+   ⋰
+ ⋰
+o-------&gt;Y
+|
+|
+V
+Z
+</pre></div>
+</div>
+<p>If the azimuth of the SW4 grid is <code class="docutils literal"><span class="pre">0</span></code> this translates to:</p>
+<ul class="last simple">
+<li>X == Northing</li>
+<li>Y == Easting</li>
+<li>Z == Vertical (inverted!)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.get_corners"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.get_corners"></a>
+<code class="descname">get_corners</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#get_corners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.get_corners" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the corners of the data from its coordinates arrays
+<cite>x</cite> and <cite>y</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2x list</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>one list of longitudes (or <cite>x</cite>) and</li>
+<li>another list of latitudes (or <cite>y</cite>).</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.line_in_loglog"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.line_in_loglog"></a>
+<code class="descname">line_in_loglog</code><span class="sig-paren">(</span><em>x</em>, <em>m</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#line_in_loglog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.line_in_loglog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate the <span class="math">\(y\)</span> values of a line in log-log
+space according to</p>
+<div class="math">
+\[y(x) = b \cdot 10^{\log_{10} x^m},\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><span class="math">\(m\)</span> is the slope of the line,</li>
+<li><span class="math">\(b\)</span> is the <span class="math">\(y(x=1)\)</span> value and</li>
+<li><span class="math">\(x\)</span> is a sequence of values on the x-axis.</li>
+</ul>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.make_cmap"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.make_cmap"></a>
+<code class="descname">make_cmap</code><span class="sig-paren">(</span><em>colors</em>, <em>position=None</em>, <em>bit=False</em>, <em>named=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#make_cmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.make_cmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a color map compatible with matplotlib plotting functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>colors</strong> : list</p>
+<blockquote>
+<div><p>List of <a class="reference external" href="http://matplotlib.org/examples/color/named_colors.html">matplotlib named colors</a>.
+Arrange your colors so that the first color is the lowest value
+for the colorbar and the last is the highest.</p>
+</div></blockquote>
+<p><strong>position</strong> : list</p>
+<blockquote>
+<div><p>List of values from 0 to 1, controls the position of each color
+on the cmap. If None (default), an evenly spaced cmap is
+created.</p>
+<dl class="docutils">
+<dt><strong>Tip:</strong></dt>
+<dd><p class="first last">You can construct the positions sequence in data units and
+then normalize so that the forst value is 0 and the last
+value is 1.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>named</strong> : bool</p>
+<blockquote>
+<div><p>If set to False, colors are regarded as tuples of RGB values.
+The RGB values may either be in 8-bit [0 to 255], in which case
+<code class="docutils literal"><span class="pre">bit</span></code> must be set to True or arithmetic [0 to 1] (default).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.LinearSegmentedColormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">LinearSegmentedColormap</span></code></a></p>
+<blockquote class="last">
+<div><p>An instance of the
+<a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.LinearSegmentedColormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">LinearSegmentedColormap</span></code></a> cmap class.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.nearest_values"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.nearest_values"></a>
+<code class="descname">nearest_values</code><span class="sig-paren">(</span><em>array</em>, <em>value</em>, <em>threshold</em>, <em>retvalue=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#nearest_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.nearest_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the indices (or elements) of an array with a threshold range
+around a central value.</p>
+<p>If <cite>retvalue</cite> is true, the elements of the array are returned,
+otherwise a True or False array of the indices of these elements
+is returned.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ 3 -4  9  6  8 -1 -4 -7 -6  7]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span> <span class="o">=</span> <span class="n">nearest_values</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">nearest_values</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">retvalue</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">array</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<span class="go">[ True False False  True False False False False False  True]</span>
+<span class="go">[3 6 7]</span>
+<span class="go">[3 6 7]</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.resample"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.resample"></a>
+<code class="descname">resample</code><span class="sig-paren">(</span><em>data</em>, <em>extent</em>, <em>shape=None</em>, <em>method='linear'</em>, <em>draft=False</em>, <em>corners=None</em>, <em>origin='nw'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample or interpolate an array on to a grid with new extent and or
+new shape.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : 3-tuple or <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote>
+<div><p>Either a tuple of 3x2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> s <code class="docutils literal"><span class="pre">(X,Y,Z)</span></code> or
+a single 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> <code class="docutils literal"><span class="pre">Z</span></code>. If a <code class="docutils literal"><span class="pre">draft=True</span></code>
+and a single <code class="docutils literal"><span class="pre">Z</span></code> array is passed, <code class="docutils literal"><span class="pre">corners</span></code> must be
+supplied.</p>
+</div></blockquote>
+<p><strong>extent</strong> : tuple or list</p>
+<blockquote>
+<div><p>Extent of the output grid to which the array is interpolated.</p>
+</div></blockquote>
+<p><strong>shape</strong> : tuple</p>
+<blockquote>
+<div><p>The shape of the output grid, defaults to the shape of the input
+array. If no shape is passed, output grid is the same shape as
+input array.</p>
+</div></blockquote>
+<p><strong>method</strong> : str</p>
+<blockquote>
+<div><p>Method of interpolation. One of</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">nearest</span></code> - return the value at the data point closest to
+the point of interpolation. This is the faster of the three.</li>
+<li><code class="docutils literal"><span class="pre">linear</span></code> - tesselate the input point set to n-dimensional
+simplices, and interpolate linearly on each simplex.</li>
+<li><code class="docutils literal"><span class="pre">cubic</span></code> - return the value determined from a piecewise
+cubic, continuously differentiable (C1), and approximately
+curvature-minimizing polynomial surface.</li>
+</ul>
+</div></blockquote>
+<p><strong>draft</strong> : bool</p>
+<blockquote>
+<div><p>If set to True, a very fast OpenCV algorithem is used to
+interpolate the array by reprojection the data corners onto
+arbitrary corners. See <a class="reference external" href="http://stackoverflow.com/a/31724678/1579211">Stack Overflow post</a> for explanation.</p>
+</div></blockquote>
+<p><strong>corners</strong> : 4-tuple</p>
+<blockquote>
+<div><p>Points to which the corners of <code class="docutils literal"><span class="pre">Z</span></code> will be tranformed to.
+After transformation, the TL, TR, BR, BL corners of the <code class="docutils literal"><span class="pre">Z</span></code>
+array will be transformed to the coordinates in:</p>
+<p><code class="docutils literal"><span class="pre">corners=(top-left,</span> <span class="pre">top-right,</span> <span class="pre">bottom-right,</span> <span class="pre">bottom-left)</span></code></p>
+<p>where each point is a tuple of <code class="docutils literal"><span class="pre">(lon,</span> <span class="pre">lat)</span></code>.
+Optionally, corners can be a <code class="docutils literal"><span class="pre">(src,</span> <span class="pre">dst)</span></code> tuple, where
+<code class="docutils literal"><span class="pre">src</span></code>, <code class="docutils literal"><span class="pre">dst</span></code> are each a tuple of <code class="docutils literal"><span class="pre">n</span></code> points. Each point in
+<code class="docutils literal"><span class="pre">src</span></code> is transformed to the respective point in extent
+coordinates in <code class="docutils literal"><span class="pre">dst</span></code>.</p>
+</div></blockquote>
+<p><strong>origin</strong> : str</p>
+<blockquote>
+<div><p>Corresponds to <code class="docutils literal"><span class="pre">Z[0,</span> <span class="pre">0]</span></code> of the array or grid,
+either <code class="docutils literal"><span class="pre">'nw'</span></code> (default), or <code class="docutils literal"><span class="pre">'sw'</span></code>.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>If set to True, some information about the transformation is
+provided.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">3x2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> s or 1x2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>If <code class="docutils literal"><span class="pre">data</span></code> is a tuple of 3x2d arrays <code class="docutils literal"><span class="pre">(X,Y,Z)</span></code> and <code class="docutils literal"><span class="pre">draft</span></code>
+is <code class="docutils literal"><span class="pre">False</span></code>, <code class="docutils literal"><span class="pre">xi,</span> <span class="pre">yi,</span> <span class="pre">zi</span></code> are returned. If <code class="docutils literal"><span class="pre">draft</span></code> is
+<code class="docutils literal"><span class="pre">True</span></code>, only <code class="docutils literal"><span class="pre">zi</span></code> is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.simple_lonlat2xy"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.simple_lonlat2xy"></a>
+<code class="descname">simple_lonlat2xy</code><span class="sig-paren">(</span><em>lon</em>, <em>lat</em>, <em>lon0=0</em>, <em>lat0=0</em>, <em>az=0</em>, <em>m_per_lat=111319.5</em>, <em>m_per_lon=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#simple_lonlat2xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.simple_lonlat2xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project geographical <cite>lat, lon</cite> to cartesian <cite>x, y</cite> coordinates.</p>
+<p>This is the inverse function of <code class="xref py py-func docutils literal"><span class="pre">xy2latlon()</span></code>
+function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>lon</strong> : float or sequence</p>
+<blockquote>
+<div><p><cite>lon</cite> coordianates.</p>
+</div></blockquote>
+<p><strong>lat</strong> : float or sequence</p>
+<blockquote>
+<div><p><cite>lat</cite> coordianates.</p>
+</div></blockquote>
+<p><strong>origin</strong> : 2-tuple or list</p>
+<blockquote>
+<div><p><cite>lat, lon</cite> coordinates of the bottom-right corner of the
+<cite>x, y</cite> grid.</p>
+</div></blockquote>
+<p><strong>az</strong> : float</p>
+<blockquote>
+<div><p>Rotation of the grid aroud the vertical (z-axis). See the
+SW4 User Guide for more information.</p>
+</div></blockquote>
+<p><strong>m_per_lat</strong> : float</p>
+<blockquote>
+<div><p>How many m to a degree latitude. (default: 111319.5 m)</p>
+</div></blockquote>
+<p><strong>m_per_lon</strong> : float</p>
+<blockquote>
+<div><p>How many m to a degree longitude. If <code class="docutils literal"><span class="pre">None</span></code>, <cite>m_per_lat</cite> is
+used).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2x <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>Two arrays with <code class="docutils literal"><span class="pre">x</span></code> and <code class="docutils literal"><span class="pre">y</span></code> projected points.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.simple_xy2lonlat"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.simple_xy2lonlat"></a>
+<code class="descname">simple_xy2lonlat</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>lon0=0</em>, <em>lat0=0</em>, <em>az=0</em>, <em>m_per_lat=111319.5</em>, <em>m_per_lon=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#simple_xy2lonlat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.simple_xy2lonlat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project cartesian <cite>x, y</cite> coordinates to geographical <cite>lat, lon</cite>.</p>
+<p>This transformation is based on the default projection used by
+SW4. See section <em>3.1.1</em> of the <a class="reference external" href="https://geodynamics.org/cig/software/sw4/">SW4</a> User Guide for more
+details.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>     X
+   ⋰
+ ⋰
+o-------&gt;Y
+|
+|
+V
+Z
+</pre></div>
+</div>
+<p>If the azimuth of the SW4 grid is <code class="docutils literal"><span class="pre">0</span></code> this translates to:</p>
+<ul class="simple">
+<li>X == Northing</li>
+<li>Y == Easting</li>
+<li>Z == Vertical (inverted!)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : float or sequence</p>
+<blockquote>
+<div><p><cite>x</cite> coordianates.</p>
+</div></blockquote>
+<p><strong>y</strong> : float or sequence</p>
+<blockquote>
+<div><p><cite>y</cite> coordianates.</p>
+</div></blockquote>
+<p><strong>origin</strong> : 2-tuple or list</p>
+<blockquote>
+<div><p><cite>lat, lon</cite> coordinates of the bottom-right corner of the
+<cite>x, y</cite> grid.</p>
+</div></blockquote>
+<p><strong>az</strong> : float</p>
+<blockquote>
+<div><p>Rotation of the grid aroud the vertical (z-axis). See the
+SW4 User Guide for more information.</p>
+</div></blockquote>
+<p><strong>m_per_lat</strong> : float</p>
+<blockquote>
+<div><p>How many m to a degree latitude. (default: 111319.5 m)</p>
+</div></blockquote>
+<p><strong>m_per_lon</strong> : float</p>
+<blockquote>
+<div><p>How many m to a degree longitude. If <code class="docutils literal"><span class="pre">None</span></code>, <cite>m_per_lat</cite> is
+used).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2x <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>Two arrays with <cite>lon</cite> and <cite>lat</cite> projected points.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.trim_cmap"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.trim_cmap"></a>
+<code class="descname">trim_cmap</code><span class="sig-paren">(</span><em>cmap</em>, <em>cmin</em>, <em>cmax</em>, <em>n=256</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#trim_cmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.trim_cmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim a <cite>cmap</cite> to <cite>cmin</cite> and <cite>cmax</cite> limits in the range 0 to 1.
+Use <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Normalize" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Normalize</span></code></a> with <cite>vmin</cite>, <cite>vmax</cite> of
+the plot or data to get <cite>cmin</cite> and <cite>cmax</cite></p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span> <span class="o">=</span> <span class="n">Normalize</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">0.20000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">0.73333333333333328</span>
+</pre></div>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.utils.xy2pixel_coordinates"><a name="//apple_ref/cpp/Function/pySW4.utils.utils.xy2pixel_coordinates"></a>
+<code class="descname">xy2pixel_coordinates</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>extent</em>, <em>shape</em>, <em>origin='nw'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/utils.html#xy2pixel_coordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.utils.xy2pixel_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the pixel coordinates on a grid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : float or sequence</p>
+<blockquote>
+<div><p><cite>x</cite> coordianates (might also be longitudes).</p>
+</div></blockquote>
+<p><strong>y</strong> : float or sequence</p>
+<blockquote>
+<div><p><cite>y</cite> coordianates (might also be latitudes).</p>
+</div></blockquote>
+<p><strong>extent</strong> : tuple or list</p>
+<blockquote>
+<div><p>Extent of the output grid to which the array is interpolated.</p>
+</div></blockquote>
+<p><strong>shape</strong> : tuple</p>
+<blockquote>
+<div><p>The shape of the output grid, defaults to the shape of the input
+array. If no shape is passed, output grid is the same shape as
+input array.</p>
+</div></blockquote>
+<p><strong>origin</strong> : str</p>
+<blockquote>
+<div><p>Corresponds to <code class="docutils literal"><span class="pre">Z[0,</span> <span class="pre">0]</span></code> of the array or grid,
+either <code class="docutils literal"><span class="pre">'nw'</span></code> (default), or <code class="docutils literal"><span class="pre">'sw'</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2x list</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>one list of longitudes (or <code class="docutils literal"><span class="pre">x</span></code>) and</li>
+<li>another list of latitudes (or <code class="docutils literal"><span class="pre">y</span></code>).</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pySW4.headers.html" title="pySW4.headers module">next</a> |</li>
+<li class="right">
+<a href="pySW4.utils.spectral.html" title="pySW4.utils.spectral module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a href="pySW4.utils.html">pySW4.utils package</a> »</li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+        © Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+</body>
+</html>

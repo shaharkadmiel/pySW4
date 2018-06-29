@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.prep.stations module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.prep.stations module &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,13 +21,13 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.utils package" href="pySW4.utils.html" />
     <link rel="prev" title="pySW4.prep.source module" href="pySW4.prep.source.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -48,7 +45,7 @@
              accesskey="P">previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &#187;</li> 
@@ -95,7 +92,7 @@ SW4 simulations.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:s&#46;shanikadmiel&#37;&#52;&#48;tudelft&#46;nl">s<span>&#46;</span>shanikadmiel<span>&#64;</span>tudelft<span>&#46;</span>nl</a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
 </tr>
@@ -118,18 +115,18 @@ string to the end of the file.</p>
 <code class="descname">inventory2station_locations</code><span class="sig-paren">(</span><em>inv</em>, <em>mode='displacement'</em>, <em>writeEvery=100</em>, <em>name='st'</em>, <em>nsew=0</em>, <em>fmt='%.3f'</em>, <em>infile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/stations.html#inventory2station_locations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.stations.inventory2station_locations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Place stations to record synthetics at specific locations.</p>
 <p>Extracts station locations from an
-<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a> object and
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.1.0) v1.1)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a> object and
 generate an SW4 inputfile string.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>inv</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>inv</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.1.0) v1.1)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a></p>
 <blockquote>
 <div><p>Path to a StationXML file or an
-<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a> object.</p>
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.inventory.inventory.Inventory.html#obspy.core.inventory.inventory.Inventory" title="(in ObsPy Documentation (1.1.0) v1.1)"><code class="xref py py-class docutils literal"><span class="pre">Inventory</span></code></a> object.</p>
 </div></blockquote>
-<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<p><strong>mode</strong> : {‘displacement’ (default), ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
 <blockquote>
 <div><p>Mode of the recorded motions.</p>
 </div></blockquote>
@@ -147,14 +144,14 @@ generate an SW4 inputfile string.</p>
 </div></blockquote>
 <p><strong>fmt</strong> : str</p>
 <blockquote>
-<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+<div><p>Format of the coordinates, default is ‘%.3f’.</p>
 </div></blockquote>
 <p><strong>infile</strong> : str</p>
 <blockquote>
 <div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
 <cite>name</cite> appended to the <cite>infile</cite> name.
-(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+(<cite>name</cite> is ‘array’ by default).</p>
 <p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
 be copied manually to an input file.</p>
 </div></blockquote>
@@ -209,7 +206,7 @@ coordinates are used.</p>
 <blockquote>
 <div><p>Prefix name of the sac file name.</p>
 </div></blockquote>
-<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<p><strong>mode</strong> : {‘displacement’ (default), ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
 <blockquote>
 <div><p>Mode of the recorded motions.</p>
 </div></blockquote>
@@ -227,14 +224,14 @@ coordinates are used.</p>
 </div></blockquote>
 <p><strong>fmt</strong> : str</p>
 <blockquote>
-<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+<div><p>Format of the coordinates, default is ‘%.3f’.</p>
 </div></blockquote>
 <p><strong>infile</strong> : str</p>
 <blockquote>
 <div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
 <cite>name</cite> appended to the <cite>infile</cite> name.
-(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+(<cite>name</cite> is ‘array’ by default).</p>
 <p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
 be copied manually to an input file.</p>
 </div></blockquote>
@@ -274,7 +271,7 @@ each end and another one in the middle).</p>
 <blockquote>
 <div><p>Prefix name of the sac file name.</p>
 </div></blockquote>
-<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<p><strong>mode</strong> : {‘displacement’ (default), ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
 <blockquote>
 <div><p>Mode of the recorded motions.</p>
 </div></blockquote>
@@ -292,14 +289,14 @@ each end and another one in the middle).</p>
 </div></blockquote>
 <p><strong>fmt</strong> : str</p>
 <blockquote>
-<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+<div><p>Format of the coordinates, default is ‘%.3f’.</p>
 </div></blockquote>
 <p><strong>infile</strong> : str</p>
 <blockquote>
 <div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
 <cite>name</cite> appended to the <cite>infile</cite> name.
-(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+(<cite>name</cite> is ‘array’ by default).</p>
 <p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
 be copied manually to an input file.</p>
 </div></blockquote>
@@ -337,7 +334,7 @@ be the same length.</p>
 <blockquote>
 <div><p>Prefix name of the sac file name.</p>
 </div></blockquote>
-<p><strong>mode</strong> : {&#8216;displacement&#8217; (default), &#8216;velocity&#8217;, &#8216;div&#8217;, &#8216;curl&#8217;, &#8216;strains&#8217;}</p>
+<p><strong>mode</strong> : {‘displacement’ (default), ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
 <blockquote>
 <div><p>Mode of the recorded motions.</p>
 </div></blockquote>
@@ -355,14 +352,14 @@ be the same length.</p>
 </div></blockquote>
 <p><strong>fmt</strong> : str</p>
 <blockquote>
-<div><p>Format of the coordinates, default is &#8216;%.3f&#8217;.</p>
+<div><p>Format of the coordinates, default is ‘%.3f’.</p>
 </div></blockquote>
 <p><strong>infile</strong> : str</p>
 <blockquote>
 <div><p>Path (relative or absolute) to the SW4 inputfile. Stations are
 added to a copy of the specified file and saved with the string
 <cite>name</cite> appended to the <cite>infile</cite> name.
-(<cite>name</cite> is &#8216;array&#8217; by default).</p>
+(<cite>name</cite> is ‘array’ by default).</p>
 <p>If set to <code class="docutils literal"><span class="pre">None</span></code>, a formated string is returned that can then
 be copied manually to an input file.</p>
 </div></blockquote>
@@ -404,7 +401,7 @@ can be copied manually to an SW4 inputfile.</p>
              >previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &#187;</li> 
@@ -412,7 +409,7 @@ can be copied manually to an SW4 inputfile.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

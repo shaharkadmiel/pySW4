@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pySW4.postp.waveforms module — pySW4 '0.3.0' documentation</title>
+<link href="../_static/style.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="pySW4.prep.html" rel="next" title="pySW4.prep package"/>
+<link href="pySW4.postp.image.html" rel="prev" title="pySW4.postp.image module"/>
+</head>
+<body role="document">
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pySW4.prep.html" title="pySW4.prep package">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pySW4.postp.image.html" title="pySW4.postp.image module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a accesskey="U" href="pySW4.postp.html">pySW4.postp package</a> »</li>
+</ul>
+</div>
+<div aria-label="main navigation" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="pySW4.postp.image.html" title="previous chapter">pySW4.postp.image module</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="pySW4.prep.html" title="next chapter">pySW4.prep package</a></p>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/packages/pySW4.postp.waveforms.rst.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<div id="searchbox" role="search" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<div><input name="q" type="text"/></div>
+<div><input type="submit" value="Go"/></div>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="section" id="module-pySW4.postp.waveforms"><a name="//apple_ref/cpp/Module/waveforms"></a>
+<span id="pysw4-postp-waveforms-module"></span><h1><a name="//apple_ref/cpp/Module/pySW4.postp.waveforms"></a>pySW4.postp.waveforms module<a class="headerlink" href="#module-pySW4.postp.waveforms" title="Permalink to this headline">¶</a></h1>
+<p>Routines for reading a line or an array of synthetic waveforms.</p>
+<span class="target" id="module-waveforms"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">SW4 uses a right handed coordinate system</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>     X
+   ⋰
+ ⋰
+o-------&gt;Y
+|
+|
+V
+Z
+</pre></div>
+</div>
+<p>If the azimuth of the SW4 grid is <code class="docutils literal"><span class="pre">0</span></code> this translates to:</p>
+<ul class="simple">
+<li>X == Northing</li>
+<li>Y == Easting</li>
+<li>Z == Vertical (inverted!)</li>
+</ul>
+<dl class="class">
+<dt id="pySW4.postp.waveforms.Stations"><a name="//apple_ref/cpp/Class/pySW4.postp.waveforms.Stations"></a>
+<em class="property">class </em><code class="descname">Stations</code><span class="sig-paren">(</span><em>name=None</em>, <em>path='./'</em>, <em>mode='velocity'</em>, <em>verbose=False</em>, <em>traces=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.html#obspy.core.stream.Stream" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">obspy.core.stream.Stream</span></code></a></p>
+<p>Class to handle waveform data from a line or an array of
+seismograms.</p>
+<p>Read a line or an array of stations constructed using
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>For a single station give the name of the station used in the
+inputfile in the <code class="docutils literal"><span class="pre">file</span></code> field. For all stations relating to a
+line or array of stations use the prefix of the line or array
+name, should be equal to the value used for <code class="docutils literal"><span class="pre">'name'</span></code> in
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess
+phase.</p>
+</div></blockquote>
+<p><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the files (default is ‘./’).</p>
+</div></blockquote>
+<p><strong>mode</strong> : {‘displacement’, ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
+<blockquote class="last">
+<div><p>Mode of the <code class="docutils literal"><span class="pre">rec</span></code> files to be read.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pySW4.postp.waveforms.Stations._parse_rec_filename"><a name="//apple_ref/cpp/Method/pySW4.postp.waveforms.Stations._parse_rec_filename"></a>
+<code class="descname">_parse_rec_filename</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations._parse_rec_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations._parse_rec_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Private method: Parse ‘rec’ filename and get the x, y or
+lat, lon coordinates.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="pySW4.postp.waveforms.Stations.delta"><a name="//apple_ref/cpp/Attribute/pySW4.postp.waveforms.Stations.delta"></a>
+<code class="descname">delta</code><a class="headerlink" href="#pySW4.postp.waveforms.Stations.delta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.waveforms.Stations.get_data"><a name="//apple_ref/cpp/Method/pySW4.postp.waveforms.Stations.get_data"></a>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>channel='*z'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data for the selected <cite>channel</cite>. Wildcard are also
+handled such that <code class="docutils literal"><span class="pre">channel='*z'</span></code> gets all vertical channels
+in <em>self.traces</em>.</p>
+<p>See <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.select.html#obspy.core.stream.Stream.select" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-meth docutils literal"><span class="pre">select()</span></code></a> method for more
+info.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">3D <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>3darray of shape (nx, ny, time).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.waveforms.Stations.plot_traces"><a name="//apple_ref/cpp/Method/pySW4.postp.waveforms.Stations.plot_traces"></a>
+<code class="descname">plot_traces</code><span class="sig-paren">(</span><em>mode=''</em>, <em>yscale='auto'</em>, <em>hspace=0.2</em>, <em>wspace=0.05</em>, <em>figsize=None</em>, <em>fig=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations.plot_traces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations.plot_traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot all traces and their Fourier specra side-by-side.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>traces</strong> : <code class="xref py py-class docutils literal"><span class="pre">Stream</span></code></p>
+<blockquote>
+<div><p>Traces to be plotted in an <code class="xref py py-class docutils literal"><span class="pre">Stream</span></code> object.</p>
+</div></blockquote>
+<p><strong>mode</strong> : {‘displacement’, ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
+<blockquote>
+<div><p>Mode describes the type of data in traces.</p>
+<p>Optionaly, an alternative string can be given that will be used
+as the y-label of the time-histories.</p>
+</div></blockquote>
+<p><strong>yscale</strong> : {‘auto’, ‘all’, ‘normalize’}</p>
+<blockquote>
+<div><p>Set the scale of the vertical y-axis:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">auto</span></code> - Vertical scale of each axes is automatically set to
+the -|max| and |max| of each trace.</li>
+<li><code class="docutils literal"><span class="pre">all</span></code> - Vertical scale of all axes is set to the same limits
+which are the -|max| and |max| of all traces.</li>
+<li><code class="docutils literal"><span class="pre">normalize</span></code> - Each trace is normalized and plotted
+(<code class="docutils literal"><span class="pre">ylim=(-1,</span> <span class="pre">1)</span></code>).</li>
+</ul>
+</div></blockquote>
+<p><strong>hspace</strong> : float</p>
+<blockquote>
+<div><p>The hight space between axes. See
+<a class="reference external" href="http://matplotlib.org/api/gridspec_api.html#matplotlib.gridspec.GridSpec" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">GridSpec</span></code></a> documentation.</p>
+</div></blockquote>
+<p><strong>wspace</strong> : float</p>
+<blockquote>
+<div><p>The width space between axes. See
+<a class="reference external" href="http://matplotlib.org/api/gridspec_api.html#matplotlib.gridspec.GridSpec" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">GridSpec</span></code></a> documentation.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : 2-tuple</p>
+<blockquote>
+<div><p>Size of the <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a>.</p>
+</div></blockquote>
+<p><strong>fig</strong> : <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a></p>
+<blockquote>
+<div><p>A <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td> </td><td class="field-body"><p class="first last"><strong>kwargs</strong> : <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">plot()</span></code></a> propeties.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="attribute">
+<dt id="pySW4.postp.waveforms.Stations.starttime"><a name="//apple_ref/cpp/Attribute/pySW4.postp.waveforms.Stations.starttime"></a>
+<code class="descname">starttime</code><a class="headerlink" href="#pySW4.postp.waveforms.Stations.starttime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.waveforms.Stations.times"><a name="//apple_ref/cpp/Method/pySW4.postp.waveforms.Stations.times"></a>
+<code class="descname">times</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#Stations.times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.Stations.times" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.postp.waveforms.read_stations"><a name="//apple_ref/cpp/Function/pySW4.postp.waveforms.read_stations"></a>
+<code class="descname">read_stations</code><span class="sig-paren">(</span><em>name</em>, <em>path='./'</em>, <em>mode='velocity'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/waveforms.html#read_stations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.waveforms.read_stations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a single station or several stations along a line or as an
+array  constructed using <a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a>
+or <a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess
+phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>For a single station give the name of the station used in the
+inputfile in the <code class="docutils literal"><span class="pre">file</span></code> field. For all stations relating to a
+line or array of stations use the prefix of the line or array
+name, should be equal to the value used for <code class="docutils literal"><span class="pre">'name'</span></code> in
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_line" title="pySW4.prep.stations.station_line"><code class="xref py py-func docutils literal"><span class="pre">station_line()</span></code></a> or
+<a class="reference internal" href="pySW4.prep.stations.html#pySW4.prep.stations.station_array" title="pySW4.prep.stations.station_array"><code class="xref py py-func docutils literal"><span class="pre">station_array()</span></code></a> in the preprocess
+phase.</p>
+</div></blockquote>
+<p><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the files (default is ‘./’).</p>
+</div></blockquote>
+<p><strong>mode</strong> : {‘displacement’, ‘velocity’, ‘div’, ‘curl’, ‘strains’}</p>
+<blockquote>
+<div><p>Mode of the <code class="docutils literal"><span class="pre">rec</span></code> files to be read.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#pySW4.postp.waveforms.Stations" title="pySW4.postp.waveforms.Stations"><code class="xref py py-class docutils literal"><span class="pre">Stations</span></code></a></p>
+<blockquote class="last">
+<div><p>Class with waveform data and methods.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pySW4.prep.html" title="pySW4.prep package">next</a> |</li>
+<li class="right">
+<a href="pySW4.postp.image.html" title="pySW4.postp.image module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a href="pySW4.postp.html">pySW4.postp package</a> »</li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+        © Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pySW4.utils.spectral module — pySW4 '0.3.0' documentation</title>
+<link href="../_static/style.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="pySW4.utils.utils.html" rel="next" title="pySW4.utils.utils module"/>
+<link href="pySW4.utils.geo.html" rel="prev" title="pySW4.utils.geo module"/>
+</head>
+<body role="document">
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pySW4.utils.utils.html" title="pySW4.utils.utils module">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pySW4.utils.geo.html" title="pySW4.utils.geo module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a accesskey="U" href="pySW4.utils.html">pySW4.utils package</a> »</li>
+</ul>
+</div>
+<div aria-label="main navigation" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="pySW4.utils.geo.html" title="previous chapter">pySW4.utils.geo module</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="pySW4.utils.utils.html" title="next chapter">pySW4.utils.utils module</a></p>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/packages/pySW4.utils.spectral.rst.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<div id="searchbox" role="search" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<div><input name="q" type="text"/></div>
+<div><input type="submit" value="Go"/></div>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="section" id="module-pySW4.utils.spectral"><a name="//apple_ref/cpp/Module/spectral"></a>
+<span id="pysw4-utils-spectral-module"></span><h1><a name="//apple_ref/cpp/Module/pySW4.utils.spectral"></a>pySW4.utils.spectral module<a class="headerlink" href="#module-pySW4.utils.spectral" title="Permalink to this headline">¶</a></h1>
+<p>Python module for spectral analysis.</p>
+<span class="target" id="module-spectral"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="pySW4.utils.spectral.fourier_spectrum"><a name="//apple_ref/cpp/Function/pySW4.utils.spectral.fourier_spectrum"></a>
+<code class="descname">fourier_spectrum</code><span class="sig-paren">(</span><em>data</em>, <em>womean=False</em>, <em>winsize=None</em>, <em>stepsize=None</em>, <em>delta=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/spectral.html#fourier_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.spectral.fourier_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Fourier spectrum of a signal either as a whole or as
+a series of windows with or without overlaps for smoother spectrum.</p>
+<p>The reason for windowing a signal into smaller chunks is to smooth a
+‘noisy’ Fourier spectrum of a very long signal. The frequency
+resolution of the FFT is related to the number of points (npts)
+passed into the FFT. The number of evenly spaced frequencies,
+sometimes refered to as bins, resolved between 0 and the nyquist
+frequency, 0.5/delta are (0.5*npts)+1 if npts is even or
+0.5*(npts+1) if npts is odd.</p>
+<p>So the FFT of a signal of length 2048 npts and delta of 0.01 will
+have a nyquist frequency of 50 Hz and 1025 (aka FFT size or bins)
+resolved frequencies making the lowest resolved frequency 0.0488 Hz.
+Had the signal been longer, say 10000 points (100 seconds), the FFT
+size would be 5001 and the frequency resolution would be 0.01 Hz
+making the the spectrum very noisy numerically with many frequencies
+that don’t contain any real information.</p>
+<p>Pay attention to the <code class="docutils literal"><span class="pre">stepsize</span></code> parameter. Leave it <code class="docutils literal"><span class="pre">None</span></code> if
+you are not sure what is the correct value. If a high energy peak in
+the time domain is picked up by more than one window due to ovelap,
+that can be accumulated to affect the over all amplitude in the
+frequency domain. On the other hand, if by slicing the signal into
+windows you introduce step-functions as the windowed signal starts
+with a steep rise or ends with a steep fall, the resulting frequency
+spectrum will contain false amplitudes at high frequencies as a
+result. Setting an overlap will get rid of this problem as these
+unwanted effects will be canceled out by one another or averaged by
+several windows.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is a convinient wrapper for the
+<code class="xref py py-func docutils literal"><span class="pre">fft()</span></code> function.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance</p>
+<blockquote>
+<div><p>If a sequence (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) of time-history values
+is passed <code class="docutils literal"><span class="pre">delta</span></code> must be supplied as well. Otherwise pass an
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance.</p>
+</div></blockquote>
+<p><strong>womean</strong> : bool</p>
+<blockquote>
+<div><p>Remove the mean of the signal before performing the transform.
+Default is False, transform as is. In cases where there is a
+shift in the signal such that the baseline is not zero, setting
+<code class="docutils literal"><span class="pre">womean=True</span></code> will result in a smaller DC.</p>
+</div></blockquote>
+<p><strong>winsize</strong> : int</p>
+<blockquote>
+<div><p>By default <cite>winsize</cite> is None, taking the FFT of the entire
+signal as-is. Otherwise, <cite>winsize</cite> sets the size of the
+sliding window, taking <cite>winsize</cite> points of the signal at a
+time. Works fastest when <cite>winsize</cite> is a whole power of 2,
+i.e., 128, 512, 1024, 2048, 4096 etc.</p>
+</div></blockquote>
+<p><strong>stepsize</strong> : int</p>
+<blockquote>
+<div><p>The number of points by which the window slides each time.
+By default, <cite>stepsize</cite> is None, making it equal to
+<cite>winsize</cite>, no overlap. Setting <cite>stepsize</cite> to half
+<cite>winsize</cite> is common practice and will cause a 50% overlap.</p>
+</div></blockquote>
+<p><strong>delta</strong> : float</p>
+<blockquote>
+<div><p>The dt from one sample to the next such that 1/delta is the
+sampling rate.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>If set to <code class="docutils literal"><span class="pre">True</span></code> some information about the process is
+printed.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>frequency array and</li>
+<li>amplitude array</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.spectral.next_power_2"><a name="//apple_ref/cpp/Function/pySW4.utils.spectral.next_power_2"></a>
+<code class="descname">next_power_2</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/spectral.html#next_power_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.spectral.next_power_2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.spectral.psde"><a name="//apple_ref/cpp/Function/pySW4.utils.spectral.psde"></a>
+<code class="descname">psde</code><span class="sig-paren">(</span><em>data</em>, <em>womean=False</em>, <em>winsize='default'</em>, <em>stepsize=None</em>, <em>delta=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/spectral.html#psde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.spectral.psde" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for <a class="reference external" href="http://matplotlib.org/api/mlab_api.html#matplotlib.mlab.psd" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.mlab.psd()</span></code></a> for conveniently estimating
+the power spectral density of a signal.</p>
+<p>See <a class="reference internal" href="#pySW4.utils.spectral.fourier_spectrum" title="pySW4.utils.spectral.fourier_spectrum"><code class="xref py py-func docutils literal"><span class="pre">fourier_spectrum()</span></code></a> documentation for
+keyword argument explanation and rational.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>frequency array and</li>
+<li>amplitude array</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pySW4.utils.utils.html" title="pySW4.utils.utils module">next</a> |</li>
+<li class="right">
+<a href="pySW4.utils.geo.html" title="pySW4.utils.geo module">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a href="pySW4.utils.html">pySW4.utils package</a> »</li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+        © Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+</body>
+</html>

@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.prep.rfileIO &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.prep.rfileIO &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,11 +21,11 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -40,7 +37,7 @@
              >modules</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -73,7 +70,7 @@
 <span class="sd">.. module:: rfileIO</span>
 
 <span class="sd">:author:</span>
-<span class="sd">    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)</span>
+<span class="sd">    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)</span>
 
 <span class="sd">:copyright:</span>
 <span class="sd">    Shahar Shani-Kadmiel</span>
@@ -85,34 +82,35 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="k">import</span> <span class="n">make_axes_locatable</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">material_model</span> <span class="k">as</span> <span class="n">mm</span>
+
 <span class="n">flush</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+<span class="n">default_proj</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs&#39;</span>
 
 <span class="n">RFILE_HEADER_DTYPE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
-        <span class="p">(</span><span class="s1">&#39;magic&#39;</span>       <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;precision&#39;</span>   <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;attenuation&#39;</span> <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;az&#39;</span>          <span class="p">,</span> <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;lon0&#39;</span>        <span class="p">,</span> <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;lat0&#39;</span>        <span class="p">,</span> <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;mlen&#39;</span>        <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">)</span>
-    <span class="p">])</span>
+    <span class="p">(</span><span class="s1">&#39;magic&#39;</span>       <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;precision&#39;</span>   <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;attenuation&#39;</span> <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;az&#39;</span>          <span class="p">,</span> <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;lon0&#39;</span>        <span class="p">,</span> <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;lat0&#39;</span>        <span class="p">,</span> <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;mlen&#39;</span>        <span class="p">,</span> <span class="s1">&#39;int32&#39;</span>   <span class="p">)</span>
+<span class="p">])</span>
 
 <span class="n">BLOCK_HEADER_DTYPE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
-        <span class="p">(</span><span class="s1">&#39;hh&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;hv&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;z0&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;nc&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;ni&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;nj&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;nk&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">)</span>
-    <span class="p">])</span>
+    <span class="p">(</span><span class="s1">&#39;hh&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;hv&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;z0&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;float64&#39;</span> <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;nc&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;ni&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;nj&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;nk&#39;</span>  <span class="p">,</span>  <span class="s1">&#39;int32&#39;</span>   <span class="p">)</span>
+<span class="p">])</span>
 
 <span class="n">DATA_PRECISION</span> <span class="o">=</span> <span class="p">{</span><span class="mi">4</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">}</span>
 
@@ -138,14 +136,12 @@
     <span class="mi">4</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span>      <span class="p">:</span> <span class="s1">&#39;Qs&#39;</span><span class="p">,</span>
          <span class="s1">&#39;symbol&#39;</span>    <span class="p">:</span> <span class="s1">&#39;Qs&#39;</span><span class="p">,</span>
          <span class="s1">&#39;unit&#39;</span>      <span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
-    <span class="p">}</span>
+<span class="p">}</span>
 
 
 <div class="viewcode-block" id="write_hdr"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.write_hdr">[docs]</a><span class="k">def</span> <span class="nf">write_hdr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">magic</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">attenuation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
               <span class="n">az</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">lon0</span><span class="o">=</span><span class="mf">33.5</span><span class="p">,</span> <span class="n">lat0</span><span class="o">=</span><span class="mf">28.0</span><span class="p">,</span>
-              <span class="n">proj_str</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;+proj=utm +zone=36 +datum=WGS84 &#39;</span>
-                        <span class="s1">&#39;+units=m +no_defs&#39;</span><span class="p">),</span>
-              <span class="n">nb</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+              <span class="n">proj_str</span><span class="o">=</span><span class="n">default_proj</span><span class="p">,</span> <span class="n">nb</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write rfile header.</span>
 
@@ -322,6 +318,97 @@
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">nk</span><span class="p">))</span></div>
 
 
+<div class="viewcode-block" id="write_topo_block"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.write_topo_block">[docs]</a><span class="k">def</span> <span class="nf">write_topo_block</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : file or str</span>
+<span class="sd">        Open file handle in ``&#39;wa&#39;`` mode or path to an rfile for</span>
+<span class="sd">        appending data to the end.</span>
+
+<span class="sd">    data : :class:`~numpy.ndarray`</span>
+<span class="sd">        Elevation data in meters below sea level (z positive down).</span>
+
+<span class="sd">    precision : {4 (default), 8}</span>
+<span class="sd">        The number of bytes per entry in the data section.</span>
+
+<span class="sd">        4 - single precision</span>
+
+<span class="sd">        8 - double precision</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;wa&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_properties"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.write_properties">[docs]</a><span class="k">def</span> <span class="nf">write_properties</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">vs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write material properties at a point `i`, `j` in block `b`.</span>
+
+<span class="sd">    This is a convenient function to use while looping over `i`, `j` in</span>
+<span class="sd">    a specific block `b` for writing out material properties at each</span>
+<span class="sd">    index `k`. At the very least `vp` should be provided. If only `vp`</span>
+<span class="sd">    is provided, the other properties are calculated using the</span>
+<span class="sd">    :mod:`~..material_model` module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : file</span>
+<span class="sd">        Open file handle in ``&#39;wa&#39;`` mode for appending data to the end</span>
+<span class="sd">        of a file in construction ot in ``&#39;r+b&#39;`` mode for overwriting</span>
+<span class="sd">        existing data.</span>
+
+<span class="sd">        When overwriting existing data, the user must take care to place</span>
+<span class="sd">        the cursor in the right place in the file.</span>
+
+<span class="sd">    vp : array-like</span>
+<span class="sd">        P wave velocity at indices of `k` in m/s.</span>
+
+<span class="sd">    nc : int</span>
+<span class="sd">        Number of components to write out. Either 3 (`rho`, `vp`, and</span>
+<span class="sd">        `vs` if ``attenuation=0``) or 5 (also `qp` and `qs` if</span>
+<span class="sd">        ``attenuation=1``).</span>
+
+<span class="sd">    vs : array-like, optional</span>
+<span class="sd">        S wave velocity at indices of `k` in m/s. If not given, `vs` is</span>
+<span class="sd">        calculated from :func:`~..material_model.get_vs`.</span>
+
+<span class="sd">    rho : array-like, optional</span>
+<span class="sd">        Density at indices of `k` in kg/m^3. If not given, `rho` is</span>
+<span class="sd">        calculated from :func:`~..material_model.get_rho`.</span>
+
+<span class="sd">    qp : array-like, optional</span>
+<span class="sd">        P quality factor at indices of `k`. If not given, `qp` is</span>
+<span class="sd">        calculated from :func:`~..material_model.get_qp`.</span>
+
+<span class="sd">    qs : array-like, optional</span>
+<span class="sd">        S quality factor at indices of `k`. If not given, `qs` is</span>
+<span class="sd">        calculated from :func:`~..material_model.get_qs`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">vp</span> <span class="o">=</span> <span class="n">vp</span> <span class="o">*</span> <span class="mf">1e-3</span>
+
+    <span class="n">k_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">vp</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">nc</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="n">vs</span> <span class="ow">or</span> <span class="n">mm</span><span class="o">.</span><span class="n">get_vs</span><span class="p">(</span><span class="n">vp</span><span class="p">)</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span> <span class="ow">or</span> <span class="n">mm</span><span class="o">.</span><span class="n">get_rho</span><span class="p">(</span><span class="n">vp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">qs</span> <span class="ow">or</span> <span class="n">mm</span><span class="o">.</span><span class="n">get_qs</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span>
+    <span class="n">qp</span> <span class="o">=</span> <span class="n">qp</span> <span class="ow">or</span> <span class="n">mm</span><span class="o">.</span><span class="n">get_qp</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span>
+
+    <span class="n">k_array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span>
+    <span class="n">k_array</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span> <span class="o">*</span> <span class="mf">1e3</span>
+    <span class="n">k_array</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">vs</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">k_array</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">qp</span>
+        <span class="n">k_array</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">qs</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">k_array</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="read_block_hdr"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.read_block_hdr">[docs]</a><span class="k">def</span> <span class="nf">read_block_hdr</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read rfile block header.</span>
@@ -350,7 +437,7 @@
 
 <span class="sd">        The first block holds the elevation of the topography/</span>
 <span class="sd">        bathymetry, so ``nc=1``.</span>
-<span class="sd">        The following blocks must have either 3 if only rho, vp, and vs</span>
+<span class="sd">        The following blocks have either 3 if only rho, vp, and vs</span>
 <span class="sd">        are present (``attenuation=0``) or 5 if qp and qs are pressent</span>
 <span class="sd">        (``attenuation=1``).</span>
 
@@ -443,19 +530,23 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">read_block_data_section</span><span class="p">(</span><span class="n">block_number</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Model information :</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;----------------- :</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;         Filename : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;            lon 0 : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;            lat 0 : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;          Azimuth : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;     Proj4 string : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39; Number of blocks : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">lon0</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">lat0</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">az</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">proj_str</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">))</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Model information :</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;----------------- :</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;         Filename : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;            lon 0 : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;            lat 0 : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;          Azimuth : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;     Proj4 string : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39; Number of blocks : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lon0</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lat0</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">az</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proj_str</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nb</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span>
 
 <div class="viewcode-block" id="Model.read_block_data_section"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.Model.read_block_data_section">[docs]</a>    <span class="k">def</span> <span class="nf">read_block_data_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_number</span><span class="p">):</span>
@@ -492,11 +583,9 @@
             <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">number</span> <span class="o">&lt;</span> <span class="n">block_number</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span>
-                                <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">ni</span>
-                                <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">nj</span>
-                                <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">nk</span>
-                                <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">nc</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">ni</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">nj</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">nk</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">nc</span><span class="p">,</span> <span class="mi">1</span>
+                    <span class="p">)</span>
                     <span class="k">break</span>
             <span class="n">block</span><span class="o">.</span><span class="n">_read_block_data_section</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span></div>
 
@@ -581,10 +670,17 @@
                 <span class="n">properties</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">properties</span><span class="p">,</span>
                                         <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">block</span><span class="o">.</span><span class="n">z</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                                  <span class="mi">5</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mf">999.</span><span class="p">))</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">properties</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">properties</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">(),</span> <span class="n">properties</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">COMPONENTS</span><span class="p">[</span><span class="nb">property</span><span class="p">]]</span>
+            <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">properties</span><span class="p">[:,</span> <span class="n">COMPONENTS</span><span class="p">[</span><span class="nb">property</span><span class="p">]]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">(),</span> <span class="n">properties</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span></div>
+            <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">properties</span><span class="p">[:]</span></div>
 
 <div class="viewcode-block" id="Model.get_cross_section"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.Model.get_cross_section">[docs]</a>    <span class="k">def</span> <span class="nf">get_cross_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -637,7 +733,7 @@
 <span class="sd">                  :meth:`~.Model.plot_topography` for plotting.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span></div>
 
 <div class="viewcode-block" id="Model.plot_topography"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.Model.plot_topography">[docs]</a>    <span class="k">def</span> <span class="nf">plot_topography</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -795,23 +891,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">yzextent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_extent</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_extent</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">string</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Block information :</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;----------------- :</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;           Number : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;  Horizontal h, m : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;    Vertical h, m : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;           z 0, m : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;               ni : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;               nj : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;               nk : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
-                  <span class="s1">&#39;               nc : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">hh</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">hv</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">z0</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">ni</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">nj</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span>
-                                                   <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="p">))</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Block information :</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;----------------- :</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;           Number : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;  Horizontal h, m : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;    Vertical h, m : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;           z 0, m : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;               ni : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;               nj : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;               nk : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;               nc : </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hh</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hv</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z0</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ni</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nj</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nc</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span>
 
 <div class="viewcode-block" id="Block._read_block_data_section"><a class="viewcode-back" href="../../../packages/pySW4.prep.rfileIO.html#pySW4.prep.rfileIO.Block._read_block_data_section">[docs]</a>    <span class="k">def</span> <span class="nf">_read_block_data_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
@@ -967,8 +1067,9 @@
 
         <span class="c1"># split the properties array into block with different extents</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="n">block</span><span class="o">.</span><span class="n">nk</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extents</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">h_extent</span>
-                        <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">z_extent</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extents</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h_extent</span> <span class="o">+</span> <span class="n">block</span><span class="o">.</span><span class="n">z_extent</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vsplit</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
 
@@ -1217,14 +1318,14 @@
              >modules</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

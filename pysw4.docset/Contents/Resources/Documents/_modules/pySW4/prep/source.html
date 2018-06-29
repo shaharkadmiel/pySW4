@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>pySW4.prep.source &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
+
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <h1>Source code for pySW4.prep.source</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python module to help specify the source parameters.</span>
+
+<span class="sd">.. module:: source</span>
+
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)</span>
+
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">..headers</span> <span class="k">import</span> <span class="n">STF</span>
+
+
+<div class="viewcode-block" id="Mw"><a class="viewcode-back" href="../../../packages/pySW4.prep.source.html#pySW4.prep.source.Mw">[docs]</a><span class="k">def</span> <span class="nf">Mw</span><span class="p">(</span><span class="n">M0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Moment Magnitude Mw from Seismic Moment M0 in N m</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">2.</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">M0</span><span class="p">)</span> <span class="o">-</span> <span class="mf">9.1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="M0"><a class="viewcode-back" href="../../../packages/pySW4.prep.source.html#pySW4.prep.source.M0">[docs]</a><span class="k">def</span> <span class="nf">M0</span><span class="p">(</span><span class="n">Mw</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Seismic Moment M0 in N m from Moment Magnitude Mw</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">Mw</span> <span class="o">+</span> <span class="mf">9.1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="source_frequency"><a class="viewcode-back" href="../../../packages/pySW4.prep.source.html#pySW4.prep.source.source_frequency">[docs]</a><span class="k">def</span> <span class="nf">source_frequency</span><span class="p">(</span><span class="n">fmax</span><span class="p">,</span> <span class="n">stf</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the angular frequency :math:`\omega`, ``freq`` attribute</span>
+<span class="sd">    on the source line in the SW4 inputfile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fmax : float</span>
+<span class="sd">        Maximum frequency in the source-time function frequency content,</span>
+<span class="sd">        Hz.</span>
+
+<span class="sd">    stf : str</span>
+<span class="sd">        Source-time function name. It can have the following values:</span>
+<span class="sd">        &#39;GaussianInt&#39;, &#39;Gaussian&#39; (**default**), &#39;RickerInt&#39;, &#39;Ricker&#39;,</span>
+<span class="sd">        &#39;Ramp&#39;, &#39;Triangle&#39;, &#39;Sawtooth&#39;, &#39;Smoothwave&#39;, &#39;VerySmoothBump&#39;,</span>
+<span class="sd">        &#39;Brune&#39;, &#39;BruneSmoothed&#39;, &#39;GaussianWindow&#39;, &#39;Liu&#39;, &#39;Dirac&#39;, and</span>
+<span class="sd">        &#39;C6SmoothBump&#39;.</span>
+
+<span class="sd">        See the `SW4 User Guide</span>
+<span class="sd">        &lt;https://geodynamics.org/cig/software/sw4/&gt;`_ for further</span>
+<span class="sd">        details.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    2-tuple</span>
+<span class="sd">        ``f0``, ``freq``. ``freq`` is the value which goes on the source</span>
+<span class="sd">        line in the SW4 inputfile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">f0</span> <span class="o">=</span> <span class="n">fmax</span> <span class="o">/</span> <span class="n">STF</span><span class="p">[</span><span class="n">stf</span><span class="p">]</span><span class="o">.</span><span class="n">fmax2f0</span>  <span class="c1"># fundamental freqency, Hz</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">f0</span> <span class="o">*</span> <span class="n">STF</span><span class="p">[</span><span class="n">stf</span><span class="p">]</span><span class="o">.</span><span class="n">freq2f0</span>  <span class="c1"># angular frequency, rad/s</span>
+
+    <span class="k">return</span> <span class="n">f0</span><span class="p">,</span> <span class="n">freq</span></div>
+
+
+<div class="viewcode-block" id="t0"><a class="viewcode-back" href="../../../packages/pySW4.prep.source.html#pySW4.prep.source.t0">[docs]</a><span class="k">def</span> <span class="nf">t0</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">stf</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the ``t0`` attribute on the source line in the SW4</span>
+<span class="sd">    inputfile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    freq : float</span>
+<span class="sd">        The angular frequency value used for the ``freq`` attribute on</span>
+<span class="sd">        the source line in the SW4 inputfile.</span>
+
+<span class="sd">    t0 : float</span>
+<span class="sd">        The calculated ``t0`` is added to the supllied `t0` in the</span>
+<span class="sd">        function call.</span>
+
+<span class="sd">    stf : str</span>
+<span class="sd">        The source-time function name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;Gaussian&#39;</span> <span class="ow">in</span> <span class="n">stf</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">+=</span> <span class="mf">6.</span> <span class="o">/</span> <span class="n">freq</span>
+    <span class="k">elif</span> <span class="s1">&#39;Ricker&#39;</span> <span class="ow">in</span> <span class="n">stf</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">+=</span> <span class="mf">6.</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">freq</span>
+    <span class="k">return</span> <span class="n">t0</span> <span class="o">*</span> <span class="mf">1.1</span>  <span class="c1"># take that extra 10%</span></div>
+
+
+<div class="viewcode-block" id="gaussian_stf"><a class="viewcode-back" href="../../../packages/pySW4.prep.source.html#pySW4.prep.source.gaussian_stf">[docs]</a><span class="k">def</span> <span class="nf">gaussian_stf</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gaussian source-time-function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">freq</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="f_max"><a class="viewcode-back" href="../../../packages/pySW4.prep.source.html#pySW4.prep.source.f_max">[docs]</a><span class="k">def</span> <span class="nf">f_max</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">ppw</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the maximum resolved frequency that meets the requirement</span>
+<span class="sd">    that the shortest wavelength (:math:`\lambda=V_{min}/f_{max}`) be</span>
+<span class="sd">    sampled by a minimum points-per-wavelength (`ppw`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vmin : float</span>
+<span class="sd">        Minimum seismic velocity in the computational doamin in m/s.</span>
+
+<span class="sd">    h : float</span>
+<span class="sd">        Grid spacing of the computational doamin in meters.</span>
+
+<span class="sd">    ppw :</span>
+<span class="sd">        Minimum points-per-wavelenght required for the computation. Set</span>
+<span class="sd">        to 8 by default.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The suggested ``fmax`` in Hz.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    .grid_spacing</span>
+<span class="sd">    .get_vmin</span>
+<span class="sd">    .source_frequency</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">vmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">ppw</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

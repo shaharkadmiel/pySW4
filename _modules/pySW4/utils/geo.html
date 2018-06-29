@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.utils.geo &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.utils.geo &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,11 +21,11 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -40,7 +37,7 @@
              >modules</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
@@ -74,7 +71,7 @@
 
 <span class="sd">:author:</span>
 <span class="sd">    Shahar Shani-Kadmiel</span>
-<span class="sd">    kadmiel@post.bgu.ac.il</span>
+<span class="sd">    s.shanikadmiel@tudelft.nl</span>
 
 <span class="sd">:copyright:</span>
 <span class="sd">    Shahar Shani-Kadmiel</span>
@@ -90,10 +87,15 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">zipfile</span> <span class="k">import</span> <span class="n">ZipFile</span><span class="p">,</span> <span class="n">BadZipFile</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">from</span> <span class="nn">tarfile</span> <span class="k">import</span> <span class="n">ReadError</span>
+<span class="kn">from</span> <span class="nn">fnmatch</span> <span class="k">import</span> <span class="n">fnmatch</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">..plotting</span> <span class="k">import</span> <span class="n">calc_intensity</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">osr</span><span class="p">,</span> <span class="n">gdal_array</span>
@@ -101,10 +103,83 @@
     <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;gdal not found, you will not be able to use the geo tools &#39;</span>
          <span class="s1">&#39; in `pySW4.utils.geo` unless you install gdal.&#39;</span><span class="p">)</span>
 
+<span class="n">GDAL_INTERPOLATION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nearest&#39;</span> <span class="p">:</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GRA_NearestNeighbour</span><span class="p">,</span>
+                      <span class="s1">&#39;bilinear&#39;</span><span class="p">:</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GRA_Bilinear</span><span class="p">,</span>
+                      <span class="s1">&#39;cubic&#39;</span>   <span class="p">:</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GRA_Cubic</span><span class="p">,</span>
+                      <span class="s1">&#39;lanczos&#39;</span> <span class="p">:</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GRA_Lanczos</span><span class="p">}</span>
+
+<div class="viewcode-block" id="gdalopen"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.gdalopen">[docs]</a><span class="k">def</span> <span class="nf">gdalopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">substring</span><span class="o">=</span><span class="s1">&#39;*_dem.tif&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function around :func:`gdal.Open`.</span>
+
+<span class="sd">    :func:`gdal.Open` returns ``None`` if no file is read. This wrapper</span>
+<span class="sd">    function will try to read the `filename` directly but if ``None``</span>
+<span class="sd">    is returned, several other options, including compressed file</span>
+<span class="sd">    formats (&#39;zip&#39;, &#39;gzip&#39;, &#39;tar&#39;) and url retrieval are attempted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="c1"># try to open compressed file container and provide more info</span>
+        <span class="c1"># in case read is unsuccessful</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f_</span> <span class="o">=</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">f_</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+            <span class="n">prefix_</span> <span class="o">=</span> <span class="s1">&#39;zip&#39;</span>
+
+        <span class="k">except</span> <span class="n">BadZipFile</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">f_</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">contents</span> <span class="o">=</span> <span class="n">f_</span><span class="o">.</span><span class="n">getnames</span><span class="p">()</span>
+                <span class="n">prefix_</span> <span class="o">=</span> <span class="s1">&#39;tar&#39;</span>
+            <span class="k">except</span> <span class="n">ReadError</span><span class="p">:</span>
+                <span class="c1"># gzip:</span>
+                <span class="n">prefix_</span> <span class="o">=</span> <span class="s1">&#39;gzip&#39;</span>
+                <span class="n">filename_</span> <span class="o">=</span> <span class="s1">&#39;/vsi</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix_</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename</span>
+
+                <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename_</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ds</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ds</span>
+
+                <span class="c1"># url:</span>
+                <span class="n">prefix_</span> <span class="o">=</span> <span class="s1">&#39;curl&#39;</span>
+                <span class="n">filename_</span> <span class="o">=</span> <span class="s1">&#39;/vsi</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix_</span><span class="p">)</span> <span class="o">+</span> <span class="n">filename</span>
+
+                <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename_</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ds</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ds</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fnmatch</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">substring</span><span class="p">)</span> <span class="ow">or</span> <span class="n">substring</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                <span class="n">filename_</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;/vsi</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix_</span><span class="p">)</span> <span class="o">+</span>
+                             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+                <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename_</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ds</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ds</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;No file with matching substring &#39;</span><span class="si">{}</span><span class="s2">&#39; was found in </span><span class="si">{}</span><span class="s2">, &quot;</span>
+            <span class="s1">&#39;which contains:</span><span class="se">\n</span><span class="s1">&#39;</span>
+             <span class="s1">&#39;   </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s2">&quot;try:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">substring</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span>
+                     <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="s1">&#39;/vsi</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix_</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">]))</span>
+
+        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ds</span></div>
+
 
 <div class="viewcode-block" id="GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF">[docs]</a><span class="k">class</span> <span class="nc">GeoTIFF</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for handling GeoTIFF files.</span>
+
+<span class="sd">    In the GeoTIFF file format, it is assumed that the origin of the</span>
+<span class="sd">    grid is at the top-left (north-west) corner. Hence, ``dx`` is</span>
+<span class="sd">    positive in the ``x`` or ``lon`` direction and ``dy`` is negative</span>
+<span class="sd">    in the ``y`` or ``lat`` direction.</span>
 
 <span class="sd">    .. note:: This class should be populated by</span>
 <span class="sd">              :func:`~pySW4.utils.geo.read_GeoTIFF` or</span>
@@ -112,55 +187,83 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;+proj=longlat +datum=WGS84 +no_defs&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="mf">0.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GeoTIFF._read"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF._read">[docs]</a>    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">elev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ny</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">e</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">extent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">dtype</span>
+
+<div class="viewcode-block" id="GeoTIFF._read"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF._read">[docs]</a>    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">substring</span><span class="o">=</span><span class="s1">&#39;*_dem.tif&#39;</span><span class="p">,</span>
+              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Private method for reading a GeoTIFF file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading GeoTIFF file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading GeoTIFF file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
-        <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdalopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">substring</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">src_ds</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;/vsizip/&#39;</span> <span class="o">+</span> <span class="n">filename</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;trying zipfile&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updating GeoTIFF file...&#39;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">src_ds</span> <span class="o">=</span> <span class="n">filename</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span> <span class="o">=</span> <span class="n">src_ds</span>
         <span class="n">band</span> <span class="o">=</span> <span class="n">src_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">rasterBand</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">GDALTypeCodeToNumericTypeCode</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
+        <span class="c1"># self.dtype = gdal_array.GDALTypeCodeToNumericTypeCode(band.DataType)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">GetNoDataValue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">geotransform</span> <span class="o">=</span> <span class="n">src_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geotransform</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">XSize</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">YSize</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">())</span>\
-                        <span class="o">.</span><span class="n">ExportToProj4</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="p">(</span><span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">())</span><span class="o">.</span><span class="n">ExportToProj4</span><span class="p">()</span> <span class="ow">or</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">GeoTIFF info:</span><span class="se">\n</span><span class="s1">&#39;</span>
@@ -248,6 +351,10 @@
 <span class="sd">            - 3 - cubic (slower)</span>
 <span class="sd">            - ...</span>
 
+<span class="sd">            **Note** that this may result in slightly different</span>
+<span class="sd">            spacing than desired and more importantly, may cause a</span>
+<span class="sd">            **discrepency** between `x` and `y` spacing.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">by</span> <span class="ow">and</span> <span class="n">to</span><span class="p">:</span>
@@ -255,19 +362,25 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">to</span><span class="p">:</span>
-            <span class="n">by</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">/</span> <span class="n">to</span><span class="p">)</span>
+            <span class="n">by</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">/</span> <span class="n">to</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
-                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
+        <span class="k">if</span> <span class="n">by</span><span class="p">:</span>
+            <span class="n">to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">/</span> <span class="n">by</span>
 
-<div class="viewcode-block" id="GeoTIFF.reproject"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.reproject">[docs]</a>    <span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj4</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                  <span class="n">error_threshold</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span> <span class="n">target_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeoTIFF.reproject"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.reproject">[docs]</a>    <span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj4</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">error_threshold</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span>
+                  <span class="n">target_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reproject the data from the current projection to the specified</span>
 <span class="sd">        target projection `epsg` or `proj4` or to `match` an</span>
-<span class="sd">        existing GeoTIFF file.</span>
+<span class="sd">        existing GeoTIFF file. Optionally, the grid spacing can be</span>
+<span class="sd">        changed as well.</span>
+
+<span class="sd">        To keep the same projection and only resample the data leave</span>
+<span class="sd">        `epsg`, `proj4`, and `match` to be ``None`` and specify</span>
+<span class="sd">        `spacing`.</span>
 
 <span class="sd">        .. warning:: **Watch Out!** This operation is performed in place</span>
 <span class="sd">                     on the actual data. The raw data will no longer be</span>
@@ -296,6 +409,17 @@
 <span class="sd">            existing GeoTIFF file or object.</span>
 <span class="sd">            It is assumed that both GeoTIFF objects cover the same</span>
 <span class="sd">            extent.</span>
+
+<span class="sd">        spacing : int or float</span>
+<span class="sd">            Target spacing in the units of ther target projection.</span>
+
+<span class="sd">        interpolation : {&#39;nearest&#39;, &#39;bilinear&#39;, &#39;cubic&#39;, &#39;lanczos&#39;}</span>
+<span class="sd">            Resampling algorithm:</span>
+
+<span class="sd">            - &#39;nearest&#39; : Nearest neighbour</span>
+<span class="sd">            - &#39;bilinear&#39; : Bilinear (2x2 kernel)</span>
+<span class="sd">            - &#39;cubic&#39; : Cubic Convolution Approximation (4x4 kernel)</span>
+<span class="sd">            - &#39;lanczos&#39; : Lanczos windowed sinc interpolation (6x6 kernel)</span>
 
 <span class="sd">        error_threshold : float</span>
 <span class="sd">            Error threshold for transformation approximation in pixel</span>
@@ -329,65 +453,81 @@
         <span class="k">if</span> <span class="n">epsg</span> <span class="ow">and</span> <span class="n">proj4</span> <span class="ow">and</span> <span class="n">match</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Only `epsg`, `proj4`, or `match` should be specified.&#39;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">epsg</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">proj4</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;`epsg`, `proj4`, or `match` MUST be specified.&#39;</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">epsg</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">proj4</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">match</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">spacing</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;`epsg`, `proj4`, `spacing` or `match` MUST be specified.&#39;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">target_filename</span><span class="p">:</span>
-            <span class="n">target_filename</span> <span class="o">=</span> <span class="s1">&#39;dst_temp.tif&#39;</span>
+        <span class="c1"># Set up the two Spatial Reference systems</span>
+        <span class="n">srcSRS</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
+        <span class="n">srcSRS</span><span class="o">.</span><span class="n">ImportFromProj4</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proj4</span><span class="p">)</span>
 
         <span class="n">dstSRS</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">or</span> <span class="n">proj4</span><span class="p">:</span>
+        <span class="n">interpolation</span> <span class="o">=</span> <span class="n">GDAL_INTERPOLATION</span><span class="p">[</span><span class="n">interpolation</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">or</span> <span class="n">proj4</span> <span class="ow">or</span> <span class="n">spacing</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">dstSRS</span><span class="o">.</span><span class="n">ImportFromEPSG</span><span class="p">(</span><span class="n">epsg</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="c1"># Default to the same projection as the source</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">proj4</span><span class="p">:</span>
+                    <span class="n">proj4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj4</span>
                 <span class="n">dstSRS</span><span class="o">.</span><span class="n">ImportFromProj4</span><span class="p">(</span><span class="n">proj4</span><span class="p">)</span>
 
-            <span class="n">temp_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">AutoCreateWarpedVRT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span><span class="p">,</span>
-                                               <span class="kc">None</span><span class="p">,</span>
-                                               <span class="n">dstSRS</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">(),</span>
-                                               <span class="n">gdal</span><span class="o">.</span><span class="n">GRA_NearestNeighbour</span><span class="p">,</span>
-                                               <span class="n">error_threshold</span><span class="p">)</span>
-            <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s1">&#39;GTiff&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">CreateCopy</span><span class="p">(</span><span class="n">target_filename</span><span class="p">,</span>
-                                                              <span class="n">temp_ds</span><span class="p">)</span>
+            <span class="c1"># Default to same spacing</span>
+            <span class="n">spacing</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">spacing</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
 
-        <span class="c1"># isinstance(match, GeoTIFF)</span>
-        <span class="k">elif</span> <span class="n">match</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">write_GeoTIFF</span><span class="p">(</span><span class="s1">&#39;src_temp.tif&#39;</span><span class="p">)</span>
-            <span class="n">src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="s1">&#39;src_temp.tif&#39;</span><span class="p">)</span>
-            <span class="n">src_proj</span> <span class="o">=</span> <span class="n">src_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">()</span>
-            <span class="n">src_geotrans</span> <span class="o">=</span> <span class="n">src_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
+            <span class="c1"># Work out the boundaries of the target dataset</span>
+            <span class="n">tx</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">CoordinateTransformation</span><span class="p">(</span><span class="n">srcSRS</span><span class="p">,</span> <span class="n">dstSRS</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="n">read_GeoTIFF</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">ulx</span><span class="p">,</span> <span class="n">uly</span><span class="p">,</span> <span class="n">ulz</span><span class="p">)</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">TransformPoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">lrx</span><span class="p">,</span> <span class="n">lry</span><span class="p">,</span> <span class="n">lrz</span><span class="p">)</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">TransformPoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span>
 
             <span class="n">gdal_dtype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">NumericTypeCodeToGDALTypeCode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-            <span class="n">dstSRS</span><span class="o">.</span><span class="n">ImportFromProj4</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">proj4</span><span class="p">)</span>
-            <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s1">&#39;GTiff&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">target_filename</span><span class="p">,</span>
-                                                          <span class="n">match</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
-                                                          <span class="n">match</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span>
-                                                          <span class="mi">1</span><span class="p">,</span>
-                                                          <span class="n">gdal_dtype</span><span class="p">)</span>
-            <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">geotransform</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">target_filename</span><span class="p">:</span>
+                <span class="c1"># Create an in-memory raster</span>
+                <span class="n">drv</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s1">&#39;MEM&#39;</span><span class="p">)</span>
+                <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                    <span class="nb">int</span><span class="p">((</span><span class="n">lrx</span> <span class="o">-</span> <span class="n">ulx</span><span class="p">)</span> <span class="o">/</span> <span class="n">spacing</span><span class="p">),</span>
+                                    <span class="nb">int</span><span class="p">((</span><span class="n">uly</span> <span class="o">-</span> <span class="n">lry</span><span class="p">)</span> <span class="o">/</span> <span class="n">spacing</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">gdal_dtype</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Create an raster file</span>
+                <span class="n">drv</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s1">&#39;GTiff&#39;</span><span class="p">)</span>
+                <span class="n">dst_ds</span> <span class="o">=</span> <span class="n">drv</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">target_filename</span><span class="p">,</span>
+                                    <span class="nb">int</span><span class="p">((</span><span class="n">lrx</span> <span class="o">-</span> <span class="n">ulx</span><span class="p">)</span> <span class="o">/</span> <span class="n">spacing</span><span class="p">),</span>
+                                    <span class="nb">int</span><span class="p">((</span><span class="n">uly</span> <span class="o">-</span> <span class="n">lry</span><span class="p">)</span> <span class="o">/</span> <span class="n">spacing</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">gdal_dtype</span><span class="p">)</span>
+
+            <span class="c1"># Calculate the new geotransform</span>
+            <span class="n">dstGT</span> <span class="o">=</span> <span class="p">(</span><span class="n">ulx</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">uly</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">spacing</span><span class="p">)</span>
+
+            <span class="c1"># Set the geotransform</span>
+            <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">dstGT</span><span class="p">)</span>
             <span class="n">dst_ds</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">dstSRS</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">())</span>
 
-            <span class="n">gdal</span><span class="o">.</span><span class="n">ReprojectImage</span><span class="p">(</span><span class="n">src_ds</span><span class="p">,</span> <span class="n">dst_ds</span><span class="p">,</span>
-                                <span class="n">src_proj</span><span class="p">,</span> <span class="n">dstSRS</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">(),</span>
-                                <span class="n">gdal</span><span class="o">.</span><span class="n">GRA_NearestNeighbour</span><span class="p">,</span>
-                                <span class="n">error_threshold</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;src_temp.tif&#39;</span><span class="p">)</span>
+            <span class="c1"># keep nodata value</span>
+            <span class="n">band</span> <span class="o">=</span> <span class="n">dst_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">band</span><span class="o">.</span><span class="n">Fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
+            <span class="n">band</span><span class="o">.</span><span class="n">SetNoDataValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
+            <span class="n">band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>
 
-        <span class="n">dst_ds</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">target_filename</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;dst_temp.tif&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="k">pass</span></div>
+            <span class="c1"># Perform the projection/resampling</span>
+            <span class="n">src_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">()</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">ReprojectImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src_ds</span><span class="p">,</span> <span class="n">dst_ds</span><span class="p">,</span>
+                                      <span class="n">src_proj</span><span class="p">,</span> <span class="n">dstSRS</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">(),</span>
+                                      <span class="n">interpolation</span><span class="p">,</span>
+                                      <span class="n">error_threshold</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GeoTIFF.keep"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">res</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">dst_ds</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeoTIFF.set_new_extent"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.set_new_extent">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_extent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Keep a subset array from a GeoTIFF file.</span>
+<span class="sd">        Change the extent of a GeoTIFF file, trimming the boundaries or</span>
+<span class="sd">        padding them as needed.</span>
 
 <span class="sd">        .. warning:: **Watch Out!** This operation is performed in place</span>
 <span class="sd">            on the actual data. The raw data will no longer be</span>
@@ -397,37 +537,73 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        w, e, s, n: float</span>
+<span class="sd">        w, e, s, n : float</span>
 <span class="sd">            The west-, east-, south-, and north-most coordinate to keep</span>
 <span class="sd">            (may also be the xmin, xmax, ymin, ymax coordinate).</span>
+
+<span class="sd">        fill_value : float or None</span>
+<span class="sd">            Value to pad the data with incase extent is expanded beyond</span>
+<span class="sd">            the data. By default this is set to the `nodata` value.</span>
+
+<span class="sd">        mask : bool</span>
+<span class="sd">            If set to ``True``, data is masked using the `fill_value`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="n">e</span><span class="p">,</span> <span class="s1">&#39;`w` must be less than `e`&#39;</span>
+        <span class="k">assert</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">,</span> <span class="s1">&#39;`s` must be less than `n`&#39;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">&lt;</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="ow">and</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="ow">and</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">&lt;</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="ow">and</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">npw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">w</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+        <span class="n">npe</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
 
-            <span class="n">x_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">w</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
-            <span class="n">x_stop</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">nps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+        <span class="n">npn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
 
-            <span class="n">y_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
-            <span class="n">y_stop</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># trimming all dimensions</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">npw</span> <span class="o">&lt;</span> <span class="n">npe</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">npn</span> <span class="o">&lt;</span> <span class="n">nps</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">npn</span><span class="p">:</span> <span class="n">nps</span><span class="p">,</span> <span class="n">npw</span><span class="p">:</span> <span class="n">npe</span><span class="p">]</span>
 
-            <span class="c1"># update class data</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_stop</span>  <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">x_start</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">y_stop</span>  <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">y_start</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">[</span><span class="n">y_start</span><span class="p">:</span><span class="n">y_stop</span><span class="p">,</span> <span class="n">x_start</span><span class="p">:</span><span class="n">x_stop</span><span class="p">]</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># expanding or trimming each dimension independently</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;One or more of the coordinates given is out of bounds:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                   <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &lt; `w` and `e` &lt; </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1"> &lt; `s` and `n` &lt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">))</span></div>
+            <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span>
+
+            <span class="c1"># first handle east and south boundaries</span>
+            <span class="k">if</span> <span class="n">npe</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">npe</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)),</span>
+                                <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[:,</span> <span class="p">:</span><span class="n">npe</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">nps</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">nps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                                <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[:</span><span class="n">nps</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="c1"># now handle west and north boundaries</span>
+            <span class="k">if</span> <span class="n">npw</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="n">npw</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                                <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[:,</span> <span class="n">npw</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">npn</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="p">((</span><span class="o">-</span><span class="n">npn</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                                <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">npn</span><span class="p">:,</span> <span class="p">:]</span>
+
+            <span class="k">if</span> <span class="n">mask</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span>
+
+        <span class="c1"># update class data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="n">npw</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">npn</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span></div>
+
+<div class="viewcode-block" id="GeoTIFF.keep"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated! Will dissapear in future vertions. Please use</span>
+<span class="sd">        :meth:`.set_new_extent` method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Deprecation Warning: Deprecated! Will dissapear in future&#39;</span>
+              <span class="s1">&#39;vertions. Please use :meth:`.set_new_extent` method.&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_new_extent</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GeoTIFF.elevation_profile"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.elevation_profile">[docs]</a>    <span class="k">def</span> <span class="nf">elevation_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -439,25 +615,26 @@
             <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
             <span class="n">column</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span>
 
-            <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">column</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">column</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">continue</span>
             <span class="c1"># Add the point to our return array</span>
             <span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">)]</span>
             <span class="n">columns</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">column</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">[</span><span class="n">columns</span><span class="p">,</span> <span class="n">rows</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">columns</span><span class="p">,</span> <span class="n">rows</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="GeoTIFF.get_intensity"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.get_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">get_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">315.</span><span class="p">,</span> <span class="n">altitude</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
-                      <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                      <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This is a method to create an intensity array that can be used to</span>
-<span class="sd">        create a shaded relief map.</span>
-
-<span class="sd">        .. note:: Since version 0.2.0 this method is not needed anymore</span>
-<span class="sd">                  as new hillshade code has been implemented in the</span>
-<span class="sd">                  :mod:`~pySW4.plotting.hillshade` module.</span>
+<span class="sd">        This is a method to create an intensity array that can be used as</span>
+<span class="sd">        illumination to create a shaded relief map or draping data over.</span>
+<span class="sd">        It is assumed that the grid origin is at the upper-left corner.</span>
+<span class="sd">        If that is not the case, add 90 to ``azimuth``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        relief : a 2d :class:`~numpy.ndarray`</span>
+<span class="sd">            Topography or other data to calculate intensity from.</span>
+
 <span class="sd">        azimuth : float</span>
 <span class="sd">            Direction of light source, degrees from north.</span>
 
@@ -470,12 +647,20 @@
 <span class="sd">        smooth : float</span>
 <span class="sd">            Number of cells to average before intensity calculation.</span>
 
+<span class="sd">        normalize : bool</span>
+<span class="sd">            By default the intensity is clipped to the [0,1] range. If set</span>
+<span class="sd">            to ``True``, intensity is normalized to [0,1].</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        a 2d :class:`~numpy.ndarray`</span>
-<span class="sd">            Normalized 2d array with illumination data.</span>
+<span class="sd">        intensity : :class:`~numpy.ndarray`</span>
+<span class="sd">            a 2d array with illumination data clipped in the [0,1] range.</span>
+<span class="sd">            Optionally, can be normalized (instead of clipped) to [0,1].</span>
+<span class="sd">            Same size as ``relief``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">calc_intensity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">smooth</span><span class="p">)</span></div>
+        <span class="n">intensity</span> <span class="o">=</span> <span class="n">calc_intensity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">altitude</span><span class="p">,</span>
+                                   <span class="n">scale</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">normalize</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">intensity</span></div>
 
 <div class="viewcode-block" id="GeoTIFF.write_topo_file"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.write_topo_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_topo_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -486,7 +671,7 @@
         <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xy2d</span><span class="p">()</span>
         <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">lon</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
                                               <span class="n">lat</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
-                                              <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span>
                    <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GeoTIFF.set_nodata"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.GeoTIFF.set_nodata">[docs]</a>    <span class="k">def</span> <span class="nf">set_nodata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -495,14 +680,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_nodata</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
@@ -528,7 +713,7 @@
         <span class="k">elif</span> <span class="n">nodata</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_nodata</span><span class="p">(</span><span class="n">nodata</span><span class="p">)</span>
 
-        <span class="n">save_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">save_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
                      <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="n">proj4</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">proj4</span><span class="p">,</span>
                      <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
                      <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
@@ -540,85 +725,57 @@
         <span class="n">new</span> <span class="o">=</span> <span class="n">GeoTIFF</span><span class="p">()</span>
         <span class="n">new</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extent</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">proj4</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proj4</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
         <span class="n">new</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elev</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">_src_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">_src_ds</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">new</span></div></div>
 
 
-<div class="viewcode-block" id="calc_intensity"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.calc_intensity">[docs]</a><span class="k">def</span> <span class="nf">calc_intensity</span><span class="p">(</span><span class="n">relief</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mf">315.</span><span class="p">,</span> <span class="n">altitude</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
-                   <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="read_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.read_GeoTIFF">[docs]</a><span class="k">def</span> <span class="nf">read_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">substring</span><span class="o">=</span><span class="s1">&#39;*_dem.tif&#39;</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This is a method to create an intensity array that can be used to</span>
-<span class="sd">    create a shaded relief map.</span>
-
-<span class="sd">    .. note:: Since version 0.2.0 this function is not needed anymore as</span>
-<span class="sd">              new hillshade code has been implemented in the</span>
-<span class="sd">              :mod:`~pySW4.plotting.hillshade` module.</span>
+<span class="sd">    Read a single GeoTIFF file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    relief : a 2d :class:`~numpy.ndarray`</span>
-<span class="sd">        Topography or other data to calculate intensity from.</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Path (relative or absolute) to a GeoTIFF file.</span>
 
-<span class="sd">    azimuth : float</span>
-<span class="sd">        Direction of light source, degrees from north.</span>
+<span class="sd">        .. note::</span>
 
-<span class="sd">    altitude : float</span>
-<span class="sd">        Height of light source, degrees above the horizon.</span>
+<span class="sd">            It is possible to read a GeoTIFF file directly from within</span>
+<span class="sd">            a compressed archive without extracting it by using the</span>
+<span class="sd">            ``/vsiPREFIX/``.</span>
 
-<span class="sd">    scale : float</span>
-<span class="sd">        Scaling value of the data.</span>
+<span class="sd">            For instance, to read &#39;my.tif&#39; from a subdirectory within</span>
+<span class="sd">            &#39;my.zip&#39; use: ``/vsizip/my.zip/subdirectory/my.tif`` if path</span>
+<span class="sd">            to &#39;my.zip&#39; is relative or</span>
+<span class="sd">            ``/vsizip//full_path_to/my.zip/subdirectory/my.tif`` if</span>
+<span class="sd">            using the absolute path. Note the extra ``/`` after</span>
+<span class="sd">            ``/vsizip/``.</span>
 
-<span class="sd">    smooth : float</span>
-<span class="sd">        Number of cells to average before intensity calculation.</span>
+<span class="sd">            See http://www.gdal.org/gdal_virtual_file_systems.html for</span>
+<span class="sd">            more details.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    a 2d :class:`~numpy.ndarray`</span>
-<span class="sd">        Normalized 2d array with illumination data.</span>
-<span class="sd">        Same size as ``relief``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    rasterBand : int</span>
+<span class="sd">        The band number to read.</span>
 
-    <span class="n">relief</span> <span class="o">=</span> <span class="n">relief</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="sd">    substring : str</span>
+<span class="sd">        Compressed file formats may archive more than one file. The</span>
+<span class="sd">        filename needs to be explicit as described in the `note` above.</span>
+<span class="sd">        However, if the filename is not explicit, this function will</span>
+<span class="sd">        try to find the correct file based on substring or regular</span>
+<span class="sd">        expression matching.</span>
 
-    <span class="k">if</span> <span class="n">scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">relief</span> <span class="o">*=</span> <span class="n">scale</span>
-    <span class="k">if</span> <span class="n">smooth</span><span class="p">:</span>
-        <span class="n">relief</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span><span class="n">relief</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">smooth</span><span class="p">)</span>
-
-    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">relief</span><span class="p">)</span>
-
-    <span class="n">slope</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">))</span>
-
-    <span class="n">aspect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
-
-    <span class="n">altitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span>
-    <span class="n">azimuth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">180.</span> <span class="o">-</span> <span class="n">azimuth</span><span class="p">)</span>
-
-    <span class="n">intensity</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
-                 <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">altitude</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span>
-                 <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">azimuth</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">aspect</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">intensity</span> <span class="o">-</span> <span class="n">intensity</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">intensity</span><span class="o">.</span><span class="n">ptp</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="read_GeoTIFF"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.read_GeoTIFF">[docs]</a><span class="k">def</span> <span class="nf">read_GeoTIFF</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reads a single GeoTIFF file and returns a</span>
-<span class="sd">    :class:`~pySW4.utils.geo.GeoTIFF` class instance. If `filename`</span>
-<span class="sd">    is None, an empty :class:`~pySW4.utils.geo.GeoTIFF` object is</span>
-<span class="sd">    returnd.</span>
+<span class="sd">        .. note:: Being explicit is faster (but not by much)</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -628,11 +785,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">tif</span> <span class="o">=</span> <span class="n">GeoTIFF</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>  <span class="c1"># return an empty GeoTIFF object</span>
-        <span class="k">return</span> <span class="n">tif</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">tif</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+    <span class="n">tif</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">,</span> <span class="n">substring</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">tif</span></div>
 
@@ -747,86 +900,60 @@
     <span class="n">dst_ds</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
+<span class="n">tilename_template</span> <span class="o">=</span> <span class="s1">&#39;ASTGTM2_</span><span class="si">{}{:02d}{}{:03d}</span><span class="s1">&#39;</span>
+
 <div class="viewcode-block" id="_get_tiles"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo._get_tiles">[docs]</a><span class="k">def</span> <span class="nf">_get_tiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span>
-               <span class="n">tilename</span><span class="o">=</span><span class="s1">&#39;ASTGTM2_</span><span class="si">%s%02d%s%03d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+               <span class="n">tilename</span><span class="o">=</span><span class="n">tilename_template</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is a helper function for :func:`~pySW4.utils.geo.get_dem`</span>
 <span class="sd">    function.</span>
 
-<span class="sd">    It extracts the GeoTIFF tiles from the zipfile downloaded from the</span>
-<span class="sd">    ASTER-GDEM dowonload site needed to stitch an elevation model</span>
-<span class="sd">    with the extent given by `lonmin`, `lonmax`, `latmin`, `latmax` in</span>
-<span class="sd">    decimal degrees and returns a list of paths pointing to these tiles.</span>
+<span class="sd">    It generates a list of tile filenames that are needed for the</span>
+<span class="sd">    stitching process.</span>
 
-<span class="sd">    .. note:: This function sould not be used directly by the user. See</span>
-<span class="sd">              :func:`~pySW4.utils.geo.get_dem`.</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        This function should not be used directly by the user. See</span>
+<span class="sd">        :func:`~pySW4.utils.geo.get_dem`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">tiles</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">tile_index</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">latrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">latmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">latmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">lonrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lonmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">lonmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">latrange</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">latmin</span> <span class="o">-=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">latmin</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="c1"># latmax -= 1 if latmax &lt; 0 else 0</span>
+    <span class="n">lonmin</span> <span class="o">-=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">lonmin</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="c1"># lonmax -= 1 if lonmax &lt; 0 else 0</span>
+
+    <span class="n">latrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">latmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">latmax</span><span class="p">))</span>
+    <span class="n">lonrange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lonmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">lonmax</span><span class="p">))</span>
+
+    <span class="n">tile_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">lat</span> <span class="ow">in</span> <span class="n">latrange</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lat</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">N</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">lat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">lat</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">N</span> <span class="o">=</span> <span class="s1">&#39;N&#39;</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lonrange</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">lon</span> <span class="ow">in</span> <span class="n">lonrange</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">E</span> <span class="o">=</span> <span class="s1">&#39;W&#39;</span>
-                <span class="n">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">lon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">lon</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">E</span> <span class="o">=</span> <span class="s1">&#39;E&#39;</span>
-            <span class="n">basename</span> <span class="o">=</span> <span class="n">tilename</span> <span class="o">%</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
-            <span class="n">fullname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
 
-            <span class="c1"># make tifs directory on current path</span>
-            <span class="n">tif_path</span> <span class="o">=</span> <span class="s1">&#39;./tifs&#39;</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tif_path</span><span class="p">):</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;tifs&#39;</span><span class="p">)</span>
-
-            <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tif_path</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;_dem.tif&#39;</span><span class="p">)</span>
+            <span class="n">basename</span> <span class="o">=</span> <span class="n">tilename</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span>
+            <span class="n">fullname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">fullname</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-                <span class="n">tiles</span> <span class="o">+=</span> <span class="p">[</span><span class="n">f</span><span class="p">]</span>
-                <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullname</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Warning! missing file </span><span class="si">{}</span><span class="s1">. &#39;</span>
-                           <span class="s1">&#39;Replacing tile with zeros.&#39;</span><span class="p">)</span>
-                    <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fullname</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">))</span>
-                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-                    <span class="n">tiles</span> <span class="o">+=</span> <span class="p">[</span><span class="n">basename</span><span class="p">]</span>
-                    <span class="k">continue</span>
+            <span class="n">tile_filenames</span> <span class="o">+=</span> <span class="p">[</span><span class="n">fullname</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extracting tiles to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">pwd</span><span class="p">)</span>
-
-                <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">fullname</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">zf</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_dem.tif&#39;</span><span class="p">):</span>
-                            <span class="n">dir_</span><span class="p">,</span> <span class="n">tif_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-                            <span class="n">zf</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">tif_path</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="n">dir_</span><span class="p">:</span>
-                                <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span>
-                                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tif_path</span><span class="p">,</span> <span class="n">item</span><span class="p">),</span> <span class="n">tif_path</span><span class="p">)</span>
-                                <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tif_path</span><span class="p">,</span> <span class="n">dir_</span><span class="p">))</span>
-                <span class="n">tiles</span> <span class="o">+=</span> <span class="p">[</span><span class="n">f</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">tiles</span></div>
+    <span class="k">return</span> <span class="n">tile_filenames</span></div>
 
 
 <div class="viewcode-block" id="get_dem"><a class="viewcode-back" href="../../../packages/pySW4.utils.geo.html#pySW4.utils.geo.get_dem">[docs]</a><span class="k">def</span> <span class="nf">get_dem</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span>
-            <span class="n">tilename</span><span class="o">=</span><span class="s1">&#39;ASTGTM2_</span><span class="si">%s%02d%s%03d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">dx</span><span class="o">=</span><span class="mf">0.000277777777778</span><span class="p">,</span> <span class="n">dy</span><span class="o">=-</span><span class="mf">0.000277777777778</span><span class="p">,</span>
-            <span class="n">keep_tiles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">tilename</span><span class="o">=</span><span class="n">tilename_template</span><span class="p">,</span> <span class="n">rasterBand</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function reads relevant ASTER-GDEM GeoTIFF tiles into memory,</span>
-<span class="sd">    stitchs them together if more than one file is read, and cuts to the</span>
+<span class="sd">    This function reads ASTER-GDEM GeoTIFF tiles into memory, stitches</span>
+<span class="sd">    them together if more than one file is read, and cuts to the</span>
 <span class="sd">    desired extent given by `lonmin`, `lonmax`, `latmin`, `latmax` in</span>
 <span class="sd">    decimal degrees.</span>
 
@@ -845,20 +972,10 @@
 <span class="sd">        (may also be the ymin and ymax coordinate).</span>
 
 <span class="sd">    tilename : str</span>
-<span class="sd">        Wildcard string of the tile names.</span>
+<span class="sd">        String template of the tile names.</span>
 
 <span class="sd">    rasterBand : int</span>
 <span class="sd">        The band number to read from each tile (defaults to 1).</span>
-
-<span class="sd">    dx, dy : float</span>
-<span class="sd">        Pixel size of data in the x and y direction, positive in the</span>
-<span class="sd">        East and North directions.</span>
-
-<span class="sd">    keep_tiles : bool</span>
-<span class="sd">        Zipped tiles get extracted to the current working directory and</span>
-<span class="sd">        are removed once the stitching is complete. If you are</span>
-<span class="sd">        interested in keeping the tiles in the current working directory</span>
-<span class="sd">        set to ``True``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -871,87 +988,55 @@
     <span class="n">tiles</span> <span class="o">=</span> <span class="n">_get_tiles</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">,</span> <span class="n">tilename</span><span class="p">)</span>
 
     <span class="n">gdems</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">emptys</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="c1"># read all GDEMs into memory to stitch together and sample</span>
+    <span class="n">_lonmin</span><span class="p">,</span> <span class="n">_lonmax</span> <span class="o">=</span> <span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span>
+    <span class="n">_latmin</span><span class="p">,</span> <span class="n">_latmax</span> <span class="o">=</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span>
+    <span class="c1"># read all GDEMs into memory for stitching</span>
     <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">gdems</span> <span class="o">+=</span> <span class="p">[</span><span class="n">read_GeoTIFF</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">)]</span>
-
-        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-            <span class="n">empty</span> <span class="o">=</span> <span class="n">GeoTIFF</span><span class="p">()</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">tile</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">coordinates</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">coordinates</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">n</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">n</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dx</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dx</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dy</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dy</span>
-
-            <span class="n">empty</span><span class="o">.</span><span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">empty</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-
-            <span class="n">empty</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">dy</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">dx</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">empty</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">dy</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
-
-            <span class="n">empty</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">empty</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">empty</span><span class="o">.</span><span class="n">nx</span><span class="p">))</span>
-            <span class="n">emptys</span> <span class="o">+=</span> <span class="p">[</span><span class="n">empty</span><span class="p">]</span>
-
-    <span class="c1"># remove the tiles after reading them</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_tiles</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s1">&#39;./tifs&#39;</span><span class="p">)</span>
-    <span class="n">gdems</span> <span class="o">+=</span> <span class="n">emptys</span>
+            <span class="n">tile_</span> <span class="o">=</span> <span class="n">read_GeoTIFF</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">rasterBand</span><span class="p">)</span>
+            <span class="n">_lonmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_lonmin</span><span class="p">,</span> <span class="n">tile_</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">_lonmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_lonmax</span><span class="p">,</span> <span class="n">tile_</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">_latmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_latmin</span><span class="p">,</span> <span class="n">tile_</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">_latmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_latmax</span><span class="p">,</span> <span class="n">tile_</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">gdems</span> <span class="o">+=</span> <span class="p">[</span><span class="n">tile_</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">Tile space is filled with 0...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">tile</span><span class="p">))</span>
 
     <span class="c1"># create a mosaicGDEM (a GeoTIFF class instance) which will eventually</span>
     <span class="c1"># hold the GDEM data within the specified extent in</span>
     <span class="c1"># lonmin, lonmax, latmin, latmax</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gdems</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">mosaicGDEM</span> <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">elev</span> <span class="o">=</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">elev</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mosaicGDEM</span> <span class="o">=</span> <span class="n">GeoTIFF</span><span class="p">()</span>
 
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span>     <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span>     <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dy</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">proj4</span>  <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">proj4</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dtype</span>  <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
         <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nodata</span>
 
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">w</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">e</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">s</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">gdem</span><span class="o">.</span><span class="n">n</span> <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">])</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
-                                <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
-                                <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">_lonmin</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">_latmax</span>
 
-        <span class="c1"># initialize the elev array into which data from each</span>
+        <span class="n">_nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">((</span><span class="n">_lonmax</span> <span class="o">-</span> <span class="n">_lonmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+        <span class="n">_ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">((</span><span class="n">_latmax</span> <span class="o">-</span> <span class="n">_latmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">gdems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span>
+
+        <span class="c1"># initialize the z array into which data from each</span>
         <span class="c1"># individual tile will be added</span>
-        <span class="n">elev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">nx</span><span class="p">))</span>
+        <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">_ny</span><span class="p">,</span> <span class="n">_nx</span><span class="p">))</span>
 
         <span class="c1"># stitching all gdems into one big mosaic</span>
         <span class="k">for</span> <span class="n">gdem</span> <span class="ow">in</span> <span class="n">gdems</span><span class="p">:</span>
-            <span class="n">x_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
-            <span class="n">x_stop</span> <span class="o">=</span> <span class="n">x_start</span> <span class="o">+</span> <span class="n">gdem</span><span class="o">.</span><span class="n">nx</span>
+            <span class="n">npw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
+            <span class="n">npe</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">e</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dx</span><span class="p">))</span>
 
-            <span class="n">y_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
-            <span class="n">y_stop</span> <span class="o">=</span> <span class="n">y_start</span> <span class="o">+</span> <span class="n">gdem</span><span class="o">.</span><span class="n">ny</span>
+            <span class="n">nps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span>
+            <span class="n">npn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">gdem</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">dy</span><span class="p">))</span>
 
-            <span class="n">elev</span><span class="p">[</span><span class="n">y_start</span><span class="p">:</span><span class="n">y_stop</span><span class="p">,</span> <span class="n">x_start</span><span class="p">:</span><span class="n">x_stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdem</span><span class="o">.</span><span class="n">elev</span>
+            <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">npn</span><span class="p">:</span> <span class="n">nps</span><span class="p">,</span> <span class="n">npw</span><span class="p">:</span> <span class="n">npe</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdem</span><span class="o">.</span><span class="n">z</span>
 
-    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">elev</span> <span class="o">=</span> <span class="n">elev</span>
-    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">keep</span><span class="p">(</span><span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">)</span>
+    <span class="n">mosaicGDEM</span><span class="o">.</span><span class="n">set_new_extent</span><span class="p">(</span><span class="n">lonmin</span><span class="p">,</span> <span class="n">lonmax</span><span class="p">,</span> <span class="n">latmin</span><span class="p">,</span> <span class="n">latmax</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">mosaicGDEM</span></div>
 
@@ -985,14 +1070,14 @@
              >modules</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

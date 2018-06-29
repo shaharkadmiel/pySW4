@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.utils.spectral module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.utils.spectral module &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,13 +21,13 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.utils.utils module" href="pySW4.utils.utils.html" />
     <link rel="prev" title="pySW4.utils.geo module" href="pySW4.utils.geo.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -48,7 +45,7 @@
              accesskey="P">previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.utils.html" accesskey="U">pySW4.utils package</a> &#187;</li> 
@@ -94,7 +91,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:s&#46;shanikadmiel&#37;&#52;&#48;tudelft&#46;nl">s<span>&#46;</span>shanikadmiel<span>&#64;</span>tudelft<span>&#46;</span>nl</a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
 </tr>
@@ -110,7 +107,7 @@ GNU Lesser General Public License, Version 3
 <dd><p>Compute the Fourier spectrum of a signal either as a whole or as
 a series of windows with or without overlaps for smoother spectrum.</p>
 <p>The reason for windowing a signal into smaller chunks is to smooth a
-&#8216;noisy&#8217; Fourier spectrum of a very long signal. The frequency
+‘noisy’ Fourier spectrum of a very long signal. The frequency
 resolution of the FFT is related to the number of points (npts)
 passed into the FFT. The number of evenly spaced frequencies,
 sometimes refered to as bins, resolved between 0 and the nyquist
@@ -122,7 +119,7 @@ resolved frequencies making the lowest resolved frequency 0.0488 Hz.
 Had the signal been longer, say 10000 points (100 seconds), the FFT
 size would be 5001 and the frequency resolution would be 0.01 Hz
 making the the spectrum very noisy numerically with many frequencies
-that don&#8217;t contain any real information.</p>
+that don’t contain any real information.</p>
 <p>Pay attention to the <code class="docutils literal"><span class="pre">stepsize</span></code> parameter. Leave it <code class="docutils literal"><span class="pre">None</span></code> if
 you are not sure what is the correct value. If a high energy peak in
 the time domain is picked up by more than one window due to ovelap,
@@ -143,11 +140,11 @@ several windows.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.1.0) v1.1)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance</p>
 <blockquote>
-<div><p>If a sequence (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) of time-history values
+<div><p>If a sequence (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) of time-history values
 is passed <code class="docutils literal"><span class="pre">delta</span></code> must be supplied as well. Otherwise pass an
-<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance.</p>
+<a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.html#obspy.core.trace.Trace" title="(in ObsPy Documentation (1.1.0) v1.1)"><code class="xref py py-class docutils literal"><span class="pre">Trace</span></code></a> instance.</p>
 </div></blockquote>
 <p><strong>womean</strong> : bool</p>
 <blockquote>
@@ -183,7 +180,7 @@ printed.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
 <blockquote class="last">
 <div><ul class="simple">
 <li>frequency array and</li>
@@ -204,7 +201,7 @@ printed.</p>
 <dl class="function">
 <dt id="pySW4.utils.spectral.psde">
 <code class="descname">psde</code><span class="sig-paren">(</span><em>data</em>, <em>womean=False</em>, <em>winsize='default'</em>, <em>stepsize=None</em>, <em>delta=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/spectral.html#psde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.spectral.psde" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper for <a class="reference external" href="http://matplotlib.org/api/mlab_api.html#matplotlib.mlab.psd" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.mlab.psd()</span></code></a> for conveniently estimating
+<dd><p>Wrapper for <a class="reference external" href="https://matplotlib.org/api/mlab_api.html#matplotlib.mlab.psd" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">matplotlib.mlab.psd()</span></code></a> for conveniently estimating
 the power spectral density of a signal.</p>
 <p>See <a class="reference internal" href="#pySW4.utils.spectral.fourier_spectrum" title="pySW4.utils.spectral.fourier_spectrum"><code class="xref py py-func docutils literal"><span class="pre">fourier_spectrum()</span></code></a> documentation for
 keyword argument explanation and rational.</p>
@@ -212,7 +209,7 @@ keyword argument explanation and rational.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
 <blockquote class="last">
 <div><ul class="simple">
 <li>frequency array and</li>
@@ -250,7 +247,7 @@ keyword argument explanation and rational.</p>
              >previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.utils.html" >pySW4.utils package</a> &#187;</li> 
@@ -258,7 +255,7 @@ keyword argument explanation and rational.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

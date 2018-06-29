@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pySW4.postp.image module — pySW4 '0.3.0' documentation</title>
+<link href="../_static/style.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="pySW4.postp.waveforms.html" rel="next" title="pySW4.postp.waveforms module"/>
+<link href="pySW4.postp.html" rel="prev" title="pySW4.postp package"/>
+</head>
+<body role="document">
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pySW4.postp.waveforms.html" title="pySW4.postp.waveforms module">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pySW4.postp.html" title="pySW4.postp package">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a accesskey="U" href="pySW4.postp.html">pySW4.postp package</a> »</li>
+</ul>
+</div>
+<div aria-label="main navigation" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="pySW4.postp.html" title="previous chapter">pySW4.postp package</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="pySW4.postp.waveforms.html" title="next chapter">pySW4.postp.waveforms module</a></p>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/packages/pySW4.postp.image.rst.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<div id="searchbox" role="search" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<div><input name="q" type="text"/></div>
+<div><input type="submit" value="Go"/></div>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="section" id="module-pySW4.postp.image"><a name="//apple_ref/cpp/Module/image"></a>
+<span id="pysw4-postp-image-module"></span><h1><a name="//apple_ref/cpp/Module/pySW4.postp.image"></a>pySW4.postp.image module<a class="headerlink" href="#module-pySW4.postp.image" title="Permalink to this headline">¶</a></h1>
+<p>Python module to handle SW4 images of Maps or Cross-Sections.</p>
+<span class="target" id="module-image"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv%40post.bgu.ac.il">omryv<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies%40geophysik.uni-muenchen.de">megies<span>@</span>geophysik<span>.</span>uni-muenchen<span>.</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body"><p class="first">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</p>
+<p>Omry Volk (<a class="reference external" href="mailto:omryv%40post.bgu.ac.il">omryv<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a>)</p>
+<p>Tobias Megies (<a class="reference external" href="mailto:megies%40geophysik.uni-muenchen.de">megies<span>@</span>geophysik<span>.</span>uni-muenchen<span>.</span>de</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body"><p class="first last">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="pySW4.postp.image.Image"><a name="//apple_ref/cpp/Class/pySW4.postp.image.Image"></a>
+<em class="property">class </em><code class="descname">Image</code><span class="sig-paren">(</span><em>input_file=None</em>, <em>stf=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to hold SW4 image files.</p>
+<p>Initialize an empty Image object, preferentially specifying the
+input file used to run the simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>input_file</strong> : str or <a class="reference external" href="https://docs.obspy.org/packages/autogen/obspy.core.util.attribdict.AttribDict.html#obspy.core.util.attribdict.AttribDict" title="(in ObsPy Documentation (1.0.3) v1.0)"><code class="xref py py-class docutils literal"><span class="pre">AttribDict</span></code></a></p>
+<blockquote>
+<div><p>Input file (already parsed or filename) used to compute the
+image output.</p>
+</div></blockquote>
+<p><strong>stf</strong> : {‘displacement’, ‘velocity’}</p>
+<blockquote class="last">
+<div><p>Only needed if no metadata from original input_file is used.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pySW4.postp.image.Image._calc_global_min_max"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Image._calc_global_min_max"></a>
+<code class="descname">_calc_global_min_max</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image._calc_global_min_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image._calc_global_min_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate <code class="docutils literal"><span class="pre">min</span></code>, <code class="docutils literal"><span class="pre">max</span></code>, <code class="docutils literal"><span class="pre">rms</span></code>, and <code class="docutils literal"><span class="pre">ptp</span></code>.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Image._read_curvilinear_grid"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Image._read_curvilinear_grid"></a>
+<code class="descname">_read_curvilinear_grid</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image._read_curvilinear_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image._read_curvilinear_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the last bit of the SW4 image file in case a curvilinear
+grid is found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file</p>
+<blockquote class="last">
+<div><p>Open file handle of SW4 image file (at correct position).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Image._read_header"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Image._read_header"></a>
+<code class="descname">_read_header</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image._read_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image._read_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read SW4 header information and store it in an <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a>
+object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file</p>
+<blockquote class="last">
+<div><p>Open file handle of SW4 image file (at correct position).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Image._read_patches"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Image._read_patches"></a>
+<code class="descname">_read_patches</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image._read_patches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image._read_patches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read SW4 patch data and store it in a list of <a class="reference internal" href="#pySW4.postp.image.Patch" title="pySW4.postp.image.Patch"><code class="xref py py-class docutils literal"><span class="pre">Patch</span></code></a>
+objects under <code class="xref py py-obj docutils literal"><span class="pre">patches</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file</p>
+<blockquote class="last">
+<div><p>Open file handle of SW4 image file (at correct position).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Image.copy"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Image.copy"></a>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deepcopy of <cite>self</cite>.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Image.plot"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Image.plot"></a>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>patches=None</em>, <em>ax=None</em>, <em>vmin='min'</em>, <em>vmax='max'</em>, <em>colorbar=True</em>, <em>cmap=None</em>, <em>interpolation='nearest'</em>, <em>origin='lower'</em>, <em>projection_distance=inf</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Image.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Image.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot all (or specific) patches in <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>patches</strong> : list of int</p>
+<blockquote>
+<div><p>Patches to plot</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td> </td><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
+<blockquote>
+<div><p>Use existing axes.</p>
+</div></blockquote>
+<p><strong>vmin</strong> : float</p>
+<blockquote>
+<div><p>Manually set minimum of color scale.</p>
+</div></blockquote>
+<p><strong>vmax</strong> : str or float</p>
+<blockquote>
+<div><p>Used to clip the coloring of the data at the set value.
+Default is ‘max’ which shows all the data. If  <code class="docutils literal"><span class="pre">float</span></code>,
+the colorscale saturates at the given value. Finally, if a
+string is passed (other than ‘max’), it is casted to float
+and used as an <code class="docutils literal"><span class="pre">rms</span></code> multiplier. For instance, if
+<code class="docutils literal"><span class="pre">vmax='3'</span></code>, clipping is done at 3.0*rms of the data.</p>
+</div></blockquote>
+<p><strong>colorbar</strong> : bool or str</p>
+<blockquote>
+<div><p>If <code class="docutils literal"><span class="pre">colorbar</span></code> is a string, that string is used to override
+the automatic label chosen based on the image header. To
+Supress plotting of the colorbar set to <code class="docutils literal"><span class="pre">False</span></code>.</p>
+</div></blockquote>
+<p><strong>cmap</strong> : <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
+<blockquote>
+<div><p>Colormap for the plot</p>
+</div></blockquote>
+<p><strong>interpolation</strong> : str</p>
+<blockquote>
+<div><p>Acceptable values are ‘none’, ‘nearest’, ‘bilinear’,
+‘bicubic’, ‘spline16’, ‘spline36’, ‘hanning’, ‘hamming’,
+‘hermite’, ‘kaiser’, ‘quadric’, ‘catrom’, ‘gaussian’,
+‘bessel’, ‘mitchell’, ‘sinc’, ‘lanczos’.</p>
+</div></blockquote>
+<p><strong>origin</strong> : str</p>
+<blockquote>
+<div><p>Places the origin at the ‘lower’ (default)
+or ‘upper’ left corner of the plot.</p>
+</div></blockquote>
+<p><strong>projection_distance</strong> : float</p>
+<blockquote class="last">
+<div><p>Threshold distance from the plane coordinate to include
+symbols of stations and sources. These are orthogonally
+<em>projected</em> onto the plotted 2D plane. By default everything
+is included but this can cause too many symbols to be
+plotted, obscuring the image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_image</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># plots all patches</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_image</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">patches</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># plots first and third patch</span>
+</pre></div>
+</div>
+</dd></dl>
+</dd></dl>
+<dl class="class">
+<dt id="pySW4.postp.image.Patch"><a name="//apple_ref/cpp/Class/pySW4.postp.image.Patch"></a>
+<em class="property">class </em><code class="descname">Patch</code><span class="sig-paren">(</span><em>image=None</em>, <em>number=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to hold SW4 patch data.</p>
+<p>Initialize an empty Patch object, preferentially specifying the
+parent <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> : <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a></p>
+<blockquote>
+<div><p>Parent Image object.</p>
+</div></blockquote>
+<p><strong>number</strong> : int</p>
+<blockquote class="last">
+<div><p>Patch index in parent image (starts at <cite>0</cite>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pySW4.postp.image.Patch._set_header"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Patch._set_header"></a>
+<code class="descname">_set_header</code><span class="sig-paren">(</span><em>header</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Patch._set_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Patch._set_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set SW4 patch header information</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Patch.copy"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Patch.copy"></a>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Patch.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Patch.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deepcopy of <cite>self</cite>.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.postp.image.Patch.plot"><a name="//apple_ref/cpp/Method/pySW4.postp.image.Patch.plot"></a>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>ax=None</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>colorbar=True</em>, <em>cmap=None</em>, <em>interpolation='nearest'</em>, <em>origin='lower'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#Patch.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.Patch.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot patch.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Should not really be used directly by the user but
+rather called by the <a class="reference internal" href="#pySW4.postp.image.Image.plot" title="pySW4.postp.image.Image.plot"><code class="xref py py-meth docutils literal"><span class="pre">plot()</span></code></a> method.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
+<blockquote>
+<div><p>Use existing axes.</p>
+</div></blockquote>
+<p><strong>vmin</strong> : float</p>
+<blockquote>
+<div><p>Manually set minimum of color scale.</p>
+</div></blockquote>
+<p><strong>vmax</strong> : float</p>
+<blockquote>
+<div><p>Manually set maximum of color scale.</p>
+</div></blockquote>
+<p><strong>colorbar</strong> : bool or str</p>
+<blockquote>
+<div><p>If <code class="docutils literal"><span class="pre">colorbar</span></code> is a string, that string is used to override
+the automatic label chosen based on the image header. To
+Supress plotting of the colorbar set to <code class="docutils literal"><span class="pre">False</span></code>.</p>
+</div></blockquote>
+<p><strong>cmap</strong> : <a class="reference external" href="http://matplotlib.org/api/colors_api.html#matplotlib.colors.Colormap" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colormap</span></code></a></p>
+<blockquote>
+<div><p>Colormap for the plot</p>
+</div></blockquote>
+<p><strong>interpolation</strong> : str</p>
+<blockquote>
+<div><p>Acceptable values are ‘none’, ‘nearest’, ‘bilinear’,
+‘bicubic’, ‘spline16’, ‘spline36’, ‘hanning’, ‘hamming’,
+‘hermite’, ‘kaiser’, ‘quadric’, ‘catrom’, ‘gaussian’,
+‘bessel’, ‘mitchell’, ‘sinc’, ‘lanczos’.</p>
+</div></blockquote>
+<p><strong>origin</strong> : str</p>
+<blockquote>
+<div><p>Places the origin at the ‘lower’ (default)
+or ‘upper’ left corner of the plot.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td> </td><td class="field-body"><p class="first last"><strong>kwargs</strong> : <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.postp.image.read_image"><a name="//apple_ref/cpp/Function/pySW4.postp.image.read_image"></a>
+<code class="descname">read_image</code><span class="sig-paren">(</span><em>filename='random'</em>, <em>input_file=None</em>, <em>stf='displacement'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/postp/image.html#read_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.postp.image.read_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read image data, cross-section or map into a
+<a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>If no filename is passed, by default, a random image is
+generated. if filename is <code class="docutils literal"><span class="pre">None</span></code>, an empty <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a>
+object is returned.</p>
+</div></blockquote>
+<p><strong>input_file</strong> : str or AttribDict</p>
+<blockquote>
+<div><p>Input file (already parsed or filename) used to compute the
+image output.</p>
+</div></blockquote>
+<p><strong>stf</strong> : str</p>
+<blockquote>
+<div><p><cite>‘displacement’</cite> or <cite>‘velocity’</cite>. Only needed if no metadata
+from original input_file is used.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>If set to <code class="docutils literal"><span class="pre">True</span></code>, print some information while reading the
+file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a></p>
+<blockquote class="last">
+<div><p>An <a class="reference internal" href="#pySW4.postp.image.Image" title="pySW4.postp.image.Image"><code class="xref py py-class docutils literal"><span class="pre">Image</span></code></a> object with a list of <a class="reference internal" href="#pySW4.postp.image.Patch" title="pySW4.postp.image.Patch"><code class="xref py py-class docutils literal"><span class="pre">Patch</span></code></a>
+objects.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pySW4.postp.waveforms.html" title="pySW4.postp.waveforms module">next</a> |</li>
+<li class="right">
+<a href="pySW4.postp.html" title="pySW4.postp package">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a href="pySW4.postp.html">pySW4.postp package</a> »</li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+        © Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+</body>
+</html>

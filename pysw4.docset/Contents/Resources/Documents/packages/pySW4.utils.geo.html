@@ -1,0 +1,634 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<title>pySW4.utils.geo module — pySW4 '0.3.0' documentation</title>
+<link href="../_static/style.css" rel="stylesheet" type="text/css"/>
+<link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+<script src="../_static/jquery.js" type="text/javascript"></script>
+<script src="../_static/underscore.js" type="text/javascript"></script>
+<script src="../_static/doctools.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<link href="../genindex.html" rel="index" title="Index"/>
+<link href="../search.html" rel="search" title="Search"/>
+<link href="pySW4.utils.spectral.html" rel="next" title="pySW4.utils.spectral module"/>
+<link href="pySW4.utils.html" rel="prev" title="pySW4.utils package"/>
+</head>
+<body role="document">
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a accesskey="I" href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a accesskey="N" href="pySW4.utils.spectral.html" title="pySW4.utils.spectral module">next</a> |</li>
+<li class="right">
+<a accesskey="P" href="pySW4.utils.html" title="pySW4.utils package">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a accesskey="U" href="pySW4.utils.html">pySW4.utils package</a> »</li>
+</ul>
+</div>
+<div aria-label="main navigation" class="sphinxsidebar" role="navigation">
+<div class="sphinxsidebarwrapper">
+<h4>Previous topic</h4>
+<p class="topless"><a href="pySW4.utils.html" title="previous chapter">pySW4.utils package</a></p>
+<h4>Next topic</h4>
+<p class="topless"><a href="pySW4.utils.spectral.html" title="next chapter">pySW4.utils.spectral module</a></p>
+<div aria-label="source link" role="note">
+<h3>This Page</h3>
+<ul class="this-page-menu">
+<li><a href="../_sources/packages/pySW4.utils.geo.rst.txt" rel="nofollow">Show Source</a></li>
+</ul>
+</div>
+<div id="searchbox" role="search" style="display: none">
+<h3>Quick search</h3>
+<form action="../search.html" class="search" method="get">
+<div><input name="q" type="text"/></div>
+<div><input type="submit" value="Go"/></div>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+</div>
+<div class="document">
+<div class="documentwrapper">
+<div class="bodywrapper">
+<div class="body" role="main">
+<div class="section" id="module-pySW4.utils.geo"><a name="//apple_ref/cpp/Module/geo"></a>
+<span id="pysw4-utils-geo-module"></span><h1><a name="//apple_ref/cpp/Module/pySW4.utils.geo"></a>pySW4.utils.geo module<a class="headerlink" href="#module-pySW4.utils.geo" title="Permalink to this headline">¶</a></h1>
+<p>Python module for handling DEM/GDEM/DTM and other raster data readable
+with gdal.</p>
+<span class="target" id="module-geo"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel
+<a class="reference external" href="mailto:kadmiel%40post.bgu.ac.il">kadmiel<span>@</span>post<span>.</span>bgu<span>.</span>ac<span>.</span>il</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">license:</th><td class="field-body">This code is distributed under the terms of the
+GNU Lesser General Public License, Version 3
+(<a class="reference external" href="https://www.gnu.org/copyleft/lesser.html">https://www.gnu.org/copyleft/lesser.html</a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="pySW4.utils.geo.GeoTIFF"><a name="//apple_ref/cpp/Class/pySW4.utils.geo.GeoTIFF"></a>
+<em class="property">class </em><code class="descname">GeoTIFF</code><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for handling GeoTIFF files.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This class should be populated by
+<a class="reference internal" href="#pySW4.utils.geo.read_GeoTIFF" title="pySW4.utils.geo.read_GeoTIFF"><code class="xref py py-func docutils literal"><span class="pre">read_GeoTIFF()</span></code></a> or
+<a class="reference internal" href="#pySW4.utils.geo.get_dem" title="pySW4.utils.geo.get_dem"><code class="xref py py-func docutils literal"><span class="pre">get_dem()</span></code></a>.</p>
+</div>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF._read"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF._read"></a>
+<code class="descname">_read</code><span class="sig-paren">(</span><em>filename</em>, <em>rasterBand</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF._read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF._read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Private method for reading a GeoTIFF file.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.copy"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.copy"></a>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deepcopy of the GeoTIFF object.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.elevation_profile"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.elevation_profile"></a>
+<code class="descname">elevation_profile</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.elevation_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.elevation_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the elevation values ar points in <code class="docutils literal"><span class="pre">xs</span></code> and <code class="docutils literal"><span class="pre">ys</span></code>.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.get_intensity"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.get_intensity"></a>
+<code class="descname">get_intensity</code><span class="sig-paren">(</span><em>azimuth=315.0</em>, <em>altitude=45.0</em>, <em>scale=None</em>, <em>smooth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.get_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.get_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a method to create an intensity array that can be used to
+create a shaded relief map.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since version 0.2.0 this method is not needed anymore
+as new hillshade code has been implemented in the
+<a class="reference internal" href="pySW4.plotting.hillshade.html#module-pySW4.plotting.hillshade" title="pySW4.plotting.hillshade"><code class="xref py py-mod docutils literal"><span class="pre">hillshade</span></code></a> module.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>azimuth</strong> : float</p>
+<blockquote>
+<div><p>Direction of light source, degrees from north.</p>
+</div></blockquote>
+<p><strong>altitude</strong> : float</p>
+<blockquote>
+<div><p>Height of light source, degrees above the horizon.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float</p>
+<blockquote>
+<div><p>Scaling value of the data.</p>
+</div></blockquote>
+<p><strong>smooth</strong> : float</p>
+<blockquote>
+<div><p>Number of cells to average before intensity calculation.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>Normalized 2d array with illumination data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.keep"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.keep"></a>
+<code class="descname">keep</code><span class="sig-paren">(</span><em>w</em>, <em>e</em>, <em>s</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.keep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep a subset array from a GeoTIFF file.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><strong>Watch Out!</strong> This operation is performed in place
+on the actual data. The raw data will no longer be
+accessible afterwards. To keep the original data, use the
+<a class="reference internal" href="#pySW4.utils.geo.GeoTIFF.copy" title="pySW4.utils.geo.GeoTIFF.copy"><code class="xref py py-meth docutils literal"><span class="pre">copy()</span></code></a> method to create a
+copy of the current object.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>w, e, s, n: float</strong></p>
+<blockquote class="last">
+<div><p>The west-, east-, south-, and north-most coordinate to keep
+(may also be the xmin, xmax, ymin, ymax coordinate).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.reproject"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.reproject"></a>
+<code class="descname">reproject</code><span class="sig-paren">(</span><em>epsg=None</em>, <em>proj4=None</em>, <em>match=None</em>, <em>spacing=None</em>, <em>interpolation='nearest'</em>, <em>error_threshold=0.125</em>, <em>target_filename=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.reproject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.reproject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reproject the data from the current projection to the specified
+target projection <cite>epsg</cite> or <cite>proj4</cite> or to <cite>match</cite> an
+existing GeoTIFF file. Optionally, the grid spacing can be
+changed as well.</p>
+<p>To keep the same projection and only resample the data leave
+<cite>epsg</cite>, <cite>proj4</cite>, and <cite>match</cite> to be <code class="docutils literal"><span class="pre">None</span></code> and specify
+<cite>spacing</cite>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><strong>Watch Out!</strong> This operation is performed in place
+on the actual data. The raw data will no longer be
+accessible afterwards. To keep the original data,
+use the <a class="reference internal" href="#pySW4.utils.geo.GeoTIFF.copy" title="pySW4.utils.geo.GeoTIFF.copy"><code class="xref py py-meth docutils literal"><span class="pre">copy()</span></code></a>
+method to create a copy of the current object.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>epsg</strong> : int</p>
+<blockquote>
+<div><p>The target projection EPSG code. See the
+<a class="reference external" href="http://www.epsg-registry.org/">Geodetic Parameter Dataset Registry</a> for more information.</p>
+</div></blockquote>
+<p><strong>proj4</strong> : str</p>
+<blockquote>
+<div><p>The target Proj4 string. If the EPSG code is unknown or a
+custom projection is required, a Proj4 string can be passed.
+See the <a class="reference external" href="https://trac.osgeo.org/proj/wiki/GenParms">Proj4</a>
+documentation for a list of general Proj4 parameters.</p>
+</div></blockquote>
+<p><strong>match</strong> : str or <a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a> instance</p>
+<blockquote>
+<div><p>Path (relative or absolute) to an existing GeoTIFF file or
+<a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a> instance (already in
+memory) to match size and projection of. Current data is
+resampled to match the shape and number of pixels of the
+existing GeoTIFF file or object.
+It is assumed that both GeoTIFF objects cover the same
+extent.</p>
+</div></blockquote>
+<p><strong>spacing</strong> : int or float</p>
+<blockquote>
+<div><p>Target spacing in the units of ther target projection.</p>
+</div></blockquote>
+<p><strong>interpolation</strong> : {‘nearest’, ‘bilinear’, ‘cubic’, ‘lanczos’}</p>
+<blockquote>
+<div><p>Resampling algorithm:</p>
+<ul class="simple">
+<li>‘nearest’ : Nearest neighbour</li>
+<li>‘bilinear’ : Bilinear (2x2 kernel)</li>
+<li>‘cubic’ : Cubic Convolution Approximation (4x4 kernel)</li>
+<li>‘lanczos’ : Lanczos windowed sinc interpolation (6x6 kernel)</li>
+</ul>
+</div></blockquote>
+<p><strong>error_threshold</strong> : float</p>
+<blockquote>
+<div><p>Error threshold for transformation approximation in pixel
+units. (default is 0.125 for compatibility with  gdalwarp)</p>
+</div></blockquote>
+<p><strong>target_filename</strong> : str</p>
+<blockquote class="last">
+<div><p>If a target filename is given then the reprojected data is
+saved as target_filename and read into memory replacing
+the current data. This is faster than reprojecting and then
+saving. Otherwise the
+<a class="reference internal" href="#pySW4.utils.geo.GeoTIFF.write_GeoTIFF" title="pySW4.utils.geo.GeoTIFF.write_GeoTIFF"><code class="xref py py-meth docutils literal"><span class="pre">write_GeoTIFF()</span></code></a> method can be
+used to save the data at a later point if further
+manipulations are needed.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Examples of some EPSG codes and their equivalent Proj4 strings
+are:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">4326</span>   <span class="o">-&gt;</span> <span class="s1">'+proj=longlat +datum=WGS84 +no_defs'</span>
+
+<span class="mi">32636</span>  <span class="o">-&gt;</span> <span class="s1">'+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'</span>
+
+<span class="mi">102009</span> <span class="o">-&gt;</span> <span class="s1">'+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40</span>
+           <span class="o">+</span><span class="n">lon_0</span><span class="o">=-</span><span class="mi">96</span> <span class="o">+</span><span class="n">x_0</span><span class="o">=</span><span class="mi">0</span> <span class="o">+</span><span class="n">y_0</span><span class="o">=</span><span class="mi">0</span> <span class="o">+</span><span class="n">datum</span><span class="o">=</span><span class="n">NAD83</span> <span class="o">+</span><span class="n">units</span><span class="o">=</span><span class="n">m</span>
+           <span class="o">+</span><span class="n">no_defs</span><span class="s1">'</span>
+</pre></div>
+</div>
+<p>and so on ... See the <a class="reference external" href="http://www.epsg-registry.org/">Geodetic Parameter Dataset Registry</a> for more information.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.resample"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.resample"></a>
+<code class="descname">resample</code><span class="sig-paren">(</span><em>by=None</em>, <em>to=None</em>, <em>order=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to resample the data either <cite>by</cite> a factor or <cite>to</cite>
+the specified spacing.</p>
+<p>This method uses <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.zoom.html#scipy.ndimage.zoom" title="(in SciPy v0.19.1)"><code class="xref py py-func docutils literal"><span class="pre">zoom()</span></code></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><strong>Watch Out!</strong> This operation is performed in place
+on the actual data. The raw data will no longer be
+accessible afterwards. To keep the original data,
+use the <a class="reference internal" href="#pySW4.utils.geo.GeoTIFF.copy" title="pySW4.utils.geo.GeoTIFF.copy"><code class="xref py py-meth docutils literal"><span class="pre">copy()</span></code></a>
+method to create a copy of the current object.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>by</strong> : float</p>
+<blockquote>
+<div><ul class="simple">
+<li>If <code class="docutils literal"><span class="pre">by=1</span></code>, nothing happens.</li>
+<li>If <code class="docutils literal"><span class="pre">by&lt;1</span></code>, the grid is sub-sampled by the factor.</li>
+<li>if <code class="docutils literal"><span class="pre">by&gt;1</span></code>, the grid is super-sampled byt the factor.</li>
+</ul>
+</div></blockquote>
+<p><strong>to</strong> : float</p>
+<blockquote>
+<div><p>The specified spacing to which the grid is resampled to.</p>
+</div></blockquote>
+<p><strong>order</strong> : int</p>
+<blockquote class="last">
+<div><p>The order of the spline interpolation, default is 0.
+The order has to be in the range 0-5.</p>
+<ul class="simple">
+<li>0 - nearest (fastest)</li>
+<li>1 - bi-linear</li>
+<li>3 - cubic (slower)</li>
+<li>...</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.set_nodata"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.set_nodata"></a>
+<code class="descname">set_nodata</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.set_nodata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.set_nodata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the current <code class="docutils literal"><span class="pre">nodata</span></code> value with the new <cite>value</cite>.</p>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.write_GeoTIFF"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.write_GeoTIFF"></a>
+<code class="descname">write_GeoTIFF</code><span class="sig-paren">(</span><em>filename</em>, <em>nodata=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.write_GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.write_GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a GeoTIFF file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to the saves file.</p>
+</div></blockquote>
+<p><strong>nodata</strong> : int or float or NaN</p>
+<blockquote class="last">
+<div><p>Value to register as the no-data value in the GeoTIFF file
+header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="method">
+<dt id="pySW4.utils.geo.GeoTIFF.write_topo_file"><a name="//apple_ref/cpp/Method/pySW4.utils.geo.GeoTIFF.write_topo_file"></a>
+<code class="descname">write_topo_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#GeoTIFF.write_topo_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.write_topo_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write an ASCII Lon, Lat, z file for SW4 topography.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="pySW4.utils.geo.GeoTIFF.x"><a name="//apple_ref/cpp/Attribute/pySW4.utils.geo.GeoTIFF.x"></a>
+<code class="descname">x</code><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>x</cite> coordinates vector of the data. This usually
+corresponds to Longitude.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="pySW4.utils.geo.GeoTIFF.xy2d"><a name="//apple_ref/cpp/Attribute/pySW4.utils.geo.GeoTIFF.xy2d"></a>
+<code class="descname">xy2d</code><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.xy2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 2 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> s with <cite>x</cite> and <cite>y</cite>
+coordinates of the data. This is the result of
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.meshgrid.html#numpy.meshgrid" title="(in NumPy v1.13)"><code class="xref py py-func docutils literal"><span class="pre">meshgrid()</span></code></a> of the <cite>x</cite> and <cite>y</cite> vectors of the
+data.</p>
+</dd></dl>
+<dl class="attribute">
+<dt id="pySW4.utils.geo.GeoTIFF.y"><a name="//apple_ref/cpp/Attribute/pySW4.utils.geo.GeoTIFF.y"></a>
+<code class="descname">y</code><a class="headerlink" href="#pySW4.utils.geo.GeoTIFF.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>y</cite> coordinates vector of the data. This usually
+corresponds to Latitude.</p>
+</dd></dl>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.geo._get_tiles"><a name="//apple_ref/cpp/Function/pySW4.utils.geo._get_tiles"></a>
+<code class="descname">_get_tiles</code><span class="sig-paren">(</span><em>path</em>, <em>lonmin</em>, <em>lonmax</em>, <em>latmin</em>, <em>latmax</em>, <em>tilename='ASTGTM2_%s%02d%s%03d'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#_get_tiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo._get_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a helper function for <a class="reference internal" href="#pySW4.utils.geo.get_dem" title="pySW4.utils.geo.get_dem"><code class="xref py py-func docutils literal"><span class="pre">get_dem()</span></code></a>
+function.</p>
+<p>It extracts the GeoTIFF tiles from the zipfile downloaded from the
+ASTER-GDEM dowonload site needed to stitch an elevation model
+with the extent given by <cite>lonmin</cite>, <cite>lonmax</cite>, <cite>latmin</cite>, <cite>latmax</cite> in
+decimal degrees and returns a list of paths pointing to these tiles.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function sould not be used directly by the user. See
+<a class="reference internal" href="#pySW4.utils.geo.get_dem" title="pySW4.utils.geo.get_dem"><code class="xref py py-func docutils literal"><span class="pre">get_dem()</span></code></a>.</p>
+</div>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.geo.calc_intensity"><a name="//apple_ref/cpp/Function/pySW4.utils.geo.calc_intensity"></a>
+<code class="descname">calc_intensity</code><span class="sig-paren">(</span><em>relief</em>, <em>azimuth=315.0</em>, <em>altitude=45.0</em>, <em>scale=None</em>, <em>smooth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#calc_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.calc_intensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a method to create an intensity array that can be used to
+create a shaded relief map.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since version 0.2.0 this function is not needed anymore as
+new hillshade code has been implemented in the
+<a class="reference internal" href="pySW4.plotting.hillshade.html#module-pySW4.plotting.hillshade" title="pySW4.plotting.hillshade"><code class="xref py py-mod docutils literal"><span class="pre">hillshade</span></code></a> module.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>relief</strong> : a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote>
+<div><p>Topography or other data to calculate intensity from.</p>
+</div></blockquote>
+<p><strong>azimuth</strong> : float</p>
+<blockquote>
+<div><p>Direction of light source, degrees from north.</p>
+</div></blockquote>
+<p><strong>altitude</strong> : float</p>
+<blockquote>
+<div><p>Height of light source, degrees above the horizon.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float</p>
+<blockquote>
+<div><p>Scaling value of the data.</p>
+</div></blockquote>
+<p><strong>smooth</strong> : float</p>
+<blockquote>
+<div><p>Number of cells to average before intensity calculation.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote class="last">
+<div><p>Normalized 2d array with illumination data.
+Same size as <code class="docutils literal"><span class="pre">relief</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.geo.get_dem"><a name="//apple_ref/cpp/Function/pySW4.utils.geo.get_dem"></a>
+<code class="descname">get_dem</code><span class="sig-paren">(</span><em>path</em>, <em>lonmin</em>, <em>lonmax</em>, <em>latmin</em>, <em>latmax</em>, <em>tilename='ASTGTM2_%s%02d%s%03d'</em>, <em>rasterBand=1</em>, <em>dx=0.000277777777778</em>, <em>dy=-0.000277777777778</em>, <em>keep_tiles=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#get_dem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.get_dem" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function reads relevant ASTER-GDEM GeoTIFF tiles into memory,
+stitchs them together if more than one file is read, and cuts to the
+desired extent given by <cite>lonmin</cite>, <cite>lonmax</cite>, <cite>latmin</cite>, <cite>latmax</cite> in
+decimal degrees.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) to where the ASTER-GDEM zipped tiles
+are stored.</p>
+</div></blockquote>
+<p><strong>lonmin, lonmax</strong> : float</p>
+<blockquote>
+<div><p>The west- and east-most coordinate of the desired extent
+(may also be the xmin and xmax coordinate).</p>
+</div></blockquote>
+<p><strong>latmin, latmax</strong> : float</p>
+<blockquote>
+<div><p>The south- and north-most coordinate of the desired extent
+(may also be the ymin and ymax coordinate).</p>
+</div></blockquote>
+<p><strong>tilename</strong> : str</p>
+<blockquote>
+<div><p>Wildcard string of the tile names.</p>
+</div></blockquote>
+<p><strong>rasterBand</strong> : int</p>
+<blockquote>
+<div><p>The band number to read from each tile (defaults to 1).</p>
+</div></blockquote>
+<p><strong>dx, dy</strong> : float</p>
+<blockquote>
+<div><p>Pixel size of data in the x and y direction, positive in the
+East and North directions.</p>
+</div></blockquote>
+<p><strong>keep_tiles</strong> : bool</p>
+<blockquote>
+<div><p>Zipped tiles get extracted to the current working directory and
+are removed once the stitching is complete. If you are
+interested in keeping the tiles in the current working directory
+set to <code class="docutils literal"><span class="pre">True</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a></p>
+<blockquote class="last">
+<div><p>A populated <a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a> instance with the
+stitched elevation data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.geo.read_GeoTIFF"><a name="//apple_ref/cpp/Function/pySW4.utils.geo.read_GeoTIFF"></a>
+<code class="descname">read_GeoTIFF</code><span class="sig-paren">(</span><em>filename=None</em>, <em>rasterBand=1</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#read_GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.read_GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a single GeoTIFF file and returns a
+<a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a> class instance. If <cite>filename</cite>
+is None, an empty <a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a> object is
+returnd.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a></p>
+<blockquote class="last">
+<div><p>A populated (or empty) <a class="reference internal" href="#pySW4.utils.geo.GeoTIFF" title="pySW4.utils.geo.GeoTIFF"><code class="xref py py-class docutils literal"><span class="pre">GeoTIFF</span></code></a>
+instance with the elevation data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.geo.save_GeoTIFF"><a name="//apple_ref/cpp/Function/pySW4.utils.geo.save_GeoTIFF"></a>
+<code class="descname">save_GeoTIFF</code><span class="sig-paren">(</span><em>filename</em>, <em>data</em>, <em>tlx</em>, <em>tly</em>, <em>dx</em>, <em>dy</em>, <em>epsg=None</em>, <em>proj4=None</em>, <em>dtype=&lt;type 'numpy.int16'&gt;</em>, <em>nodata=nan</em>, <em>rasterBand=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#save_GeoTIFF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.save_GeoTIFF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data at a known projection as a GeoTIFF file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name"/>
+<col class="field-body"/>
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>Path (relative or absolute) of the output GeoTIFF file.</p>
+</div></blockquote>
+<p><strong>data</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote>
+<div><p>A 2d array of data to write to file.</p>
+</div></blockquote>
+<p><strong>tlx</strong> : float</p>
+<blockquote>
+<div><p>Top-left-x (usually West-) coordinate of data.</p>
+</div></blockquote>
+<p><strong>tly</strong> : flaot</p>
+<blockquote>
+<div><p>Top-left-y (usually North-) coordinate of data.</p>
+</div></blockquote>
+<p><strong>dx</strong> : float</p>
+<blockquote>
+<div><p>Pixel size of data in the x direction, positive in the East
+direction.</p>
+</div></blockquote>
+<p><strong>dy</strong> : float</p>
+<blockquote>
+<div><p>Pixel size of data in the y direction, positive in the North
+direction.</p>
+</div></blockquote>
+<p><strong>epsg</strong> : int</p>
+<blockquote>
+<div><p>The target projection EPSG code. See the
+<a class="reference external" href="http://www.epsg-registry.org/">Geodetic Parameter Dataset Registry</a> for more information.</p>
+</div></blockquote>
+<p><strong>proj4</strong> : str</p>
+<blockquote>
+<div><p>The target Proj4 string. If the EPSG code is unknown or a
+custom projection is required, a Proj4 string can be passed.
+See the <a class="reference external" href="https://trac.osgeo.org/proj/wiki/GenParms">Proj4</a>
+documentation for a list of general Proj4 parameters.</p>
+</div></blockquote>
+<p><strong>dtype</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">dtype</span></code></a></p>
+<blockquote>
+<div><p>One of following dtypes should be used:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">numpy.int16</span></code> (default)</li>
+<li><code class="docutils literal"><span class="pre">numpy.int32</span></code></li>
+<li><code class="docutils literal"><span class="pre">numpy.float32</span></code></li>
+<li><code class="docutils literal"><span class="pre">numpy.float64</span></code></li>
+</ul>
+</div></blockquote>
+<p><strong>nodata</strong> : int or float or NaN</p>
+<blockquote>
+<div><p>Value to register as the no-data value in the GeoTIFF file
+header. By default this is set to <code class="docutils literal"><span class="pre">numpy.nan</span></code>. Other common
+options are -9999, -12345 or any other value that suits your
+purpose.</p>
+</div></blockquote>
+<p><strong>rasterband</strong> : int</p>
+<blockquote class="last">
+<div><p>The band number to write. (default is 1)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Examples of some EPSG codes and their equivalent Proj4 strings
+are:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">4326</span>   <span class="o">-&gt;</span> <span class="s1">'+proj=longlat +datum=WGS84 +no_defs'</span>
+
+<span class="mi">32636</span>  <span class="o">-&gt;</span> <span class="s1">'+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'</span>
+
+<span class="mi">102009</span> <span class="o">-&gt;</span> <span class="s1">'+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40</span>
+           <span class="o">+</span><span class="n">lon_0</span><span class="o">=-</span><span class="mi">96</span> <span class="o">+</span><span class="n">x_0</span><span class="o">=</span><span class="mi">0</span> <span class="o">+</span><span class="n">y_0</span><span class="o">=</span><span class="mi">0</span> <span class="o">+</span><span class="n">datum</span><span class="o">=</span><span class="n">NAD83</span> <span class="o">+</span><span class="n">units</span><span class="o">=</span><span class="n">m</span>
+           <span class="o">+</span><span class="n">no_defs</span><span class="s1">'</span>
+</pre></div>
+</div>
+<p>and so on ... See the <a class="reference external" href="http://www.epsg-registry.org/">Geodetic Parameter Dataset Registry</a> for more information.</p>
+</dd></dl>
+<dl class="function">
+<dt id="pySW4.utils.geo.xy2gridpoints"><a name="//apple_ref/cpp/Function/pySW4.utils.geo.xy2gridpoints"></a>
+<code class="descname">xy2gridpoints</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grid_shape</em>, <em>grid_extent</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/utils/geo.html#xy2gridpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.utils.geo.xy2gridpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the grid coordinates of the data coordinates in <code class="docutils literal"><span class="pre">x</span></code>, <code class="docutils literal"><span class="pre">y</span></code></p>
+</dd></dl>
+</div>
+</div>
+</div>
+</div>
+<div class="clearer"></div>
+</div>
+<div aria-label="related navigation" class="related" role="navigation">
+<h3>Navigation</h3>
+<ul>
+<li class="right" style="margin-right: 10px">
+<a href="../genindex.html" title="General Index">index</a></li>
+<li class="right">
+<a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+<li class="right">
+<a href="pySW4.utils.spectral.html" title="pySW4.utils.spectral module">next</a> |</li>
+<li class="right">
+<a href="pySW4.utils.html" title="pySW4.utils package">previous</a> |</li>
+<li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+<li class="nav-item nav-item-0"><a href="../index.html">pySW4 '0.3.0' documentation</a> »</li>
+<li class="nav-item nav-item-1"><a href="index.html">pySW4 Library Reference</a> »</li>
+<li class="nav-item nav-item-2"><a href="pySW4.utils.html">pySW4.utils package</a> »</li>
+</ul>
+</div>
+<div class="footer" role="contentinfo">
+        © Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+</body>
+</html>

@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pySW4.prep.rfileIO module &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
-    
+    <title>pySW4.prep.rfileIO module &#8212; pySW4 &#39;0.3.5&#39; documentation</title>
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '&#39;0.3.0&#39;',
+        VERSION:     '&#39;0.3.5&#39;',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -24,13 +21,13 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pySW4.prep.source module" href="pySW4.prep.source.html" />
     <link rel="prev" title="pySW4.prep.material_model module" href="pySW4.prep.material_model.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -48,7 +45,7 @@
              accesskey="P">previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.prep.html" accesskey="U">pySW4.prep package</a> &#187;</li> 
@@ -94,7 +91,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:kadmiel&#37;&#52;&#48;post&#46;bgu&#46;ac&#46;il">kadmiel<span>&#64;</span>post<span>&#46;</span>bgu<span>&#46;</span>ac<span>&#46;</span>il</a>)</td>
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Shahar Shani-Kadmiel (<a class="reference external" href="mailto:s&#46;shanikadmiel&#37;&#52;&#48;tudelft&#46;nl">s<span>&#46;</span>shanikadmiel<span>&#64;</span>tudelft<span>&#46;</span>nl</a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">copyright:</th><td class="field-body">Shahar Shani-Kadmiel</td>
 </tr>
@@ -107,7 +104,8 @@ GNU Lesser General Public License, Version 3
 <dl class="class">
 <dt id="pySW4.prep.rfileIO.Block">
 <em class="property">class </em><code class="descname">Block</code><span class="sig-paren">(</span><em>f</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#Block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.Block" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to hold rfile block header and data section</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A class to hold rfile block header and data section</p>
 <dl class="method">
 <dt id="pySW4.prep.rfileIO.Block._read_block_data_section">
 <code class="descname">_read_block_data_section</code><span class="sig-paren">(</span><em>f</em>, <em>precision</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#Block._read_block_data_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.Block._read_block_data_section" title="Permalink to this definition">¶</a></dt>
@@ -174,7 +172,8 @@ Coordinates are elevation below sea level in km
 <dl class="class">
 <dt id="pySW4.prep.rfileIO.CrossSection">
 <em class="property">class </em><code class="descname">CrossSection</code><span class="sig-paren">(</span><em>model</em>, <em>x1=None</em>, <em>x2=None</em>, <em>y1=None</em>, <em>y2=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#CrossSection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.CrossSection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to generate and hold a cross-section of the material
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Class to generate and hold a cross-section of the material
 properties along a line in an existing model
 (<a class="reference internal" href="#pySW4.prep.rfileIO.Model" title="pySW4.prep.rfileIO.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a>).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -220,17 +219,17 @@ method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>property</strong> : {&#8216;vp&#8217;, &#8216;vs&#8217;, &#8216;qp&#8217;, &#8216;qs&#8217;}</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>property</strong> : {‘vp’, ‘vs’, ‘qp’, ‘qs’}</p>
 <blockquote>
 <div><p>Which property to plot.</p>
 </div></blockquote>
-<p><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
+<p><strong>ax</strong> : <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
 <blockquote>
 <div><p>Use existing axes. If <code class="docutils literal"><span class="pre">ax=None</span></code> function returns:
-a <a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance,
-a <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> instance,
-and a <a class="reference external" href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a> instance.
-Otherwise, only a <a class="reference external" href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a>
+a <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance,
+a <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> instance,
+and a <a class="reference external" href="https://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a> instance.
+Otherwise, only a <a class="reference external" href="https://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a>
 instance is returned.</p>
 </div></blockquote>
 <p><strong>draw_separator</strong> : bool</p>
@@ -261,10 +260,10 @@ and maximum of the data is used.</p>
 </div></blockquote>
 <p><strong>interpolation</strong> : str</p>
 <blockquote>
-<div><p>Acceptable values are &#8216;none&#8217;, &#8216;nearest&#8217;, &#8216;bilinear&#8217;,
-&#8216;bicubic&#8217;, &#8216;spline16&#8217;, &#8216;spline36&#8217;, &#8216;hanning&#8217;, &#8216;hamming&#8217;,
-&#8216;hermite&#8217;, &#8216;kaiser&#8217;, &#8216;quadric&#8217;, &#8216;catrom&#8217;, &#8216;gaussian&#8217;,
-&#8216;bessel&#8217;, &#8216;mitchell&#8217;, &#8216;sinc&#8217;, &#8216;lanczos&#8217;.</p>
+<div><p>Acceptable values are ‘none’, ‘nearest’, ‘bilinear’,
+‘bicubic’, ‘spline16’, ‘spline36’, ‘hanning’, ‘hamming’,
+‘hermite’, ‘kaiser’, ‘quadric’, ‘catrom’, ‘gaussian’,
+‘bessel’, ‘mitchell’, ‘sinc’, ‘lanczos’.</p>
 </div></blockquote>
 <p><strong>pad</strong> : int or float</p>
 <blockquote>
@@ -278,14 +277,14 @@ axes width.</p>
 <dl class="docutils">
 <dt>For example:</dt>
 <dd><dl class="first last docutils">
-<dt><code class="docutils literal"><span class="pre">size='3%'</span></code> will result in a colorbar who&#8217;s width is</dt>
+<dt><code class="docutils literal"><span class="pre">size='3%'</span></code> will result in a colorbar who’s width is</dt>
 <dd><p class="first last">3% of the width of the axes.</p>
 </dd>
 </dl>
 </dd>
 <dt>Similarly:</dt>
 <dd><dl class="first last docutils">
-<dt><code class="docutils literal"><span class="pre">size='0.3'</span></code> will result in a colorbar who&#8217;s width is</dt>
+<dt><code class="docutils literal"><span class="pre">size='0.3'</span></code> will result in a colorbar who’s width is</dt>
 <dd><p class="first last">0.3 of the width of the axes.</p>
 </dd>
 </dl>
@@ -297,7 +296,7 @@ axes width.</p>
 <div><p>Label used for the colorbar. By default the label is set by
 the property plotted.</p>
 </div></blockquote>
-<p class="last"><strong>kwargs</strong> : <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a> propeties.</p>
+<p class="last"><strong>kwargs</strong> : <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.imshow.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a> propeties.</p>
 </td>
 </tr>
 </tbody>
@@ -309,7 +308,8 @@ the property plotted.</p>
 <dl class="class">
 <dt id="pySW4.prep.rfileIO.Model">
 <em class="property">class </em><code class="descname">Model</code><span class="sig-paren">(</span><em>filename</em>, <em>block_number=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.Model" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to hold rfile header and blocks.</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A class to hold rfile header and blocks.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Setting <code class="docutils literal"><span class="pre">block_number='all'</span></code> for large models may take a while and take up a lot of memory.</p>
@@ -399,15 +399,15 @@ method.</p>
 <div><p>Distance in km along the x-, y-, and z-axis of the model.
 (z - positive is down)</p>
 </div></blockquote>
-<p><strong>property</strong> : {&#8216;all&#8217;, &#8216;rho&#8217;, &#8216;vp&#8217;, &#8216;vs&#8217;, &#8216;qp&#8217;, &#8216;qs&#8217;}</p>
+<p><strong>property</strong> : {‘all’, ‘rho’, ‘vp’, ‘vs’, ‘qp’, ‘qs’}</p>
 <blockquote>
-<div><p>&#8216;all&#8217; returns all 5 material properties.
-Otherwise, only &#8216;rho&#8217;, &#8216;vp&#8217;, &#8216;vs&#8217;, &#8216;qp&#8217;, or &#8216;qs&#8217; are
+<div><p>‘all’ returns all 5 material properties.
+Otherwise, only ‘rho’, ‘vp’, ‘vs’, ‘qp’, or ‘qs’ are
 returned.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or float</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> or float</p>
 <blockquote class="last">
 <div><p>One or all of the material properties at point (x,y,z)
 (<cite>rho</cite>, <cite>vp</cite>, <cite>vs</cite>, <cite>qp</cite>, <cite>qs</cite>)</p>
@@ -421,14 +421,14 @@ returned.</p>
 <dl class="method">
 <dt id="pySW4.prep.rfileIO.Model.get_topography">
 <code class="descname">get_topography</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#Model.get_topography"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.Model.get_topography" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> with elevation data
+<dd><p>Returns a 2d <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> with elevation data
 retrieved from the topography/bathymetry block
 (the first block).</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The origin of the data is the bottom-left corner so if
-plotted with <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a> set the
-<cite>origin</cite> keyword to &#8216;lower&#8217; or simply use
+plotted with <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.imshow.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a> set the
+<cite>origin</cite> keyword to ‘lower’ or simply use
 <a class="reference internal" href="#pySW4.prep.rfileIO.Model.plot_topography" title="pySW4.prep.rfileIO.Model.plot_topography"><code class="xref py py-meth docutils literal"><span class="pre">plot_topography()</span></code></a> for plotting.</p>
 </div>
 </dd></dl>
@@ -445,23 +445,23 @@ plotted with <a class="reference external" href="http://matplotlib.org/api/pyplo
 <blockquote>
 <div><p>Distance in km along the x-, and y-axis of the model.</p>
 </div></blockquote>
-<p><strong>property</strong> : {&#8216;all&#8217;, &#8216;rho&#8217;, &#8216;vp&#8217;, &#8216;vs&#8217;, &#8216;qp&#8217;, &#8216;qs&#8217;}</p>
+<p><strong>property</strong> : {‘all’, ‘rho’, ‘vp’, ‘vs’, ‘qp’, ‘qs’}</p>
 <blockquote>
-<div><p>&#8216;all&#8217; returns all 5 material properties.
-Otherwise, only &#8216;rho&#8217;, &#8216;vp&#8217;, &#8216;vs&#8217;, &#8216;qp&#8217;, or &#8216;qs&#8217; are
+<div><p>‘all’ returns all 5 material properties.
+Otherwise, only ‘rho’, ‘vp’, ‘vs’, ‘qp’, or ‘qs’ are
 returned.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> &#8216;s</p>
-<p><strong>z</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a> ‘s</p>
+<p><strong>z</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
 <blockquote>
 <div><p>Elevation values allong the profile, shape (n,)</p>
 </div></blockquote>
-<p><strong>properties</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<p><strong>properties</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
 <blockquote class="last">
 <div><p>Material properties (one or all):</p>
-<p>(&#8216;rho&#8217;, &#8216;vp&#8217;, &#8216;vs&#8217;, &#8216;qp&#8217;, &#8216;qs&#8217;), shape (n,) or (n, 5)</p>
+<p>(‘rho’, ‘vp’, ‘vs’, ‘qp’, ‘qs’), shape (n,) or (n, 5)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -477,13 +477,13 @@ returned.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a></p>
 <blockquote>
 <div><p>Use existing axes. If <code class="docutils literal"><span class="pre">ax=None</span></code> function returns a
-<a class="reference external" href="http://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance,
-a <a class="reference external" href="http://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> instance,
-and a <a class="reference external" href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a> instance.
-Otherwise, only a <a class="reference external" href="http://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.0.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a>
+<a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Figure</span></code></a> instance,
+a <a class="reference external" href="https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Axes</span></code></a> instance,
+and a <a class="reference external" href="https://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a> instance.
+Otherwise, only a <a class="reference external" href="https://matplotlib.org/api/colorbar_api.html#matplotlib.colorbar.Colorbar" title="(in Matplotlib v2.2.2)"><code class="xref py py-class docutils literal"><span class="pre">Colorbar</span></code></a>
 instance is returned.</p>
 </div></blockquote>
 </td>
@@ -496,10 +496,10 @@ and maximum of the data is used.</p>
 </div></blockquote>
 <p><strong>interpolation</strong> : str</p>
 <blockquote>
-<div><p>Acceptable values are &#8216;none&#8217;, &#8216;nearest&#8217;, &#8216;bilinear&#8217;,
-&#8216;bicubic&#8217;, &#8216;spline16&#8217;, &#8216;spline36&#8217;, &#8216;hanning&#8217;, &#8216;hamming&#8217;,
-&#8216;hermite&#8217;, &#8216;kaiser&#8217;, &#8216;quadric&#8217;, &#8216;catrom&#8217;, &#8216;gaussian&#8217;,
-&#8216;bessel&#8217;, &#8216;mitchell&#8217;, &#8216;sinc&#8217;, &#8216;lanczos&#8217;.</p>
+<div><p>Acceptable values are ‘none’, ‘nearest’, ‘bilinear’,
+‘bicubic’, ‘spline16’, ‘spline36’, ‘hanning’, ‘hamming’,
+‘hermite’, ‘kaiser’, ‘quadric’, ‘catrom’, ‘gaussian’,
+‘bessel’, ‘mitchell’, ‘sinc’, ‘lanczos’.</p>
 </div></blockquote>
 <p><strong>pad</strong> : int or float</p>
 <blockquote>
@@ -513,14 +513,14 @@ axes width.</p>
 <dl class="docutils">
 <dt>For example:</dt>
 <dd><dl class="first last docutils">
-<dt><code class="docutils literal"><span class="pre">size='3%'</span></code> will result in a colorbar who&#8217;s width is</dt>
+<dt><code class="docutils literal"><span class="pre">size='3%'</span></code> will result in a colorbar who’s width is</dt>
 <dd><p class="first last">3% of the width of the axes.</p>
 </dd>
 </dl>
 </dd>
 <dt>Similarly:</dt>
 <dd><dl class="first last docutils">
-<dt><code class="docutils literal"><span class="pre">size='0.3'</span></code> will result in a colorbar who&#8217;s width is</dt>
+<dt><code class="docutils literal"><span class="pre">size='0.3'</span></code> will result in a colorbar who’s width is</dt>
 <dd><p class="first last">0.3 of the width of the axes.</p>
 </dd>
 </dl>
@@ -532,7 +532,7 @@ axes width.</p>
 <div><p>Label used for the colorbar. By default the label is set by
 the property plotted.</p>
 </div></blockquote>
-<p class="last"><strong>kwargs</strong> : <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.0.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a> propeties.</p>
+<p class="last"><strong>kwargs</strong> : <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.imshow.html#matplotlib.pyplot.imshow" title="(in Matplotlib v2.2.2)"><code class="xref py py-func docutils literal"><span class="pre">imshow()</span></code></a> propeties.</p>
 </td>
 </tr>
 </tbody>
@@ -571,7 +571,7 @@ block data sections are read into memory.</p>
 <dl class="method">
 <dt id="pySW4.prep.rfileIO.Model.z">
 <code class="descname">z</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#Model.z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.Model.z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a vector (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) with z coordinates of
+<dd><p>Return a vector (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a>) with z coordinates of
 the model based on the <cite>hv</cite> of each block. Coordinates are
 distance in km along the z-axis of the model which are elevation
 below sea level (positive is down).</p>
@@ -656,7 +656,7 @@ bathymetry.</p>
 <div><p>The number of components:</p>
 <p>The first block holds the elevation of the topography/
 bathymetry, so <code class="docutils literal"><span class="pre">nc=1</span></code>.
-The following blocks must have either 3 if only rho, vp, and vs
+The following blocks have either 3 if only rho, vp, and vs
 are present (<code class="docutils literal"><span class="pre">attenuation=0</span></code>) or 5 if qp and qs are pressent
 (<code class="docutils literal"><span class="pre">attenuation=1</span></code>).</p>
 </div></blockquote>
@@ -790,7 +790,7 @@ horizontal coordinates, the first block must have <code class="docutils literal"
 
 <dl class="function">
 <dt id="pySW4.prep.rfileIO.write_hdr">
-<code class="descname">write_hdr</code><span class="sig-paren">(</span><em>f</em>, <em>magic=1</em>, <em>precision=4</em>, <em>attenuation=1</em>, <em>az=0.0</em>, <em>lon0=33.5</em>, <em>lat0=28.0</em>, <em>proj_str='+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'</em>, <em>nb=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#write_hdr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.write_hdr" title="Permalink to this definition">¶</a></dt>
+<code class="descname">write_hdr</code><span class="sig-paren">(</span><em>f</em>, <em>magic=1</em>, <em>precision=4</em>, <em>attenuation=1</em>, <em>az=0.0</em>, <em>lon0=33.5</em>, <em>lat0=28.0</em>, <em>proj_str=b'+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'</em>, <em>nb=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#write_hdr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.write_hdr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write rfile header.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -835,12 +835,97 @@ built with Proj4 support. See the
 <a class="reference external" href="https://geodynamics.org/cig/software/sw4/">SW4 User Guide</a>
 and the <a class="reference external" href="https://trac.osgeo.org/proj/wiki/GenParms">Proj4</a>
 documentation. Defaults to
-&#8216;+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs&#8217;.</p>
+‘+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs’.</p>
 </div></blockquote>
 <p><strong>nb</strong> : int</p>
 <blockquote class="last">
 <div><p>The number of blocks in the data section. Must be &gt; 0.
 Defaults to 1.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.prep.rfileIO.write_properties">
+<code class="descname">write_properties</code><span class="sig-paren">(</span><em>f</em>, <em>vp</em>, <em>nc</em>, <em>vs=None</em>, <em>rho=None</em>, <em>qp=None</em>, <em>qs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#write_properties"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.write_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write material properties at a point <cite>i</cite>, <cite>j</cite> in block <cite>b</cite>.</p>
+<p>This is a convenient function to use while looping over <cite>i</cite>, <cite>j</cite> in
+a specific block <cite>b</cite> for writing out material properties at each
+index <cite>k</cite>. At the very least <cite>vp</cite> should be provided. If only <cite>vp</cite>
+is provided, the other properties are calculated using the
+<code class="xref py py-mod docutils literal"><span class="pre">material_model</span></code> module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file</p>
+<blockquote>
+<div><p>Open file handle in <code class="docutils literal"><span class="pre">'wa'</span></code> mode for appending data to the end
+of a file in construction ot in <code class="docutils literal"><span class="pre">'r+b'</span></code> mode for overwriting
+existing data.</p>
+<p>When overwriting existing data, the user must take care to place
+the cursor in the right place in the file.</p>
+</div></blockquote>
+<p><strong>vp</strong> : array-like</p>
+<blockquote>
+<div><p>P wave velocity at indices of <cite>k</cite> in m/s.</p>
+</div></blockquote>
+<p><strong>nc</strong> : int</p>
+<blockquote>
+<div><p>Number of components to write out. Either 3 (<cite>rho</cite>, <cite>vp</cite>, and
+<cite>vs</cite> if <code class="docutils literal"><span class="pre">attenuation=0</span></code>) or 5 (also <cite>qp</cite> and <cite>qs</cite> if
+<code class="docutils literal"><span class="pre">attenuation=1</span></code>).</p>
+</div></blockquote>
+<p><strong>vs</strong> : array-like, optional</p>
+<blockquote>
+<div><p>S wave velocity at indices of <cite>k</cite> in m/s. If not given, <cite>vs</cite> is
+calculated from <code class="xref py py-func docutils literal"><span class="pre">get_vs()</span></code>.</p>
+</div></blockquote>
+<p><strong>rho</strong> : array-like, optional</p>
+<blockquote>
+<div><p>Density at indices of <cite>k</cite> in kg/m^3. If not given, <cite>rho</cite> is
+calculated from <code class="xref py py-func docutils literal"><span class="pre">get_rho()</span></code>.</p>
+</div></blockquote>
+<p><strong>qp</strong> : array-like, optional</p>
+<blockquote>
+<div><p>P quality factor at indices of <cite>k</cite>. If not given, <cite>qp</cite> is
+calculated from <code class="xref py py-func docutils literal"><span class="pre">get_qp()</span></code>.</p>
+</div></blockquote>
+<p><strong>qs</strong> : array-like, optional</p>
+<blockquote class="last">
+<div><p>S quality factor at indices of <cite>k</cite>. If not given, <cite>qs</cite> is
+calculated from <code class="xref py py-func docutils literal"><span class="pre">get_qs()</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pySW4.prep.rfileIO.write_topo_block">
+<code class="descname">write_topo_block</code><span class="sig-paren">(</span><em>f</em>, <em>data</em>, <em>precision=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pySW4/prep/rfileIO.html#write_topo_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pySW4.prep.rfileIO.write_topo_block" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file or str</p>
+<blockquote>
+<div><p>Open file handle in <code class="docutils literal"><span class="pre">'wa'</span></code> mode or path to an rfile for
+appending data to the end.</p>
+</div></blockquote>
+<p><strong>data</strong> : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.14)"><code class="xref py py-class docutils literal"><span class="pre">ndarray</span></code></a></p>
+<blockquote>
+<div><p>Elevation data in meters below sea level (z positive down).</p>
+</div></blockquote>
+<p><strong>precision</strong> : {4 (default), 8}</p>
+<blockquote class="last">
+<div><p>The number of bytes per entry in the data section.</p>
+<p>4 - single precision</p>
+<p>8 - double precision</p>
 </div></blockquote>
 </td>
 </tr>
@@ -873,7 +958,7 @@ Defaults to 1.</p>
              >previous</a> |</li>
     <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
     
-        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pySW4 &#39;0.3.5&#39; documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >pySW4 Library Reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="pySW4.prep.html" >pySW4.prep package</a> &#187;</li> 
@@ -881,7 +966,7 @@ Defaults to 1.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
     </div>
   </body>
 </html>

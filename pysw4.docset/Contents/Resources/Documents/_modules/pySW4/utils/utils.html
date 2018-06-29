@@ -1,0 +1,763 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>pySW4.utils.utils &#8212; pySW4 &#39;0.3.0&#39; documentation</title>
+
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '&#39;0.3.0&#39;',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+
+  <h1>Source code for pySW4.utils.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python module with general utilities.</span>
+
+<span class="sd">.. module:: utils</span>
+
+<span class="sd">:author:</span>
+<span class="sd">    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)</span>
+
+<span class="sd">:copyright:</span>
+<span class="sd">    Shahar Shani-Kadmiel</span>
+
+<span class="sd">:license:</span>
+<span class="sd">    This code is distributed under the terms of the</span>
+<span class="sd">    GNU Lesser General Public License, Version 3</span>
+<span class="sd">    (https://www.gnu.org/copyleft/lesser.html)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">griddata</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pyproj</span> <span class="k">import</span> <span class="n">Proj</span><span class="p">,</span> <span class="n">transform</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cv2</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;OpenCV not found, you will not be able to use &#39;</span>
+         <span class="s1">&#39;`pySW4.utils.resample` in `draft` mode.&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="k">import</span> <span class="n">LinearSegmentedColormap</span><span class="p">,</span> <span class="n">ColorConverter</span>
+
+
+<div class="viewcode-block" id="resample"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.resample">[docs]</a><span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+             <span class="n">draft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">corners</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;nw&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resample or interpolate an array on to a grid with new extent and or</span>
+<span class="sd">    new shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : 3-tuple or :class:`~numpy.ndarray`</span>
+<span class="sd">        Either a tuple of 3x2d :class:`~numpy.ndarray` s ``(X,Y,Z)`` or</span>
+<span class="sd">        a single 2d :class:`~numpy.ndarray` ``Z``. If a ``draft=True``</span>
+<span class="sd">        and a single ``Z`` array is passed, ``corners`` must be</span>
+<span class="sd">        supplied.</span>
+
+<span class="sd">    extent : tuple or list</span>
+<span class="sd">        Extent of the output grid to which the array is interpolated.</span>
+
+<span class="sd">    shape : tuple</span>
+<span class="sd">        The shape of the output grid, defaults to the shape of the input</span>
+<span class="sd">        array. If no shape is passed, output grid is the same shape as</span>
+<span class="sd">        input array.</span>
+
+<span class="sd">    method : str</span>
+<span class="sd">        Method of interpolation. One of</span>
+
+<span class="sd">        - ``nearest`` - return the value at the data point closest to</span>
+<span class="sd">          the point of interpolation. This is the faster of the three.</span>
+<span class="sd">        - ``linear`` - tesselate the input point set to n-dimensional</span>
+<span class="sd">          simplices, and interpolate linearly on each simplex.</span>
+<span class="sd">        - ``cubic`` - return the value determined from a piecewise</span>
+<span class="sd">          cubic, continuously differentiable (C1), and approximately</span>
+<span class="sd">          curvature-minimizing polynomial surface.</span>
+
+<span class="sd">    draft : bool</span>
+<span class="sd">        If set to True, a very fast OpenCV algorithem is used to</span>
+<span class="sd">        interpolate the array by reprojection the data corners onto</span>
+<span class="sd">        arbitrary corners. See `Stack Overflow post</span>
+<span class="sd">        &lt;http://stackoverflow.com/a/31724678/1579211&gt;`_ for explanation.</span>
+
+<span class="sd">    corners : 4-tuple</span>
+<span class="sd">        Points to which the corners of ``Z`` will be tranformed to.</span>
+<span class="sd">        After transformation, the TL, TR, BR, BL corners of the ``Z``</span>
+<span class="sd">        array will be transformed to the coordinates in:</span>
+
+<span class="sd">        ``corners=(top-left, top-right, bottom-right, bottom-left)``</span>
+
+<span class="sd">        where each point is a tuple of ``(lon, lat)``.</span>
+<span class="sd">        Optionally, corners can be a ``(src, dst)`` tuple, where</span>
+<span class="sd">        ``src``, ``dst`` are each a tuple of ``n`` points. Each point in</span>
+<span class="sd">        ``src`` is transformed to the respective point in extent</span>
+<span class="sd">        coordinates in ``dst``.</span>
+
+<span class="sd">    origin : str</span>
+<span class="sd">        Corresponds to ``Z[0, 0]`` of the array or grid,</span>
+<span class="sd">        either ``&#39;nw&#39;`` (default), or ``&#39;sw&#39;``.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        If set to True, some information about the transformation is</span>
+<span class="sd">        provided.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    3x2d :class:`~numpy.ndarray` s or 1x2d :class:`~numpy.ndarray`</span>
+<span class="sd">        If ``data`` is a tuple of 3x2d arrays ``(X,Y,Z)`` and ``draft``</span>
+<span class="sd">        is ``False``, ``xi, yi, zi`` are returned. If ``draft`` is</span>
+<span class="sd">        ``True``, only ``zi`` is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error: data must be a tuple of 3x2d &#39;</span>
+              <span class="s1">&#39;:class:`numpy.ndarry` (X, Y, Z) or one 2d ``Z`` array&#39;</span><span class="p">)</span>
+
+    <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">extent</span>
+
+    <span class="c1"># if no output shape is supplied</span>
+    <span class="c1"># use the shape of the input array Z</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">shape</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">z_ny</span><span class="p">,</span> <span class="n">z_nx</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span> <span class="o">=</span> <span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">z_nx</span><span class="p">),</span>
+                           <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">z_ny</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">draft</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>  <span class="c1"># the long and accurate way...</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Accurately interpolating data onto a grid of &#39;</span>
+                       <span class="s1">&#39;shape </span><span class="si">%d</span><span class="s1">x</span><span class="si">%d</span><span class="s1"> and extent </span><span class="si">%.2f</span><span class="s1">,</span><span class="si">%.2f</span><span class="s1">,</span><span class="si">%.2f</span><span class="s1">,</span><span class="si">%.2f</span><span class="s1"> &#39;</span>
+                       <span class="s1">&#39;using X, Y, Z arrays.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                       <span class="s1">&#39;                      This may take a while...&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">nx</span><span class="p">),</span>
+                             <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">ny</span><span class="p">))</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">),</span>
+                      <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span>
+
+    <span class="k">elif</span> <span class="n">draft</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># the fast and less accurate way...</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># both src and dst are passed</span>
+            <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="n">corners</span>
+            <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># only dst corners passed</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ny</span><span class="p">))</span>
+            <span class="n">dst</span> <span class="o">=</span> <span class="n">corners</span>
+
+        <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dst</span><span class="p">],</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">dst</span><span class="p">]</span>
+        <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span> <span class="o">=</span> <span class="n">xy2pixel_coordinates</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Transforming points:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                       <span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+                       <span class="s1">&#39;in the data to points:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                       <span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span>
+                       <span class="s1">&#39;in the the output grid of shape </span><span class="si">%d</span><span class="s1">x</span><span class="si">%d</span><span class="s1"> and &#39;</span>
+                       <span class="s1">&#39;extent </span><span class="si">%.2f</span><span class="s1">,</span><span class="si">%.2f</span><span class="s1">,</span><span class="si">%.2f</span><span class="s1">,</span><span class="si">%.2f</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="c1"># Compute the transformation matrix which places</span>
+        <span class="c1"># the corners Z at the corners points bounding the</span>
+        <span class="c1"># data in output grid pixel coordinates</span>
+        <span class="n">tranformation_matrix</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getPerspectiveTransform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">src</span><span class="p">),</span>
+                                                           <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">dst</span><span class="p">))</span>
+
+        <span class="c1"># Make the transformation</span>
+        <span class="n">interpolation</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nearest&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="s1">&#39;linear&#39;</span>  <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                         <span class="s1">&#39;cubic&#39;</span>   <span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpPerspective</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">tranformation_matrix</span><span class="p">,</span>
+                                 <span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">),</span>
+                                 <span class="n">flags</span><span class="o">=</span><span class="n">interpolation</span><span class="p">[</span><span class="n">method</span><span class="p">],</span>
+                                 <span class="n">borderMode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                 <span class="n">borderValue</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">zi</span></div>
+
+
+<div class="viewcode-block" id="make_cmap"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.make_cmap">[docs]</a><span class="k">def</span> <span class="nf">make_cmap</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">named</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a color map compatible with matplotlib plotting functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    colors : list</span>
+<span class="sd">        List of `matplotlib named colors</span>
+<span class="sd">        &lt;http://matplotlib.org/examples/color/named_colors.html&gt;`_.</span>
+<span class="sd">        Arrange your colors so that the first color is the lowest value</span>
+<span class="sd">        for the colorbar and the last is the highest.</span>
+
+<span class="sd">    position : list</span>
+<span class="sd">        List of values from 0 to 1, controls the position of each color</span>
+<span class="sd">        on the cmap. If None (default), an evenly spaced cmap is</span>
+<span class="sd">        created.</span>
+
+<span class="sd">        **Tip:**</span>
+<span class="sd">            You can construct the positions sequence in data units and</span>
+<span class="sd">            then normalize so that the forst value is 0 and the last</span>
+<span class="sd">            value is 1.</span>
+
+<span class="sd">    named : bool</span>
+<span class="sd">        If set to False, colors are regarded as tuples of RGB values.</span>
+<span class="sd">        The RGB values may either be in 8-bit [0 to 255], in which case</span>
+<span class="sd">        ``bit`` must be set to True or arithmetic [0 to 1] (default).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`~matplotlib.colors.LinearSegmentedColormap`</span>
+<span class="sd">        An instance of the</span>
+<span class="sd">        :class:`~matplotlib.colors.LinearSegmentedColormap` cmap class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bit_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Position length must be the same as colors</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">position</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Position must start with 0 and end with 1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bit</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)):</span>
+            <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bit_rgb</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
+                         <span class="n">bit_rgb</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>
+                         <span class="n">bit_rgb</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">cdict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;red&#39;</span>   <span class="p">:</span> <span class="p">[],</span>
+             <span class="s1">&#39;green&#39;</span> <span class="p">:</span> <span class="p">[],</span>
+             <span class="s1">&#39;blue&#39;</span>  <span class="p">:</span> <span class="p">[]}</span>
+    <span class="k">if</span> <span class="n">named</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">ColorConverter</span><span class="p">()</span><span class="o">.</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;green&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s1">&#39;my_colormap&#39;</span><span class="p">,</span> <span class="n">cdict</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cmap</span></div>
+
+
+<div class="viewcode-block" id="trim_cmap"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.trim_cmap">[docs]</a><span class="k">def</span> <span class="nf">trim_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span> <span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trim a `cmap` to `cmin` and `cmax` limits in the range 0 to 1.</span>
+<span class="sd">    Use :class:`~matplotlib.colors.Normalize` with `vmin`, `vmax` of</span>
+<span class="sd">    the plot or data to get `cmin` and `cmax`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; norm = Normalize(-5, 10)</span>
+<span class="sd">    &gt;&gt;&gt; norm(-2)</span>
+<span class="sd">    0.20000000000000001</span>
+<span class="sd">    &gt;&gt;&gt; norm(6)</span>
+<span class="sd">    0.73333333333333328</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmap_</span> <span class="o">=</span> <span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
+        <span class="s1">&#39;trim(</span><span class="si">{}</span><span class="s1">,</span><span class="si">{:f}</span><span class="s1">,</span><span class="si">{:f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmap</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span><span class="p">),</span>
+        <span class="n">cmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span><span class="p">,</span> <span class="n">n</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">cmap_</span></div>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a flattened 1Darray from any multidimentional array. This</span>
+<span class="sd">    function is recursive and may take a long time on large data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subitem</span> <span class="ow">in</span> <span class="n">flatten</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">subitem</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="close_polygon"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.close_polygon">[docs]</a><span class="k">def</span> <span class="nf">close_polygon</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a list of points with the first point added to the end.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="get_corners"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.get_corners">[docs]</a><span class="k">def</span> <span class="nf">get_corners</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the corners of the data from its coordinates arrays</span>
+<span class="sd">    `x` and `y`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    2x list</span>
+<span class="sd">        - one list of longitudes (or `x`) and</span>
+<span class="sd">        - another list of latitudes (or `y`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xc</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="n">yc</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span></div>
+
+
+<div class="viewcode-block" id="line_in_loglog"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.line_in_loglog">[docs]</a><span class="k">def</span> <span class="nf">line_in_loglog</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to calculate the :math:`y` values of a line in log-log</span>
+<span class="sd">    space according to</span>
+
+<span class="sd">    .. math:: y(x) = b \cdot 10^{\log_{10} x^m},</span>
+
+<span class="sd">    where:</span>
+
+<span class="sd">    - :math:`m` is the slope of the line,</span>
+<span class="sd">    - :math:`b` is the :math:`y(x=1)` value and</span>
+<span class="sd">    - :math:`x` is a sequence of values on the x-axis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="xy2pixel_coordinates"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.xy2pixel_coordinates">[docs]</a><span class="k">def</span> <span class="nf">xy2pixel_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;nw&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the pixel coordinates on a grid.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : float or sequence</span>
+<span class="sd">        `x` coordianates (might also be longitudes).</span>
+
+<span class="sd">    y : float or sequence</span>
+<span class="sd">        `y` coordianates (might also be latitudes).</span>
+
+<span class="sd">    extent : tuple or list</span>
+<span class="sd">        Extent of the output grid to which the array is interpolated.</span>
+
+<span class="sd">    shape : tuple</span>
+<span class="sd">        The shape of the output grid, defaults to the shape of the input</span>
+<span class="sd">        array. If no shape is passed, output grid is the same shape as</span>
+<span class="sd">        input array.</span>
+
+<span class="sd">    origin : str</span>
+<span class="sd">        Corresponds to ``Z[0, 0]`` of the array or grid,</span>
+<span class="sd">        either ``&#39;nw&#39;`` (default), or ``&#39;sw&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    2x list</span>
+<span class="sd">        - one list of longitudes (or ``x``) and</span>
+<span class="sd">        - another list of latitudes (or ``y``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">extent</span>
+    <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span> <span class="o">=</span> <span class="n">shape</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">nx</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">ny</span>
+
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="s1">&#39;nw&#39;</span><span class="p">:</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">dx</span>
+        <span class="n">yc</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">dy</span>
+    <span class="k">elif</span> <span class="n">origin</span> <span class="ow">is</span> <span class="s1">&#39;sw&#39;</span><span class="p">:</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">dx</span>
+        <span class="n">yc</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">dy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Origin must be &#39;nw&#39; or &#39;sw&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span></div>
+
+
+<div class="viewcode-block" id="geographic2cartesian"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.geographic2cartesian">[docs]</a><span class="k">def</span> <span class="nf">geographic2cartesian</span><span class="p">(</span><span class="n">proj4</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">sw4_default_proj</span><span class="o">=</span><span class="s1">&#39;+proj=latlong +datum=NAD83&#39;</span><span class="p">,</span>
+                         <span class="n">lon0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lat0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">az</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                         <span class="n">m_per_lat</span><span class="o">=</span><span class="mf">111319.5</span><span class="p">,</span> <span class="n">m_per_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">lon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate SW4 cartesian coordinats from geographic coordinates</span>
+<span class="sd">    `lon`, `lat` in the `proj4` projection. If `x`, `y`</span>
+<span class="sd">    coordinates are given (`x` and `y` are not ``None``) the</span>
+<span class="sd">    inverse transformation is performed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    proj4 : str or dict or None</span>
+<span class="sd">        EPSG or Proj4. If EPSG then string should be &#39;epsg:number&#39;</span>
+<span class="sd">        where number is the EPSG code. See the `Geodetic Parameter</span>
+<span class="sd">        Dataset Registry &lt;http://www.epsg-registry.org/&gt;`_ for more</span>
+<span class="sd">        information. If Proj4 then either a dictionary:</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            {&#39;proj&#39;: projection, &#39;datum&#39;: &#39;datum&#39;, &#39;units&#39;: units,</span>
+<span class="sd">             &#39;lon_0&#39;: lon0, &#39;lat_0&#39;: lat0, &#39;scale&#39;: scale ... etc.}</span>
+
+<span class="sd">        or a string:</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            &#39;+proj=projection +datum=datum +units=units +lon_0=lon0 \\</span>
+<span class="sd">                +lat_0=lat0 +scale=scale ... etc.&#39;</span>
+
+<span class="sd">        should be given.</span>
+
+<span class="sd">        See the `Proj4 &lt;https://trac.osgeo.org/proj/wiki/GenParms&gt;`_</span>
+<span class="sd">        documentation for a list of general Proj4 parameters.</span>
+
+<span class="sd">        In the context of SW4 this dictionary or string should be taken</span>
+<span class="sd">        from the ``grid`` line in the SW4 input file.</span>
+
+<span class="sd">    sw4_default_proj : str</span>
+<span class="sd">        SW4 uses &#39;+proj=latlong +datum=NAD83&#39; as the default projection.</span>
+<span class="sd">        Pass a different projection for other purposes. See ``proj4``.</span>
+
+<span class="sd">    lon0 : float</span>
+<span class="sd">        Longitude of the grid origin in degrees.</span>
+
+<span class="sd">        This is the ``lon`` keyword on the ``grid`` line in the SW4</span>
+<span class="sd">        input file.</span>
+
+<span class="sd">    lat0 : float</span>
+<span class="sd">        Latitude of the grid origin in degrees.</span>
+
+<span class="sd">        This is the ``lat`` keyword on the ``grid`` line in the SW4</span>
+<span class="sd">        input file.</span>
+
+<span class="sd">    az : float</span>
+<span class="sd">        Azimuth between North and the ``x`` axis of the SW4 grid.</span>
+
+<span class="sd">        This is the ``az`` keyword on the ``grid`` line in the SW4 input</span>
+<span class="sd">        file.</span>
+
+<span class="sd">    m_per_lat : float</span>
+<span class="sd">        How many m to a degree latitude. (default: 111319.5 m)</span>
+
+<span class="sd">        This is the ``mlat`` keyword on the ``grid`` line in the SW4</span>
+<span class="sd">        input file.</span>
+
+<span class="sd">    m_per_lon : float</span>
+<span class="sd">        How many m to a degree longitude. If ``None``, ``m_per_lat`` is</span>
+<span class="sd">        used).</span>
+
+<span class="sd">        This is the ``mlon`` keyword on the ``grid`` line in the SW4</span>
+<span class="sd">        input file.</span>
+
+<span class="sd">    lon : float</span>
+<span class="sd">        Longitude coordinates in degrees to convert (geo. ===&gt; cart.).</span>
+
+<span class="sd">    lat : float</span>
+<span class="sd">        Latitude coordinates in degrees to convert (geo. ===&gt; cart.).</span>
+
+<span class="sd">    x : float</span>
+<span class="sd">        ``x`` coordinates in meters to convert (cart. ===&gt; geo.).</span>
+
+<span class="sd">    y : float</span>
+<span class="sd">        ``y`` coordinates in meters to convert (cart. ===&gt; geo.).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Converted coordinates:</span>
+<span class="sd">    - x, y if geo. ===&gt; cart. was invoked or</span>
+<span class="sd">    - lon, lat if cart. ===&gt; geo. was invoked.</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">             X</span>
+<span class="sd">           ⋰</span>
+<span class="sd">         ⋰</span>
+<span class="sd">        o-------&gt;Y</span>
+<span class="sd">        |</span>
+<span class="sd">        |</span>
+<span class="sd">        V</span>
+<span class="sd">        Z</span>
+
+<span class="sd">    If the azimuth of the SW4 grid is ``0`` this translates to:</span>
+
+<span class="sd">    - X == Northing</span>
+<span class="sd">    - Y == Easting</span>
+<span class="sd">    - Z == Vertical (inverted!)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># No Proj4 projection, use simple transformations</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">proj4</span> <span class="ow">and</span> <span class="n">lon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_out</span><span class="p">,</span> <span class="n">y_out</span> <span class="o">=</span> <span class="n">simple_lonlat2xy</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">az</span><span class="p">,</span>
+                                        <span class="n">m_per_lat</span><span class="p">,</span> <span class="n">m_per_lon</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">proj4</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_out</span><span class="p">,</span> <span class="n">y_out</span> <span class="o">=</span> <span class="n">simple_xy2lonlat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">az</span><span class="p">,</span>
+                                        <span class="n">m_per_lat</span><span class="p">,</span> <span class="n">m_per_lon</span><span class="p">)</span>
+
+    <span class="c1"># Proj4 projection is used, follow these tranformations</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Proj4</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">geo_proj</span> <span class="o">=</span> <span class="n">Proj</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="n">proj4</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="n">geo_proj</span> <span class="o">=</span> <span class="n">Proj</span><span class="p">(</span><span class="n">proj4</span><span class="p">)</span>
+
+        <span class="c1"># sw4 projection (either the default or a user&#39;s choice)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sw4_proj</span> <span class="o">=</span> <span class="n">Proj</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="n">sw4_default_proj</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="n">sw4_proj</span> <span class="o">=</span> <span class="n">Proj</span><span class="p">(</span><span class="n">sw4_default_proj</span><span class="p">)</span>
+
+        <span class="n">xoffset</span><span class="p">,</span> <span class="n">yoffset</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">sw4_proj</span><span class="p">,</span> <span class="n">geo_proj</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">lat0</span><span class="p">)</span>
+
+        <span class="c1"># lon, lat ===&gt; x, y</span>
+        <span class="k">if</span> <span class="n">lon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">lat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x_</span><span class="p">,</span> <span class="n">y_</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">sw4_proj</span><span class="p">,</span> <span class="n">geo_proj</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
+            <span class="n">x_</span> <span class="o">-=</span> <span class="n">xoffset</span>
+            <span class="n">y_</span> <span class="o">-=</span> <span class="n">yoffset</span>
+
+            <span class="n">az_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+            <span class="n">x_out</span> <span class="o">=</span> <span class="n">x_</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span>
+            <span class="n">y_out</span> <span class="o">=</span> <span class="n">x_</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span>
+
+        <span class="c1"># x, y ===&gt; lon, lat</span>
+        <span class="k">elif</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">az_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+            <span class="n">x_</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">+</span> <span class="n">xoffset</span>
+            <span class="n">y_</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">-</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">+</span> <span class="n">yoffset</span>
+
+            <span class="n">x_out</span><span class="p">,</span> <span class="n">y_out</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">geo_proj</span><span class="p">,</span> <span class="n">sw4_proj</span><span class="p">,</span> <span class="n">x_</span><span class="p">,</span> <span class="n">y_</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x_out</span><span class="p">,</span> <span class="n">y_out</span></div>
+
+
+<div class="viewcode-block" id="simple_xy2lonlat"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.simple_xy2lonlat">[docs]</a><span class="k">def</span> <span class="nf">simple_xy2lonlat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lon0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lat0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">az</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                     <span class="n">m_per_lat</span><span class="o">=</span><span class="mf">111319.5</span><span class="p">,</span> <span class="n">m_per_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Project cartesian `x, y` coordinates to geographical `lat, lon`.</span>
+
+<span class="sd">    This transformation is based on the default projection used by</span>
+<span class="sd">    SW4. See section *3.1.1* of the `SW4</span>
+<span class="sd">    &lt;https://geodynamics.org/cig/software/sw4/&gt;`_ User Guide for more</span>
+<span class="sd">    details.</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">             X</span>
+<span class="sd">           ⋰</span>
+<span class="sd">         ⋰</span>
+<span class="sd">        o-------&gt;Y</span>
+<span class="sd">        |</span>
+<span class="sd">        |</span>
+<span class="sd">        V</span>
+<span class="sd">        Z</span>
+
+<span class="sd">    If the azimuth of the SW4 grid is ``0`` this translates to:</span>
+
+<span class="sd">    - X == Northing</span>
+<span class="sd">    - Y == Easting</span>
+<span class="sd">    - Z == Vertical (inverted!)</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : float or sequence</span>
+<span class="sd">        `x` coordianates.</span>
+
+<span class="sd">    y : float or sequence</span>
+<span class="sd">        `y` coordianates.</span>
+
+<span class="sd">    origin : 2-tuple or list</span>
+<span class="sd">        `lat, lon` coordinates of the bottom-right corner of the</span>
+<span class="sd">        `x, y` grid.</span>
+
+<span class="sd">    az : float</span>
+<span class="sd">        Rotation of the grid aroud the vertical (z-axis). See the</span>
+<span class="sd">        SW4 User Guide for more information.</span>
+
+<span class="sd">    m_per_lat : float</span>
+<span class="sd">        How many m to a degree latitude. (default: 111319.5 m)</span>
+
+<span class="sd">    m_per_lon : float</span>
+<span class="sd">        How many m to a degree longitude. If ``None``, `m_per_lat` is</span>
+<span class="sd">        used).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    2x :class:`~numpy.ndarray`</span>
+<span class="sd">        Two arrays with `lon` and `lat` projected points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">az_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">lat0</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">-</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">))</span> <span class="o">/</span> <span class="n">m_per_lat</span>
+
+    <span class="k">if</span> <span class="n">m_per_lon</span><span class="p">:</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">lon0</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">))</span> <span class="o">/</span> <span class="n">m_per_lon</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="p">(</span><span class="n">lon0</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">))</span> <span class="o">/</span>
+               <span class="p">(</span><span class="n">m_per_lat</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))))</span>
+
+    <span class="k">return</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span></div>
+
+
+<div class="viewcode-block" id="simple_lonlat2xy"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.simple_lonlat2xy">[docs]</a><span class="k">def</span> <span class="nf">simple_lonlat2xy</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lat0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">az</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                     <span class="n">m_per_lat</span><span class="o">=</span><span class="mf">111319.5</span><span class="p">,</span> <span class="n">m_per_lon</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Project geographical `lat, lon` to cartesian `x, y` coordinates.</span>
+
+<span class="sd">    This is the inverse function of :func:`~pySW4.utils.utils.xy2latlon`</span>
+<span class="sd">    function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    lon : float or sequence</span>
+<span class="sd">        `lon` coordianates.</span>
+
+<span class="sd">    lat : float or sequence</span>
+<span class="sd">        `lat` coordianates.</span>
+
+<span class="sd">    origin : 2-tuple or list</span>
+<span class="sd">        `lat, lon` coordinates of the bottom-right corner of the</span>
+<span class="sd">        `x, y` grid.</span>
+
+<span class="sd">    az : float</span>
+<span class="sd">        Rotation of the grid aroud the vertical (z-axis). See the</span>
+<span class="sd">        SW4 User Guide for more information.</span>
+
+<span class="sd">    m_per_lat : float</span>
+<span class="sd">        How many m to a degree latitude. (default: 111319.5 m)</span>
+
+<span class="sd">    m_per_lon : float</span>
+<span class="sd">        How many m to a degree longitude. If ``None``, `m_per_lat` is</span>
+<span class="sd">        used).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    2x :class:`~numpy.ndarray`</span>
+<span class="sd">        Two arrays with ``x`` and ``y`` projected points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">az_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">m_per_lon</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_per_lat</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">lat</span> <span class="o">-</span> <span class="n">lat0</span><span class="p">)</span>
+             <span class="o">+</span> <span class="n">m_per_lon</span> <span class="o">*</span> <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">lon0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_per_lat</span> <span class="o">*</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">lat</span> <span class="o">-</span> <span class="n">lat0</span><span class="p">)</span>
+             <span class="o">+</span> <span class="n">m_per_lon</span> <span class="o">*</span> <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">lon0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_per_lat</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">lat</span> <span class="o">-</span> <span class="n">lat0</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">lon0</span><span class="p">)</span>
+                             <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">))))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_per_lat</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">az_</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">lat</span> <span class="o">-</span> <span class="n">lat0</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">lon</span> <span class="o">-</span> <span class="n">lon0</span><span class="p">)</span>
+                          <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">az_</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="nearest_values"><a class="viewcode-back" href="../../../packages/pySW4.utils.utils.html#pySW4.utils.utils.nearest_values">[docs]</a><span class="k">def</span> <span class="nf">nearest_values</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">retvalue</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the indices (or elements) of an array with a threshold range</span>
+<span class="sd">    around a central value.</span>
+
+<span class="sd">    If `retvalue` is true, the elements of the array are returned,</span>
+<span class="sd">    otherwise a True or False array of the indices of these elements</span>
+<span class="sd">    is returned.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; array = np.random.randint(-10, 10, size=10)</span>
+<span class="sd">    &gt;&gt;&gt; print(array)</span>
+<span class="sd">    [ 3 -4  9  6  8 -1 -4 -7 -6  7]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; idx = nearest_values(array, 5, 2)</span>
+<span class="sd">    &gt;&gt;&gt; print(idx)</span>
+<span class="sd">    &gt;&gt;&gt; print(nearest_values(array, 5, 2, retvalue=True))</span>
+<span class="sd">    &gt;&gt;&gt; print array[idx]</span>
+<span class="sd">    [ True False False  True False False False False False  True]</span>
+<span class="sd">    [3 6 7]</span>
+<span class="sd">    [3 6 7]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>  <span class="c1"># make sure aray is a numpy array</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">value</span> <span class="o">-</span> <span class="n">threshold</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span> <span class="n">threshold</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">array</span> <span class="o">&gt;=</span> <span class="n">left</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">array</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">retvalue</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">array</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">idx</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="https://github.com/shaharkadmiel/pySW4">View pySW4 on GitHub</a> | </li>
+
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pySW4 &#39;0.3.0&#39; documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2016, Shahar Shani-Kadmiel, Omry Volk, Tobias Megies.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
