@@ -42,7 +42,7 @@ cp -pRv $DOCSDIR/build/html/{.[!.],}* $DSTDIR
 rm -rfv docs pySW4
 
 echo
-echo "Adding new doc files to be commited, commiting changes"
+echo "Adding new doc files to be committed, committing changes"
 git add -A
 git commit -m "Generated gh-pages for `git log $CURRENT_BRANCH -1 --pretty=short --abbrev-commit`" && git push origin gh-pages
 
