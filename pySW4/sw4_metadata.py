@@ -5,14 +5,14 @@ Parsing routines for SW4 input and output files and directories.
 .. module:: sw4_metadata
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
     Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
@@ -423,7 +423,7 @@ def _parse_input_file_and_folder(input_file=None, folder=None):
 
     if input_file:
         input_folder = os.path.dirname(os.path.abspath(input_file))
-        input_ = parse_input_file(input_file)
+        input_ = Inputfile(input_file)
     else:
         input_ = None
 

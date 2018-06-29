@@ -5,10 +5,10 @@ Routines for reading a line or an array of synthetic waveforms.
 .. module:: waveforms
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :license:
     This code is distributed under the terms of the

@@ -5,14 +5,14 @@ Python module to handle SW4 images of Maps or Cross-Sections.
 .. module:: image
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
     Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
@@ -49,6 +49,8 @@ from ..headers import (
     IMAGE_HEADER_DTYPE, PATCH_HEADER_DTYPE, IMAGE_PLANE,
     IMAGE_MODE_DISPLACEMENT, IMAGE_MODE_VELOCITY, IMAGE_PRECISION,
     STF)
+
+import copy
 
 
 class Image():
@@ -506,23 +508,27 @@ class Image():
             return None
 
     def __str__(self):
-        string = ('        Image information :\n'
-                  '        ----------------- :\n'
-                  '                 Filename : {}\n'
-                  '                Precision : {}\n'
-                  '        Number of patches : {}\n'
-                  '                  Time, s : {}\n'
-                  '                    Plane : {}\n'
-                  '               Coordinate : {}\n'
-                  '                     Mode : {}, {}\n'
-                  'Curvilinear grid included : {}\n'
-                  '             Image extent : {}\n'
-                  '            Creation time : {}\n'.format(
-        str(self.filename).rsplit('/', 1)[-1], self.precision,
-        self.number_of_patches, self.time,
-        self.plane, self.coordinate, self.quantity_symbol,
-        self.quantity_unit, True if self.gridinfo else False,
-        self.extent, self.creation_time))
+        string = (
+            '        Image information :\n'
+            '        ----------------- :\n'
+            '                 Filename : {}\n'
+            '                Precision : {}\n'
+            '        Number of patches : {}\n'
+            '                  Time, s : {}\n'
+            '                    Plane : {}\n'
+            '               Coordinate : {}\n'
+            '                     Mode : {}, {}\n'
+            'Curvilinear grid included : {}\n'
+            '             Image extent : {}\n'
+            '            Creation time : {}\n'
+        ).format(
+            str(self.filename).rsplit('/', 1)[-1], self.precision,
+            self.number_of_patches, self.time,
+            self.plane, self.coordinate, self.quantity_symbol,
+            self.quantity_unit, True if self.gridinfo else False,
+            self.extent, self.creation_time
+        )
+
         return string
 
     def copy(self):
@@ -637,7 +643,6 @@ class Patch():
 
         if not ax:
             fig, ax = plt.subplots()
-            return_items = [fig, ax]
         else:
             fig = None
 
@@ -725,20 +730,23 @@ class Patch():
             return im
 
     def __str__(self):
-        string = ('Patch information :\n'
-                  '----------------- :\n'
-                  '           Number : {}\n'
-                  '       Spacing, m : {}\n'
-                  '          Zmin, m : {}\n'
-                  '           Extent : {}\n'
-                  '               ni : {}\n'
-                  '               nj : {}\n'
-                  '              Max : {}\n'
-                  '              Min : {}\n'
-                  '              STD : {}\n'
-                  '              RMS : {}\n'.format(
-        self.number, self.h, self.zmin, self.extent, self.ni, self.nj,
-        self._max, self._min, self._std, self._rms))
+        string = (
+            'Patch information :\n'
+            '----------------- :\n'
+            '           Number : {}\n'
+            '       Spacing, m : {}\n'
+            '          Zmin, m : {}\n'
+            '           Extent : {}\n'
+            '               ni : {}\n'
+            '               nj : {}\n'
+            '              Max : {}\n'
+            '              Min : {}\n'
+            '              STD : {}\n'
+            '              RMS : {}\n'
+        ).format(
+            self.number, self.h, self.zmin, self.extent, self.ni, self.nj,
+            self._max, self._min, self._std, self._rms
+        )
         return string
 
     @property

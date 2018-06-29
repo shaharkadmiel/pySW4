@@ -5,10 +5,10 @@ Convert a sequencial set of .png images to a .mp4 movies.
 .. module:: png2mp4
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :license:
     This code is distributed under the terms of the

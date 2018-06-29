@@ -5,14 +5,14 @@ Plotting routines for SW4 images of Maps or Cross-Sections.
 .. module:: image
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (€€€€)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
     Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
@@ -25,12 +25,12 @@ Plotting routines for SW4 images of Maps or Cross-Sections.
 """
 from __future__ import absolute_import, print_function, division
 
-import glob
+from glob import glob
 import os
 import re
 
 import subprocess
-import warnings
+from warnings import warn
 from io import BytesIO
 
 import numpy as np
@@ -48,6 +48,7 @@ except ImportError:
 
 from ..postp import read_image
 from ..sw4_metadata import _parse_input_file_and_folder
+from ..headers import STF
 
 
 def image_files_to_movie(
@@ -87,12 +88,19 @@ def image_files_to_movie(
         global_min = np.inf
         global_max = -np.inf
         for file_ in files:
-            image = read_image(
-                file_, input_file=input_file,
-                stf=stf)
+            try:
+                image = read_image(
+                    file_, input_file=input_file,
+                    stf=stf)
+            except Exception as e:
+                warn(
+                    'Unable to read {}: {}. Skipping this file...'.format(
+                        file_, e
+                    )
+                )
             patch = image.patches[patch_number]
-            global_min = min(global_min, patch.min)
-            global_max = max(global_max, patch.max)
+            global_min = min(global_min, patch._min)
+            global_max = max(global_max, patch._max)
         if image.is_divergent:
             abs_max = max(abs(global_min), abs(global_max))
             plot_kwargs["vmin"] = -abs_max
@@ -131,7 +139,7 @@ def image_files_to_movie(
         bytes_io.close()
         sub = subprocess.Popen(cmdstring, stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
+
         stdout, stderr = sub.communicate(png_data)
         if debug:
             print("###### ffmpeg stdout")
@@ -193,6 +201,8 @@ def create_image_plots(
                "(option `stf`).")
         raise ValueError(msg)
 
+    stf = stf or STF[input_.source[0].type].type
+
     if not os.path.isdir(folder):
         msg = "Not a folder: '{}'".format(folder)
         raise ValueError(msg)
@@ -212,11 +222,18 @@ def create_image_plots(
     for files in grouped_files.values():
         # create individual plots as .png
         for file_ in files:
-            image = read_image(
-                file_, stf=stf,
-                input_file=input_file)
+            try:
+                image = read_image(
+                    file_, stf=stf,
+                    input_file=input_file)
+            except Exception as e:
+                warn(
+                    'Unable to read {}: {}. Skipping this file...'.format(
+                        file_, e
+                    )
+                )
             outfile = file_.rsplit(".", 1)[0] + ".png"
-            fig, _, _ = image.patches[0].plot(cmap=cmap)
+            fig, _, _ = image.plot(cmap=cmap)
             fig.savefig(outfile)
             plt.close(fig)
         # if several individual files in the group, also create a movie as .mp4

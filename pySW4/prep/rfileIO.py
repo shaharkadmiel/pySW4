@@ -5,7 +5,7 @@ Python module to read and write rfiles.
 .. module:: rfileIO
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
     Shahar Shani-Kadmiel
@@ -17,36 +17,35 @@ Python module to read and write rfiles.
 """
 from __future__ import absolute_import, print_function, division
 
-import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from warnings import warn
 
 from . import material_model as mm
 
 flush = sys.stdout.flush()
+default_proj = b'+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
 
 RFILE_HEADER_DTYPE = np.dtype([
-        ('magic'       , 'int32'   ),
-        ('precision'   , 'int32'   ),
-        ('attenuation' , 'int32'   ),
-        ('az'          , 'float64' ),
-        ('lon0'        , 'float64' ),
-        ('lat0'        , 'float64' ),
-        ('mlen'        , 'int32'   )
-    ])
+    ('magic'       , 'int32'   ),
+    ('precision'   , 'int32'   ),
+    ('attenuation' , 'int32'   ),
+    ('az'          , 'float64' ),
+    ('lon0'        , 'float64' ),
+    ('lat0'        , 'float64' ),
+    ('mlen'        , 'int32'   )
+])
 
 BLOCK_HEADER_DTYPE = np.dtype([
-        ('hh'  ,  'float64' ),
-        ('hv'  ,  'float64' ),
-        ('z0'  ,  'float64' ),
-        ('nc'  ,  'int32'   ),
-        ('ni'  ,  'int32'   ),
-        ('nj'  ,  'int32'   ),
-        ('nk'  ,  'int32'   )
-    ])
+    ('hh'  ,  'float64' ),
+    ('hv'  ,  'float64' ),
+    ('z0'  ,  'float64' ),
+    ('nc'  ,  'int32'   ),
+    ('ni'  ,  'int32'   ),
+    ('nj'  ,  'int32'   ),
+    ('nk'  ,  'int32'   )
+])
 
 DATA_PRECISION = {4: np.float32, 8: np.float64}
 
@@ -72,14 +71,12 @@ TITLES_AND_LABELS = {
     4 : {'name'      : 'Qs',
          'symbol'    : 'Qs',
          'unit'      : ''},
-    }
+}
 
 
 def write_hdr(f, magic=1, precision=4, attenuation=1,
               az=0., lon0=33.5, lat0=28.0,
-              proj_str=('+proj=utm +zone=36 +datum=WGS84 '
-                        '+units=m +no_defs'),
-              nb=1):
+              proj_str=default_proj, nb=1):
     """
     Write rfile header.
 
@@ -286,7 +283,7 @@ def write_properties(f, vp, nc, vs=None, rho=None, qp=None, qs=None):
     """
     Write material properties at a point `i`, `j` in block `b`.
 
-    This is a convinient function to use while looping over `i`, `j` in
+    This is a convenient function to use while looping over `i`, `j` in
     a specific block `b` for writing out material properties at each
     index `k`. At the very least `vp` should be provided. If only `vp`
     is provided, the other properties are calculated using the
@@ -303,7 +300,7 @@ def write_properties(f, vp, nc, vs=None, rho=None, qp=None, qs=None):
         the cursor in the right place in the file.
 
     vp : array-like
-        P wave velocity at indicies of `k` in m/s.
+        P wave velocity at indices of `k` in m/s.
 
     nc : int
         Number of components to write out. Either 3 (`rho`, `vp`, and
@@ -311,19 +308,19 @@ def write_properties(f, vp, nc, vs=None, rho=None, qp=None, qs=None):
         ``attenuation=1``).
 
     vs : array-like, optional
-        S wave velocity at indicies of `k` in m/s. If not given, `vs` is
+        S wave velocity at indices of `k` in m/s. If not given, `vs` is
         calculated from :func:`~..material_model.get_vs`.
 
     rho : array-like, optional
-        Density at indicies of `k` in kg/m^3. If not given, `rho` is
+        Density at indices of `k` in kg/m^3. If not given, `rho` is
         calculated from :func:`~..material_model.get_rho`.
 
     qp : array-like, optional
-        P quality factor at indicies of `k`. If not given, `qp` is
+        P quality factor at indices of `k`. If not given, `qp` is
         calculated from :func:`~..material_model.get_qp`.
 
     qs : array-like, optional
-        S quality factor at indicies of `k`. If not given, `qs` is
+        S quality factor at indices of `k`. If not given, `qs` is
         calculated from :func:`~..material_model.get_qs`.
     """
 
@@ -331,15 +328,18 @@ def write_properties(f, vp, nc, vs=None, rho=None, qp=None, qs=None):
 
     k_array = np.empty((vp.size, nc), np.float32)
     vs = vs or mm.get_vs(vp)
-    rho = rho or mm.get_rho(vp)
-    qs = qs or mm.get_qs(vs)
+    rho = rho or mm.get_rho(vp) * 1e3
+    qs = qs or mm.get_qs(vs) * 1e3
     qp = qp or mm.get_qp(qs)
 
-    k_array[:, 0] = rho * 1e3
+    k_array[:, 0] = rho
     k_array[:, 1] = vp * 1e3
-    k_array[:, 2] = vs * 1e3
-    k_array[:, 3] = qp
-    k_array[:, 4] = qs
+    k_array[:, 2] = vs
+    try:
+        k_array[:, 3] = qp
+        k_array[:, 4] = qs
+    except IndexError:
+        pass
 
     k_array.tofile(f)
 
@@ -465,19 +465,23 @@ class Model():
                 self.read_block_data_section(block_number)
 
     def __str__(self):
-        string = ('Model information :\n'
-                  '----------------- :\n'
-                  '         Filename : {}\n'
-                  '            lon 0 : {}\n'
-                  '            lat 0 : {}\n'
-                  '          Azimuth : {}\n'
-                  '     Proj4 string : {}\n'
-                  ' Number of blocks : {}\n'.format(self.filename,
-                                                   self.lon0,
-                                                   self.lat0,
-                                                   self.az,
-                                                   self.proj_str,
-                                                   self.nb))
+        string = (
+            'Model information :\n'
+            '----------------- :\n'
+            '         Filename : {}\n'
+            '            lon 0 : {}\n'
+            '            lat 0 : {}\n'
+            '          Azimuth : {}\n'
+            '     Proj4 string : {}\n'
+            ' Number of blocks : {}\n'
+        ).format(
+            self.filename,
+            self.lon0,
+            self.lat0,
+            self.az,
+            self.proj_str,
+            self.nb
+        )
         return string
 
     def read_block_data_section(self, block_number):
@@ -514,11 +518,9 @@ class Model():
             block = self.blocks[block_number - 1]
             for b in self.blocks:
                 if b.number < block_number:
-                    self.f.seek(self.precision
-                                * b.ni
-                                * b.nj
-                                * b.nk
-                                * b.nc, 1)
+                    self.f.seek(
+                        self.precision * b.ni * b.nj * b.nk * b.nc, 1
+                    )
                     break
             block._read_block_data_section(self.f, self.precision)
 
@@ -824,23 +826,27 @@ class Block():
         self.yzextent = self.y_extent + self.z_extent
 
     def __str__(self):
-        string = ('Block information :\n'
-                  '----------------- :\n'
-                  '           Number : {}\n'
-                  '  Horizontal h, m : {}\n'
-                  '    Vertical h, m : {}\n'
-                  '           z 0, m : {}\n'
-                  '               ni : {}\n'
-                  '               nj : {}\n'
-                  '               nk : {}\n'
-                  '               nc : {}\n'.format(self.number,
-                                                   self.hh,
-                                                   self.hv,
-                                                   self.z0,
-                                                   self.ni,
-                                                   self.nj,
-                                                   self.nk,
-                                                   self.nc))
+        string = (
+            'Block information :\n'
+            '----------------- :\n'
+            '           Number : {}\n'
+            '  Horizontal h, m : {}\n'
+            '    Vertical h, m : {}\n'
+            '           z 0, m : {}\n'
+            '               ni : {}\n'
+            '               nj : {}\n'
+            '               nk : {}\n'
+            '               nc : {}\n'
+        ).format(
+            self.number,
+            self.hh,
+            self.hv,
+            self.z0,
+            self.ni,
+            self.nj,
+            self.nk,
+            self.nc
+        )
         return string
 
     def _read_block_data_section(self, f, precision):
@@ -996,8 +1002,9 @@ class CrossSection():
 
         # split the properties array into block with different extents
         indices = np.cumsum([block.nk for block in model.blocks[1:-1]])
-        self.extents = [self.h_extent
-                        + block.z_extent for block in model.blocks[1:]]
+        self.extents = [
+            self.h_extent + block.z_extent for block in model.blocks[1:]
+        ]
 
         self.data = np.vsplit(properties, indices)
 

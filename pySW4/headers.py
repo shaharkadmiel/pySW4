@@ -5,14 +5,14 @@ Some dictionaries and data_types for SW4 output files.
 .. module:: headers
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
     Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 

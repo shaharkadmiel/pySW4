@@ -5,7 +5,7 @@ Python module with general utilities for making plotting easier.
 .. module:: utils
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
     Shahar Shani-Kadmiel

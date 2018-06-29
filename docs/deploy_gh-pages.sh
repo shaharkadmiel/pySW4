@@ -21,6 +21,9 @@ rm -rf build
 echo "Remaking the docs..."
 make html
 
+echo "Adding Google Analytics (gtag.js) to index.html"
+sed -i ''  '/<head>/r gtag.js' $DOCSDIR/build/html/index.html
+
 echo
 echo "Coping new docs to $TMPDIR and switching branch to gh-pages"
 cp -pRv build $TMPDIR

@@ -9,14 +9,14 @@ propagation with SW4 in all phases of the task (preprocessing,
 post-processing and runtime visualization).
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
     Tobias Megies (megies@geophysik.uni-muenchen.de)
 
 :copyright:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
     Omry Volk (omryv@post.bgu.ac.il)
 
@@ -29,13 +29,15 @@ post-processing and runtime visualization).
 """
 from __future__ import absolute_import, print_function, division
 
-__version__ = '0.3.0'
+__version__ = '0.3.5'
 
-from .postp import read_image, read_stations
-from . import plotting
-from . import prep
 from . import utils
+from . import plotting
+from .postp import read_image, read_stations
+
+from . import prep
+
 from .sw4_metadata import Inputfile, Outputfile, read_metadata
 
-# from .plotting.utils import set_matplotlib_rc_params
-# set_matplotlib_rc_params()
+from .plotting.utils import set_matplotlib_rc_params
+set_matplotlib_rc_params()

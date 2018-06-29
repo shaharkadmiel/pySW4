@@ -6,7 +6,7 @@ parameters of the computational domain.
 .. module:: material_model
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
     Shahar Shani-Kadmiel
@@ -27,7 +27,9 @@ def get_vs(vp):
     """
     Calculate Shear-wave velocity based on Brocher (2008).
 
-    .. note:: Shear-wave velocity is forced to be greater than :math:`V_S>V_P / \\sqrt{2}`.
+    .. note::
+        Shear-wave velocity is forced to be greater than
+        :math:`V_P / \\sqrt{2}`.
 
     Parameters
     ----------

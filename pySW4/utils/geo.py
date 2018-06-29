@@ -6,7 +6,7 @@ with gdal.
 
 :author:
     Shahar Shani-Kadmiel
-    kadmiel@post.bgu.ac.il
+    s.shanikadmiel@tudelft.nl
 
 :copyright:
     Shahar Shani-Kadmiel
@@ -22,10 +22,15 @@ from scipy import ndimage
 import numpy as np
 import sys
 import os
-import zipfile
+from zipfile import ZipFile, BadZipFile
+import tarfile
+from tarfile import ReadError
+from fnmatch import fnmatch
 import shutil
 import copy
 from warnings import warn
+
+from ..plotting import calc_intensity
 
 try:
     from osgeo import gdal, osr, gdal_array
@@ -38,10 +43,78 @@ GDAL_INTERPOLATION = {'nearest' : gdal.GRA_NearestNeighbour,
                       'cubic'   : gdal.GRA_Cubic,
                       'lanczos' : gdal.GRA_Lanczos}
 
+def gdalopen(filename, substring='*_dem.tif'):
+    """
+    Wrapper function around :func:`gdal.Open`.
+
+    :func:`gdal.Open` returns ``None`` if no file is read. This wrapper
+    function will try to read the `filename` directly but if ``None``
+    is returned, several other options, including compressed file
+    formats ('zip', 'gzip', 'tar') and url retrieval are attempted.
+    """
+
+    ds = gdal.Open(filename)
+    if not ds:
+        # try to open compressed file container and provide more info
+        # in case read is unsuccessful
+        try:
+            f_ = ZipFile(filename)
+            contents = f_.namelist()
+            prefix_ = 'zip'
+
+        except BadZipFile:
+            try:
+                f_ = tarfile.open(filename)
+                contents = f_.getnames()
+                prefix_ = 'tar'
+            except ReadError:
+                # gzip:
+                prefix_ = 'gzip'
+                filename_ = '/vsi{}/'.format(prefix_) + filename
+
+                ds = gdal.Open(filename_)
+                if ds:
+                    return ds
+
+                # url:
+                prefix_ = 'curl'
+                filename_ = '/vsi{}/'.format(prefix_) + filename
+
+                ds = gdal.Open(filename_)
+                if ds:
+                    return ds
+
+        for item in contents:
+            if fnmatch(item, substring) or substring in item:
+                filename_ = ('/vsi{}/'.format(prefix_) +
+                             os.path.join(filename, item))
+                ds = gdal.Open(filename_)
+                if ds:
+                    return ds
+
+        msg = (
+            "No file with matching substring '{}' was found in {}, "
+            'which contains:\n'
+             '   {}\n'
+            "try:\n{}"
+            ).format(substring, filename, contents,
+                     '\n'.join(
+                ['/vsi{}/'.format(prefix_) + os.path.join(filename, item)
+                 for item in contents]))
+
+        raise OSError(msg)
+
+    return ds
+
 
 class GeoTIFF():
     """
     Class for handling GeoTIFF files.
+
+    In the GeoTIFF file format, it is assumed that the origin of the
+    grid is at the top-left (north-west) corner. Hence, ``dx`` is
+    positive in the ``x`` or ``lon`` direction and ``dy`` is negative
+    in the ``y`` or ``lat`` direction.
 
     .. note:: This class should be populated by
               :func:`~pySW4.utils.geo.read_GeoTIFF` or
@@ -49,24 +122,47 @@ class GeoTIFF():
     """
 
     def __init__(self):
-        self.path = None
-        self.name = None
-        self.dtype = np.int16
+        self.path = './'
+        self.name = ''
         self.nodata = np.nan
         self.w = 0.
-        self.e = 0.
-        self.s = 0.
         self.n = 0.
-        self.extent = (0, 0, 0, 0)
-        self.proj4 = ''
+        self.proj4 = b'+proj=longlat +datum=WGS84 +no_defs'
         self.dx = 0.
-        self.dy = 0.
-        self.nx = 0
-        self.ny = 0
+        self.dy = -0.
 
-        self.elev = np.array([])
+        self.z = np.empty((1, 1), dtype=np.int16)
 
-    def _read(self, filename, rasterBand, verbose=False):
+    @property
+    def elev(self):
+        return self.z
+
+    @property
+    def nx(self):
+        return self.z.shape[1]
+
+    @property
+    def ny(self):
+        return self.z.shape[0]
+
+    @property
+    def e(self):
+        return self.w + (self.nx) * self.dx
+
+    @property
+    def s(self):
+        return self.n + (self.ny) * self.dy
+
+    @property
+    def extent(self):
+        return self.w, self.e, self.s, self.n
+
+    @property
+    def dtype(self):
+        return self.z.dtype
+
+    def _read(self, filename, rasterBand, substring='*_dem.tif',
+              verbose=False):
         """
         Private method for reading a GeoTIFF file.
         """
@@ -77,7 +173,11 @@ class GeoTIFF():
                 print('Reading GeoTIFF file: %s' % filename)
                 sys.stdout.flush()
 
-            src_ds = gdal.Open(filename)
+            src_ds = gdalopen(filename, substring)
+            if not src_ds:
+                filename = '/vsizip/' + filename
+                print('trying zipfile', filename)
+                src_ds = gdal.Open(filename)
         except AttributeError:
             if verbose:
                 print('Updating GeoTIFF file...')
@@ -86,30 +186,19 @@ class GeoTIFF():
 
         self._src_ds = src_ds
         band = src_ds.GetRasterBand(rasterBand)
-        self.dtype = gdal_array.GDALTypeCodeToNumericTypeCode(band.DataType)
+        # self.dtype = gdal_array.GDALTypeCodeToNumericTypeCode(band.DataType)
+        self.z = band.ReadAsArray()
+
         self.nodata = band.GetNoDataValue()
         self.geotransform = src_ds.GetGeoTransform()
         self.w = self.geotransform[0]
         self.n = self.geotransform[3]
         self.dx = self.geotransform[1]
         self.dy = self.geotransform[5]
-        self.nx = band.XSize
-        self.ny = band.YSize
 
-        self.e = self.w + self.nx * self.dx
-        self.s = self.n + self.ny * self.dy
-
-        self.extent = (self.w, self.e, self.s, self.n)
-        self.proj4 = osr.SpatialReference(self._src_ds.GetProjection())\
-                        .ExportToProj4()
-
-        self.elev = band.ReadAsArray()
-
-    def _update(self):
-        """
-        Update GeoTIFF object by closing and reopening the dataset
-        """
-        pass
+        self.proj4 = (osr.SpatialReference(
+            self._src_ds.GetProjection()).ExportToProj4() or
+            self.proj4)
 
     def __str__(self):
         string = '\nGeoTIFF info:\n'
@@ -164,7 +253,7 @@ class GeoTIFF():
         """
         return np.meshgrid(self.x, self.y)
 
-    def resample(self, by=None, to=None, order=0, keep_extent=False):
+    def resample(self, by=None, to=None, order=0):
         """
         Method to resample the data either `by` a factor or `to`
         the specified spacing.
@@ -197,12 +286,6 @@ class GeoTIFF():
             - 3 - cubic (slower)
             - ...
 
-        keep_extent : bool
-            Resampling interpolates the data onto a new grid with the
-            desired spacing. This may result in a change of the extent
-            of the data. To keep the extent, set `keep_extent` to
-            ``True``.
-
             **Note** that this may result in slightly different
             spacing than desired and more importantly, may cause a
             **discrepency** between `x` and `y` spacing.
@@ -214,22 +297,12 @@ class GeoTIFF():
             raise ValueError(msg)
 
         if to:
-            by = abs(self.dx / to)
+            by = self.dx / to
 
         if by:
-            to = abs(self.dx / by)
+            to = self.dx / by
 
-        self.elev = ndimage.zoom(self.elev, by, order=order)
-        self.ny, self.nx = self.elev.shape
-        if keep_extent:
-            self.dy, self.dx = ((self.s - self.n) / (self.ny - 1),
-                                (self.e - self.w) / (self.nx - 1))
-        else:
-            self.dy, self.dx = -to, to
-            self.e = self.w + self.nx * self.dx
-            self.s = self.n + self.ny * self.dy
-
-            self.extent = (self.w, self.e, self.s, self.n)
+        self.z = ndimage.zoom(self.z, by, order=order)
 
     def reproject(self, epsg=None, proj4=None, match=None, spacing=None,
                   interpolation='nearest', error_threshold=0.125,
@@ -343,9 +416,8 @@ class GeoTIFF():
             tx = osr.CoordinateTransformation(srcSRS, dstSRS)
 
             (ulx, uly, ulz) = tx.TransformPoint(self.w, self.n)
-            (lrx, lry, lrz) = tx.TransformPoint(
-                                self.w + self.dx * self.nx,
-                                self.n + self.dy * self.ny)
+            (lrx, lry, lrz) = tx.TransformPoint(self.w + self.dx * self.nx,
+                                                self.n + self.dy * self.ny)
 
             gdal_dtype = gdal_array.NumericTypeCodeToGDALTypeCode(self.dtype)
 
@@ -387,132 +459,10 @@ class GeoTIFF():
             assert res == 0
             self._read(dst_ds, 1, verbose)
 
-    # def reproject(self, epsg=None, proj4=None, match=None,
-    #               error_threshold=0.125, target_filename=None):
-    #     """
-    #     Reproject the data from the current projection to the specified
-    #     target projection `epsg` or `proj4` or to `match` an
-    #     existing GeoTIFF file.
-
-    #     .. warning:: **Watch Out!** This operation is performed in place
-    #                  on the actual data. The raw data will no longer be
-    #                  accessible afterwards. To keep the original data,
-    #                  use the :meth:`~pySW4.utils.geo.GeoTIFF.copy`
-    #                  method to create a copy of the current object.
-
-    #     Parameters
-    #     ----------
-    #     epsg : int
-    #         The target projection EPSG code. See the
-    #         `Geodetic Parameter Dataset Registry
-    #         <http://www.epsg-registry.org/>`_ for more information.
-
-    #     proj4 : str
-    #         The target Proj4 string. If the EPSG code is unknown or a
-    #         custom projection is required, a Proj4 string can be passed.
-    #         See the `Proj4 <https://trac.osgeo.org/proj/wiki/GenParms>`_
-    #         documentation for a list of general Proj4 parameters.
-
-    #     match : str or :class:`~pySW4.utils.geo.GeoTIFF` instance
-    #         Path (relative or absolute) to an existing GeoTIFF file or
-    #         :class:`~pySW4.utils.geo.GeoTIFF` instance (already in
-    #         memory) to match size and projection of. Current data is
-    #         resampled to match the shape and number of pixels of the
-    #         existing GeoTIFF file or object.
-    #         It is assumed that both GeoTIFF objects cover the same
-    #         extent.
-
-    #     error_threshold : float
-    #         Error threshold for transformation approximation in pixel
-    #         units. (default is 0.125 for compatibility with  gdalwarp)
-
-    #     target_filename : str
-    #         If a target filename is given then the reprojected data is
-    #         saved as target_filename and read into memory replacing
-    #         the current data. This is faster than reprojecting and then
-    #         saving. Otherwise the
-    #         :meth:`~pySW4.utils.geo.GeoTIFF.write_GeoTIFF` method can be
-    #         used to save the data at a later point if further
-    #         manipulations are needed.
-
-    #     Notes
-    #     -----
-    #     Examples of some EPSG codes and their equivalent Proj4 strings
-    #     are::
-
-    #         4326   -> '+proj=longlat +datum=WGS84 +no_defs'
-
-    #         32636  -> '+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs'
-
-    #         102009 -> '+proj=lcc +lat_1=20 +lat_2=60 +lat_0=40
-    #                    +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m
-    #                    +no_defs'
-
-    #     and so on ... See the `Geodetic Parameter Dataset Registry
-    #     <http://www.epsg-registry.org/>`_ for more information.
-    #     """
-    #     if epsg and proj4 and match:
-    #         msg = 'Only `epsg`, `proj4`, or `match` should be specified.'
-    #         raise ValueError(msg)
-    #     elif not epsg and not proj4 and not match:
-    #         msg = '`epsg`, `proj4`, or `match` MUST be specified.'
-    #         raise ValueError(msg)
-
-    #     if not target_filename:
-    #         target_filename = 'dst_temp.tif'
-
-    #     dstSRS = osr.SpatialReference()
-
-    #     if epsg or proj4:
-    #         try:
-    #             dstSRS.ImportFromEPSG(epsg)
-    #         except TypeError:
-    #             dstSRS.ImportFromProj4(proj4)
-
-    #         temp_ds = gdal.AutoCreateWarpedVRT(self._src_ds,
-    #                                            None,
-    #                                            dstSRS.ExportToWkt(),
-    #                                            gdal.GRA_NearestNeighbour,
-    #                                            error_threshold)
-    #         dst_ds = gdal.GetDriverByName('GTiff').CreateCopy(target_filename,
-    #                                                           temp_ds)
-
-    #     # isinstance(match, GeoTIFF)
-    #     elif match:
-    #         self.write_GeoTIFF('src_temp.tif')
-    #         src_ds = gdal.Open('src_temp.tif')
-    #         src_proj = src_ds.GetProjection()
-    #         src_geotrans = src_ds.GetGeoTransform()
-
-    #         if type(match) is str:
-    #             match = read_GeoTIFF(match, 1)
-
-    #         gdal_dtype = gdal_array.NumericTypeCodeToGDALTypeCode(self.dtype)
-    #         dstSRS.ImportFromProj4(match.proj4)
-    #         dst_ds = gdal.GetDriverByName('GTiff').Create(target_filename,
-    #                                                       match.nx,
-    #                                                       match.ny,
-    #                                                       1,
-    #                                                       gdal_dtype)
-    #         dst_ds.SetGeoTransform(match.geotransform)
-    #         dst_ds.SetProjection(dstSRS.ExportToWkt())
-
-    #         gdal.ReprojectImage(src_ds, dst_ds,
-    #                             src_proj, dstSRS.ExportToWkt(),
-    #                             gdal.GRA_NearestNeighbour,
-    #                             error_threshold)
-    #         os.remove('src_temp.tif')
-
-    #     dst_ds = None
-    #     self._read(target_filename, 1)
-    #     try:
-    #         os.remove('dst_temp.tif')
-    #     except OSError:
-    #         pass
-
-    def keep(self, w, e, s, n):
+    def set_new_extent(self, w, e, s, n, fill_value=None, mask=False):
         """
-        Keep a subset array from a GeoTIFF file.
+        Change the extent of a GeoTIFF file, trimming the boundaries or
+        padding them as needed.
 
         .. warning:: **Watch Out!** This operation is performed in place
             on the actual data. The raw data will no longer be
@@ -522,37 +472,73 @@ class GeoTIFF():
 
         Parameters
         ----------
-        w, e, s, n: float
+        w, e, s, n : float
             The west-, east-, south-, and north-most coordinate to keep
             (may also be the xmin, xmax, ymin, ymax coordinate).
+
+        fill_value : float or None
+            Value to pad the data with incase extent is expanded beyond
+            the data. By default this is set to the `nodata` value.
+
+        mask : bool
+            If set to ``True``, data is masked using the `fill_value`.
         """
+        assert w < e, '`w` must be less than `e`'
+        assert s < n, '`s` must be less than `n`'
 
-        if (self.w < w < self.e and
-                self.w < e < self.e and
-                self.s < s < self.n and
-                self.s < n < self.n):
+        npw = int((w - self.w) / self.dx)
+        npe = int((e - self.w) / self.dx)
 
-            x_start = int((w - self.w) / self.dx)
-            x_stop  = int((e - self.w) / self.dx) + 1
+        nps = int((s - self.n) / self.dy)
+        npn = int((n - self.n) / self.dy)
 
-            y_start = int((n - self.n) / self.dy)
-            y_stop  = int((s - self.n) / self.dy) + 1
+        # trimming all dimensions
+        if 0 <= npw < npe <= self.nx and 0 <= npn < nps <= self.ny:
+            self.z = self.z[npn: nps, npw: npe]
 
-            # update class data
-            self.e = self.w + x_stop  * self.dx
-            self.w = self.w + x_start * self.dx
-            self.s = self.n + y_stop  * self.dy
-            self.n = self.n + y_start * self.dy
-
-            self.extent = (self.w, self.e, self.s, self.n)
-            self.elev = self.elev[y_start:y_stop, x_start:x_stop]
-
-            self.nx = self.elev.shape[1]
-            self.ny = self.elev.shape[0]
+        # expanding or trimming each dimension independently
         else:
-            msg = ('One or more of the coordinates given is out of bounds:\n'
-                   '{} < `w` and `e` < {} and {} < `s` and `n` < {}')
-            raise ValueError(msg.format(self.w, self.e, self.s, self.n))
+            fill_value = fill_value or self.nodata
+
+            # first handle east and south boundaries
+            if npe > self.nx:
+                self.z = np.pad(self.z, ((0, 0), (0, npe - self.nx)),
+                                'constant', constant_values=fill_value)
+            else:
+                self.z = self.z[:, :npe]
+            if nps > self.ny:
+                self.z = np.pad(self.z, ((0, nps - self.ny), (0, 0)),
+                                'constant', constant_values=fill_value)
+            else:
+                self.z = self.z[:nps, :]
+
+            # now handle west and north boundaries
+            if npw < 0:
+                self.z = np.pad(self.z, ((0, 0), (-npw, 0)),
+                                'constant', constant_values=fill_value)
+            else:
+                self.z = self.z[:, npw:]
+            if npn < 0:
+                self.z = np.pad(self.z, ((-npn, 0), (0, 0)),
+                                'constant', constant_values=fill_value)
+            else:
+                self.z = self.z[npn:, :]
+
+            if mask:
+                self.z = np.ma.masked_equal(self.z, fill_value)
+
+        # update class data
+        self.w = self.w + npw * self.dx
+        self.n = self.n + npn * self.dy
+
+    def keep(self, w, e, s, n):
+        """
+        Deprecated! Will dissapear in future vertions. Please use
+        :meth:`.set_new_extent` method.
+        """
+        warn(('Deprecation Warning: Deprecated! Will dissapear in future'
+              'vertions. Please use :meth:`.set_new_extent` method.'))
+        self.set_new_extent(w, e, s, n)
 
     def elevation_profile(self, xs, ys):
         """
@@ -564,25 +550,26 @@ class GeoTIFF():
             row = (x - self.w) / self.dx
             column = (self.n - y) / self.dy
 
-            if row > self.elev.shape[1] or column > self.elev.shape[0]:
+            if row > self.z.shape[1] or column > self.z.shape[0]:
                 continue
             # Add the point to our return array
             rows += [int(row)]
             columns += [int(column)]
-        return self.elev[columns, rows]
+        return self.z[columns, rows]
 
     def get_intensity(self, azimuth=315., altitude=45.,
-                      scale=None, smooth=None):
+                      scale=None, smooth=None, normalize=False):
         """
-        This is a method to create an intensity array that can be used to
-        create a shaded relief map.
-
-        .. note:: Since version 0.2.0 this method is not needed anymore
-                  as new hillshade code has been implemented in the
-                  :mod:`~pySW4.plotting.hillshade` module.
+        This is a method to create an intensity array that can be used as
+        illumination to create a shaded relief map or draping data over.
+        It is assumed that the grid origin is at the upper-left corner.
+        If that is not the case, add 90 to ``azimuth``.
 
         Parameters
         ----------
+        relief : a 2d :class:`~numpy.ndarray`
+            Topography or other data to calculate intensity from.
+
         azimuth : float
             Direction of light source, degrees from north.
 
@@ -595,12 +582,20 @@ class GeoTIFF():
         smooth : float
             Number of cells to average before intensity calculation.
 
+        normalize : bool
+            By default the intensity is clipped to the [0,1] range. If set
+            to ``True``, intensity is normalized to [0,1].
+
         Returns
         -------
-        a 2d :class:`~numpy.ndarray`
-            Normalized 2d array with illumination data.
+        intensity : :class:`~numpy.ndarray`
+            a 2d array with illumination data clipped in the [0,1] range.
+            Optionally, can be normalized (instead of clipped) to [0,1].
+            Same size as ``relief``.
         """
-        return calc_intensity(self.elev, azimuth, altitude, scale, smooth)
+        intensity = calc_intensity(self.z, azimuth, altitude,
+                                   scale, smooth, normalize)
+        return intensity
 
     def write_topo_file(self, filename):
         """
@@ -611,7 +606,7 @@ class GeoTIFF():
         lon, lat = self.xy2d()
         np.savetxt(filename, np.column_stack((lon.ravel(),
                                               lat.ravel(),
-                                              self.elev.ravel())),
+                                              self.z.ravel())),
                    fmt='%f', header=header, comments='')
 
     def set_nodata(self, value):
@@ -620,14 +615,14 @@ class GeoTIFF():
         """
 
         try:
-            if np.isnan(self.elev).any():
-                self.elev[np.isnan(self.elev)] = value
+            if np.isnan(self.z).any():
+                self.z[np.isnan(self.z)] = value
             else:
-                self.elev[self.elev == self.nodata] = value
+                self.z[self.z == self.nodata] = value
 
             self.nodata = value
         except ValueError:
-            self.elev = self.elev.astype(np.float32)
+            self.z = self.z.astype(np.float32)
             self.dtype = np.float32
             self.set_nodata(value)
 
@@ -653,7 +648,7 @@ class GeoTIFF():
         elif nodata != self.nodata:
             self.set_nodata(nodata)
 
-        save_GeoTIFF(filename, self.elev, self.w, self.n,
+        save_GeoTIFF(filename, self.z, self.w, self.n,
                      self.dx, self.dy, proj4=self.proj4,
                      dtype=self.dtype, nodata=self.nodata,
                      rasterBand=1)
@@ -665,19 +660,13 @@ class GeoTIFF():
         new = GeoTIFF()
         new.path = copy.deepcopy(self.path)
         new.name = copy.deepcopy(self.name)
-        new.dtype = copy.deepcopy(self.dtype)
         new.nodata = copy.deepcopy(self.nodata)
         new.w = copy.deepcopy(self.w)
-        new.e = copy.deepcopy(self.e)
-        new.s = copy.deepcopy(self.s)
         new.n = copy.deepcopy(self.n)
-        new.extent = copy.deepcopy(self.extent)
         new.proj4 = copy.deepcopy(self.proj4)
         new.dx = copy.deepcopy(self.dx)
         new.dy = copy.deepcopy(self.dy)
-        new.nx = copy.deepcopy(self.nx)
-        new.ny = copy.deepcopy(self.ny)
-        new.elev = copy.deepcopy(self.elev)
+        new.z = copy.deepcopy(self.z)
         try:
             new._src_ds = gdal.Open(os.path.join(self.path, self.name))
         except AttributeError:
@@ -685,69 +674,43 @@ class GeoTIFF():
         return new
 
 
-def calc_intensity(relief, azimuth=315., altitude=45.,
-                   scale=None, smooth=None):
+def read_GeoTIFF(filename, rasterBand=1, substring='*_dem.tif',
+                 verbose=False):
     """
-    This is a method to create an intensity array that can be used to
-    create a shaded relief map.
-
-    .. note:: Since version 0.2.0 this function is not needed anymore as
-              new hillshade code has been implemented in the
-              :mod:`~pySW4.plotting.hillshade` module.
+    Read a single GeoTIFF file.
 
     Parameters
     ----------
-    relief : a 2d :class:`~numpy.ndarray`
-        Topography or other data to calculate intensity from.
+    filename : str
+        Path (relative or absolute) to a GeoTIFF file.
 
-    azimuth : float
-        Direction of light source, degrees from north.
+        .. note::
 
-    altitude : float
-        Height of light source, degrees above the horizon.
+            It is possible to read a GeoTIFF file directly from within
+            a compressed archive without extracting it by using the
+            ``/vsiPREFIX/``.
 
-    scale : float
-        Scaling value of the data.
+            For instance, to read 'my.tif' from a subdirectory within
+            'my.zip' use: ``/vsizip/my.zip/subdirectory/my.tif`` if path
+            to 'my.zip' is relative or
+            ``/vsizip//full_path_to/my.zip/subdirectory/my.tif`` if
+            using the absolute path. Note the extra ``/`` after
+            ``/vsizip/``.
 
-    smooth : float
-        Number of cells to average before intensity calculation.
+            See http://www.gdal.org/gdal_virtual_file_systems.html for
+            more details.
 
-    Returns
-    -------
-    a 2d :class:`~numpy.ndarray`
-        Normalized 2d array with illumination data.
-        Same size as ``relief``.
-    """
+    rasterBand : int
+        The band number to read.
 
-    relief = relief.copy()
+    substring : str
+        Compressed file formats may archive more than one file. The
+        filename needs to be explicit as described in the `note` above.
+        However, if the filename is not explicit, this function will
+        try to find the correct file based on substring or regular
+        expression matching.
 
-    if scale is not None:
-        relief *= scale
-    if smooth:
-        relief = ndimage.uniform_filter(relief, size=smooth)
-
-    dx, dy = np.gradient(relief)
-
-    slope = 0.5 * np.pi - np.arctan(np.hypot(dx, dy))
-
-    aspect = np.arctan2(dx, dy)
-
-    altitude = np.radians(altitude)
-    azimuth = np.radians(180. - azimuth)
-
-    intensity = (np.sin(altitude) * np.sin(slope)
-                 + np.cos(altitude) * np.cos(slope)
-                 * np.cos(-azimuth - np.pi - aspect))
-
-    return (intensity - intensity.min()) / intensity.ptp()
-
-
-def read_GeoTIFF(filename=None, rasterBand=1, verbose=False):
-    """
-    Reads a single GeoTIFF file and returns a
-    :class:`~pySW4.utils.geo.GeoTIFF` class instance. If `filename`
-    is None, an empty :class:`~pySW4.utils.geo.GeoTIFF` object is
-    returnd.
+        .. note:: Being explicit is faster (but not by much)
 
     Returns
     -------
@@ -757,11 +720,7 @@ def read_GeoTIFF(filename=None, rasterBand=1, verbose=False):
     """
 
     tif = GeoTIFF()
-
-    if not filename:  # return an empty GeoTIFF object
-        return tif
-    else:
-        tif._read(filename, rasterBand, verbose)
+    tif._read(filename, rasterBand, substring, verbose)
 
     return tif
 
@@ -876,86 +835,60 @@ def save_GeoTIFF(filename, data, tlx, tly, dx, dy,
     dst_ds = None
 
 
+tilename_template = 'ASTGTM2_{}{:02d}{}{:03d}'
+
 def _get_tiles(path, lonmin, lonmax, latmin, latmax,
-               tilename='ASTGTM2_%s%02d%s%03d', verbose=False):
+               tilename=tilename_template, verbose=False):
     """
     This is a helper function for :func:`~pySW4.utils.geo.get_dem`
     function.
 
-    It extracts the GeoTIFF tiles from the zipfile downloaded from the
-    ASTER-GDEM dowonload site needed to stitch an elevation model
-    with the extent given by `lonmin`, `lonmax`, `latmin`, `latmax` in
-    decimal degrees and returns a list of paths pointing to these tiles.
+    It generates a list of tile filenames that are needed for the
+    stitching process.
 
-    .. note:: This function sould not be used directly by the user. See
-              :func:`~pySW4.utils.geo.get_dem`.
+    .. note::
+        This function should not be used directly by the user. See
+        :func:`~pySW4.utils.geo.get_dem`.
     """
 
-    tiles = []
-    tile_index = []
-    latrange = range(int(latmin), int(latmax + 1))
-    lonrange = range(int(lonmin), int(lonmax + 1))
-    for i in latrange:
-        if i < 0:
+    latmin -= 1 if latmin < 0 else 0
+    # latmax -= 1 if latmax < 0 else 0
+    lonmin -= 1 if lonmin < 0 else 0
+    # lonmax -= 1 if lonmax < 0 else 0
+
+    latrange = range(int(latmin), int(latmax))
+    lonrange = range(int(lonmin), int(lonmax))
+
+    tile_filenames = []
+    for lat in latrange:
+        if lat < 0:
             N = 'S'
-            i = -1 * i + 1
+            lat = -1 * lat
         else:
             N = 'N'
-        for j in lonrange:
-            if j < 0:
+        for lon in lonrange:
+            if lon < 0:
                 E = 'W'
-                j = -1 * j + 1
+                lon = -1 * lon
             else:
                 E = 'E'
-            basename = tilename % (N, i, E, j)
-            fullname = os.path.join(path, basename)
 
-            # make tifs directory on current path
-            tif_path = './tifs'
-            if not os.path.exists(tif_path):
-                os.makedirs('tifs')
-
-            f = os.path.join(tif_path, basename + '_dem.tif')
+            basename = tilename.format(N, lat, E, lon)
+            fullname = os.path.join(path, basename + '.zip')
 
             if verbose:
-                print(f)
+                print(fullname)
 
-            if os.path.exists(f):
-                tiles += [f]
-                continue
-            else:
-                if not os.path.exists(fullname + '.zip'):
-                    msg = ('Warning! missing file {}. '
-                           'Replacing tile with zeros.')
-                    warn(msg.format(fullname + '.zip'))
-                    sys.stdout.flush()
-                    tiles += [basename]
-                    continue
+            tile_filenames += [fullname]
 
-                if verbose:
-                    print('Extracting tiles to %s' % pwd)
-
-                with zipfile.ZipFile(fullname + '.zip') as zf:
-                    for item in zf.namelist():
-                        if item.endswith('_dem.tif'):
-                            dir_, tif_ = os.path.split(item)
-                            zf.extract(item, tif_path)
-                            if dir_:
-                                shutil.move(
-                                    os.path.join(tif_path, item), tif_path)
-                                shutil.rmtree(os.path.join(tif_path, dir_))
-                tiles += [f]
-
-    return tiles
+    return tile_filenames
 
 
 def get_dem(path, lonmin, lonmax, latmin, latmax,
-            tilename='ASTGTM2_%s%02d%s%03d', rasterBand=1,
-            dx=0.000277777777778, dy=-0.000277777777778,
-            keep_tiles=False):
+            tilename=tilename_template, rasterBand=1):
     """
-    This function reads relevant ASTER-GDEM GeoTIFF tiles into memory,
-    stitchs them together if more than one file is read, and cuts to the
+    This function reads ASTER-GDEM GeoTIFF tiles into memory, stitches
+    them together if more than one file is read, and cuts to the
     desired extent given by `lonmin`, `lonmax`, `latmin`, `latmax` in
     decimal degrees.
 
@@ -974,20 +907,10 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
         (may also be the ymin and ymax coordinate).
 
     tilename : str
-        Wildcard string of the tile names.
+        String template of the tile names.
 
     rasterBand : int
         The band number to read from each tile (defaults to 1).
-
-    dx, dy : float
-        Pixel size of data in the x and y direction, positive in the
-        East and North directions.
-
-    keep_tiles : bool
-        Zipped tiles get extracted to the current working directory and
-        are removed once the stitching is complete. If you are
-        interested in keeping the tiles in the current working directory
-        set to ``True``.
 
     Returns
     -------
@@ -1000,87 +923,55 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
     tiles = _get_tiles(path, lonmin, lonmax, latmin, latmax, tilename)
 
     gdems = []
-    emptys = []
-    # read all GDEMs into memory to stitch together and sample
+    _lonmin, _lonmax = lonmin, lonmax
+    _latmin, _latmax = latmin, latmax
+    # read all GDEMs into memory for stitching
     for tile in tiles:
         try:
-            gdems += [read_GeoTIFF(tile, rasterBand)]
-
-        except RuntimeError:
-            empty = GeoTIFF()
-            empty.name = tile
-            empty.dtype = np.int16
-            empty.nodata = np.nan
-
-            try:
-                coordinates = tile.split('N')[-1]
-            except ValueError:
-                coordinates = tile.split('S')[-1]
-
-            try:
-                n, w = coordinates.split('E')
-            except:
-                n, w = coordinates.split('W')
-            empty.w = float(w) - 0.5 * dx
-            empty.e = empty.w + 1 + dx
-            empty.n = float(n) + 1 - 0.5 * dy
-            empty.s = empty.n - 1 + dy
-
-            empty.extent = (empty.w, empty.e, empty.s, empty.n)
-
-            empty.dx = dx
-            empty.dy = dy
-            empty.nx = abs(int(round(1 / dx))) + 1
-            empty.ny = abs(int(round(1 / dy))) + 1
-
-            empty.elev = np.zeros((empty.ny, empty.nx))
-            emptys += [empty]
-
-    # remove the tiles after reading them
-    if not keep_tiles:
-        shutil.rmtree('./tifs')
-    gdems += emptys
+            tile_ = read_GeoTIFF(tile, rasterBand)
+            _lonmin = min(_lonmin, tile_.w)
+            _lonmax = max(_lonmax, tile_.e)
+            _latmin = min(_latmin, tile_.s)
+            _latmax = max(_latmax, tile_.n)
+            gdems += [tile_]
+        except FileNotFoundError as e:
+            warn('{}: {}\nTile space is filled with 0...'.format(
+                repr(e), tile))
 
     # create a mosaicGDEM (a GeoTIFF class instance) which will eventually
     # hold the GDEM data within the specified extent in
     # lonmin, lonmax, latmin, latmax
     if len(gdems) is 1:
         mosaicGDEM = gdems[0]
-        elev = mosaicGDEM.elev
     else:
         mosaicGDEM = GeoTIFF()
 
         mosaicGDEM.dx     = gdems[0].dx
         mosaicGDEM.dy     = gdems[0].dy
         mosaicGDEM.proj4  = gdems[0].proj4
-        mosaicGDEM.dtype  = gdems[0].dtype
         mosaicGDEM.nodata = gdems[0].nodata
 
-        mosaicGDEM.w = min([gdem.w for gdem in gdems])
-        mosaicGDEM.e = max([gdem.e for gdem in gdems])
-        mosaicGDEM.s = min([gdem.s for gdem in gdems])
-        mosaicGDEM.n = max([gdem.n for gdem in gdems])
-        mosaicGDEM.nx = abs(int((mosaicGDEM.e - mosaicGDEM.w)
-                                / mosaicGDEM.dx)) + 1
-        mosaicGDEM.ny = abs(int((mosaicGDEM.n - mosaicGDEM.s)
-                                / mosaicGDEM.dy)) + 1
+        mosaicGDEM.w = _lonmin
+        mosaicGDEM.n = _latmax
 
-        # initialize the elev array into which data from each
+        _nx = int(0.5 + abs((_lonmax - _lonmin) / gdems[0].dx))
+        _ny = int(0.5 + abs((_latmax - _latmin) / gdems[0].dy))
+
+        # initialize the z array into which data from each
         # individual tile will be added
-        elev = np.zeros((mosaicGDEM.ny, mosaicGDEM.nx))
+        mosaicGDEM.z = np.zeros((_ny, _nx))
 
         # stitching all gdems into one big mosaic
         for gdem in gdems:
-            x_start = int((gdem.w - mosaicGDEM.w) / mosaicGDEM.dx)
-            x_stop = x_start + gdem.nx
+            npw = int(0.5 + ((gdem.w - mosaicGDEM.w) / mosaicGDEM.dx))
+            npe = int(0.5 + ((gdem.e - mosaicGDEM.w) / mosaicGDEM.dx))
 
-            y_start = int((gdem.n - mosaicGDEM.n) / mosaicGDEM.dy)
-            y_stop = y_start + gdem.ny
+            nps = int(0.5 + ((gdem.s - mosaicGDEM.n) / mosaicGDEM.dy))
+            npn = int(0.5 + ((gdem.n - mosaicGDEM.n) / mosaicGDEM.dy))
 
-            elev[y_start:y_stop, x_start:x_stop] = gdem.elev
+            mosaicGDEM.z[npn: nps, npw: npe] = gdem.z
 
-    mosaicGDEM.elev = elev
-    mosaicGDEM.keep(lonmin, lonmax, latmin, latmax)
+    mosaicGDEM.set_new_extent(lonmin, lonmax, latmin, latmax)
 
     return mosaicGDEM
 

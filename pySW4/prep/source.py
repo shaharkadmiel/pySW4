@@ -5,7 +5,7 @@ Python module to help specify the source parameters.
 .. module:: source
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
     Shahar Shani-Kadmiel

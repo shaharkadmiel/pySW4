@@ -6,7 +6,7 @@ SW4 simulations.
 .. module:: stations
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
     Shahar Shani-Kadmiel

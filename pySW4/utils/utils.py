@@ -5,7 +5,7 @@ Python module with general utilities.
 .. module:: utils
 
 :author:
-    Shahar Shani-Kadmiel (kadmiel@post.bgu.ac.il)
+    Shahar Shani-Kadmiel (s.shanikadmiel@tudelft.nl)
 
 :copyright:
     Shahar Shani-Kadmiel
@@ -632,6 +632,13 @@ def simple_lonlat2xy(lon, lat, lon0=0, lat0=0, az=0,
                           * np.cos(az_)))
 
     return x, y
+
+
+def _list(x):
+    try:
+        return list(x)
+    except TypeError:
+        return [x]
 
 
 def nearest_values(array, value, threshold, retvalue=False):

@@ -42,7 +42,7 @@ setup(
     version=package_version,
     description="Python routines for interaction with SW4",
     author="Shahar Shani-Kadmiel, Omry Volk, Tobias Megies",
-    author_email="kadmiel@post.bgu.ac.il",
+    author_email="s.shanikadmiel@tudelft.nl",
     url="https://github.com/shaharkadmiel/pySW4",
     download_url="https://github.com/shaharkadmiel/pySW4.git",
     install_requires=INSTALL_REQUIRES,
