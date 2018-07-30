@@ -477,8 +477,8 @@ class GeoTIFF():
             (may also be the xmin, xmax, ymin, ymax coordinate).
 
         fill_value : float or None
-            Value to pad the data with incase extent is expanded beyond
-            the data. By default this is set to the `nodata` value.
+            Value to pad the data with in case extent is expanded beyond
+            the data. By default this is set to the ``nodata`` value.
 
         mask : bool
             If set to ``True``, data is masked using the `fill_value`.
@@ -856,8 +856,8 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
     lonmin -= 1 if lonmin < 0 else 0
     # lonmax -= 1 if lonmax < 0 else 0
 
-    latrange = range(int(latmin), int(latmax))
-    lonrange = range(int(lonmin), int(lonmax))
+    latrange = range(int(latmin), int(latmax) + 1)
+    lonrange = range(int(lonmin), int(lonmax) + 1)
 
     tile_filenames = []
     for lat in latrange:
@@ -885,7 +885,8 @@ def _get_tiles(path, lonmin, lonmax, latmin, latmax,
 
 
 def get_dem(path, lonmin, lonmax, latmin, latmax,
-            tilename=tilename_template, rasterBand=1):
+            tilename=tilename_template, rasterBand=1, fill_value=None,
+            verbose=False):
     """
     This function reads ASTER-GDEM GeoTIFF tiles into memory, stitches
     them together if more than one file is read, and cuts to the
@@ -912,6 +913,13 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
     rasterBand : int
         The band number to read from each tile (defaults to 1).
 
+    fill_value : float
+        Value to fill missing data or missing tiles. Defaults to the
+        tile ``nodata`` attribute.
+
+    verbose : bool
+        Print some information on the process.
+
     Returns
     -------
     :class:`~pySW4.utils.geo.GeoTIFF`
@@ -927,8 +935,12 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
     _latmin, _latmax = latmin, latmax
     # read all GDEMs into memory for stitching
     for tile in tiles:
+        if verbose:
+            print('Processing tile: {}...'.format(tile))
         try:
             tile_ = read_GeoTIFF(tile, rasterBand)
+            if verbose:
+                print(tile_)
             _lonmin = min(_lonmin, tile_.w)
             _lonmax = max(_lonmax, tile_.e)
             _latmin = min(_latmin, tile_.s)
@@ -971,7 +983,7 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
 
             mosaicGDEM.z[npn: nps, npw: npe] = gdem.z
 
-    mosaicGDEM.set_new_extent(lonmin, lonmax, latmin, latmax)
+    mosaicGDEM.set_new_extent(lonmin, lonmax, latmin, latmax, fill_value)
 
     return mosaicGDEM
 
