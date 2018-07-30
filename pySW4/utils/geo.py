@@ -947,7 +947,8 @@ def get_dem(path, lonmin, lonmax, latmin, latmax,
             _latmax = max(_latmax, tile_.n)
             gdems += [tile_]
         except FileNotFoundError as e:
-            warn('{}: {}\nTile space is filled with 0...'.format(
+            warn(('{}: {}\n'
+                  'Tile space is filled with the set fill_value...').format(
                 repr(e), tile))
 
     # create a mosaicGDEM (a GeoTIFF class instance) which will eventually
