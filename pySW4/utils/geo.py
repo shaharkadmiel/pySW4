@@ -22,7 +22,10 @@ from scipy import ndimage
 import numpy as np
 import sys
 import os
-from zipfile import ZipFile, BadZipFile
+try:  # on python 3
+    from zipfile import ZipFile, BadZipFile
+except ImportError:  # on python 2
+    from zipfile import ZipFile, BadZipfile 
 import tarfile
 from tarfile import ReadError
 from fnmatch import fnmatch
