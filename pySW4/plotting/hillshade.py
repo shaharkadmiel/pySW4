@@ -20,8 +20,8 @@ from __future__ import absolute_import, print_function, division
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LightSource, Normalize, rgb_to_hsv, hsv_to_rgb
-from matplotlib.colorbar import ColorbarBase
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+# from matplotlib.colorbar import ColorbarBase
+# from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from scipy.ndimage import uniform_filter
 
@@ -172,13 +172,13 @@ def shade_and_color(relief, data=None, az=315, alt=45, vmax='max', vmin='min',
         func(rgb, illum, \*\*kwargs))
 
         Options are:
-        **'hsv', 'overlay', 'soft', 'multiply', 'hard', 'screen', 'pegtop'** - are achieved using the
+        **'hsv', 'overlay', 'soft'** - are achieved using the
         :meth:`~matplotlib.colors.LightSource.shade_rgb` method of the
         :class:`~matplotlib.colors.LightSource` class.
 
-        **** - are achieved by
-        image manipulation with the PIL (Python Imaging Library) or
-        PILLOW (the friendly PIL fork).
+        **'multiply', 'hard', 'screen', 'pegtop'** - are achieved by
+        image manipulation in RGB space. See :func:`~.multiply`,
+        :func:`~.hard`, :func:`~.screen`, :func:`~.pegtop`.
 
     contrast : float
         Increases or decreases the contrast of the resulting image.
@@ -208,7 +208,9 @@ def shade_and_color(relief, data=None, az=315, alt=45, vmax='max', vmin='min',
         be passed to :func:`~matplotlib.pyplot.imshow` and
         :func:`~.shade_colorbar` to preserve consistency.
 
-    .. note:: It is assumed that relief and data have the same extent, origin and shape. Any resizing and reshaping must be done prior to this.
+    .. note:: It is assumed that relief and data have the same extent,
+       origin and shape. Any resizing and reshaping must be done prior
+       to this.
 
     Other parameters
     ----------------
@@ -349,9 +351,12 @@ def shade_colorbar(cb, max_illum=1, min_illum=0.1, n=3,
         keys are 'cmap', 'vmin', 'vmax', 'blend_mode', and 'brightness'.
         Other keywards are passed to blend_mode.
     """
-    x = np.linspace(0, 1, cb._values.shape[0])
+    x = np.linspace(0, 1, 256)
     y = np.linspace(min_illum, max_illum, n)
     C1, C0 = np.meshgrid(x, y)
+
+    xmin = ymin = cb.vmin
+    xmax = ymax = cb.vmax
 
     if cb.orientation == 'vertical':
         C1 = C1.T[::-1]
@@ -359,7 +364,7 @@ def shade_colorbar(cb, max_illum=1, min_illum=0.1, n=3,
 
     illumination = C0[::-1]**0.5
 
-    cmap = cb.get_cmap()
+    cmap = cb.cmap
     rgb = data2rgb(C1, cmap)
 
     illumination = illumination[..., np.newaxis]
@@ -378,7 +383,7 @@ def shade_colorbar(cb, max_illum=1, min_illum=0.1, n=3,
     if kwargs['brightness'] != 1:
         rgb = adjust_brightness(rgb, kwargs['brightness'])
     cb.ax.imshow(rgb, interpolation='bilinear', aspect=cb.ax.get_aspect(),
-                 extent=(0, 1, 0, 1), zorder=1)
+                 extent=(xmin, xmax, ymin, ymax), zorder=1)
 
 
 ls = LightSource()

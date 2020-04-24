@@ -43,6 +43,7 @@ GDAL_INTERPOLATION = {'nearest' : gdal.GRA_NearestNeighbour,
                       'cubic'   : gdal.GRA_Cubic,
                       'lanczos' : gdal.GRA_Lanczos}
 
+
 def gdalopen(filename, substring='*_dem.tif'):
     """
     Wrapper function around :func:`gdal.Open`.
@@ -95,12 +96,12 @@ def gdalopen(filename, substring='*_dem.tif'):
         msg = (
             "No file with matching substring '{}' was found in {}, "
             'which contains:\n'
-             '   {}\n'
+            '   {}\n'
             "try:\n{}"
-            ).format(substring, filename, contents,
-                     '\n'.join(
-                ['/vsi{}/'.format(prefix_) + os.path.join(filename, item)
-                 for item in contents]))
+        ).format(
+            substring, filename, contents,
+            '\n'.join(['/vsi{}/'.format(prefix_) + os.path.join(
+                filename, item) for item in contents]))
 
         raise OSError(msg)
 
@@ -270,9 +271,9 @@ class GeoTIFF():
         ----------
         by : float
 
-            - If ``by=1``, nothing happens.
-            - If ``by<1``, the grid is sub-sampled by the factor.
-            - if ``by>1``, the grid is super-sampled byt the factor.
+            - If ``by = 1``, nothing happens.
+            - If ``by < 1``, the grid is sub-sampled by the factor.
+            - if ``by > 1``, the grid is super-sampled by the factor.
 
         to : float
             The specified spacing to which the grid is resampled to.
@@ -288,7 +289,7 @@ class GeoTIFF():
 
             **Note** that this may result in slightly different
             spacing than desired and more importantly, may cause a
-            **discrepency** between `x` and `y` spacing.
+            **discrepancy** between `x` and `y` spacing.
 
         """
 
@@ -299,10 +300,11 @@ class GeoTIFF():
         if to:
             by = self.dx / to
 
-        if by:
-            to = self.dx / by
-
         self.z = ndimage.zoom(self.z, by, order=order)
+
+        # update class data
+        self.dx /= by
+        self.dy /= by
 
     def reproject(self, epsg=None, proj4=None, match=None, spacing=None,
                   interpolation='nearest', error_threshold=0.125,
@@ -498,7 +500,7 @@ class GeoTIFF():
 
         # expanding or trimming each dimension independently
         else:
-            fill_value = fill_value or self.nodata
+            fill_value = self.nodata if fill_value is None else fill_value
 
             # first handle east and south boundaries
             if npe > self.nx:
@@ -658,19 +660,20 @@ class GeoTIFF():
         Return a deepcopy of the GeoTIFF object.
         """
         new = GeoTIFF()
-        new.path = copy.deepcopy(self.path)
-        new.name = copy.deepcopy(self.name)
-        new.nodata = copy.deepcopy(self.nodata)
-        new.w = copy.deepcopy(self.w)
-        new.n = copy.deepcopy(self.n)
-        new.proj4 = copy.deepcopy(self.proj4)
-        new.dx = copy.deepcopy(self.dx)
-        new.dy = copy.deepcopy(self.dy)
-        new.z = copy.deepcopy(self.z)
-        try:
-            new._src_ds = gdal.Open(os.path.join(self.path, self.name))
-        except AttributeError:
-            new._src_ds = None
+        new.__dict__ = self.__dict__.copy()
+        # new.path = copy.deepcopy(self.path)
+        # new.name = copy.deepcopy(self.name)
+        # new.nodata = copy.deepcopy(self.nodata)
+        # new.w = copy.deepcopy(self.w)
+        # new.n = copy.deepcopy(self.n)
+        # new.proj4 = copy.deepcopy(self.proj4)
+        # new.dx = copy.deepcopy(self.dx)
+        # new.dy = copy.deepcopy(self.dy)
+        # new.z = copy.deepcopy(self.z)
+        # try:
+        #     new._src_ds = gdal.Open(os.path.join(self.path, self.name))
+        # except AttributeError:
+        #     new._src_ds = None
         return new
 
 
