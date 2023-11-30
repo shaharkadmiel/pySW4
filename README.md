@@ -10,7 +10,7 @@
 pySW4: Python routines for interaction with SW4
 ===============================================
 
-pySW4 is an open-source project dedicated to provide a Python framework for working with numerical simulations of seismic-wave propagation with [SW4](https://geodynamics.org/cig/software/sw4/) in all phases of the task. Preprocessing, post-processing and runtime visualization. It also provides several other tools for handling GeoTIFF files such as ASTER-GDEM tiles and others, plotting shaded-relief DEM maps and draping data over them, creating movies from image sequences, etc.
+pySW4 is an open-source project dedicated to provide a Python framework for working with numerical simulations of seismic-wave propagation with [SW4](https://geodynamics.org/resources/sw4/about) in all phases of the task. Preprocessing, post-processing and runtime visualization. It also provides several other tools for handling GeoTIFF files such as ASTER-GDEM tiles and others, plotting shaded-relief DEM maps and draping data over them, creating movies from image sequences, etc.
 
 The functionality is provided through 5 sub-packages which include pre- and post-processing routines including the [rfileIO](http://shaharkadmiel.github.io/pySW4/packages/pySW4.prep.rfileIO.html) library for interaction, reading and writing seismic models in the rfile format.
 
